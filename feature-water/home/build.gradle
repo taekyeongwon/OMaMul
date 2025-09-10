@@ -1,7 +1,9 @@
+
 plugins {
     alias libs.plugins.android.library
     alias libs.plugins.jetbrains.kotlin.android
     alias libs.plugins.hilt
+    alias libs.plugins.kotlin.compose
     id 'kotlin-kapt'
 }
 
@@ -27,6 +29,7 @@ android {
     buildFeatures {
         dataBinding = true
         viewBinding = true
+        compose true
     }
 
     compileOptions {
@@ -45,6 +48,7 @@ dependencies {
     implementation project(':core:alarmnoti')
     implementation project(':core:navigation')
     implementation project(':feature-common:base')
+    implementation project(':feature-water:alarm')
 
     implementation libs.androidx.core
     implementation libs.androidx.appcompat
@@ -68,13 +72,21 @@ dependencies {
 
     //hilt
     implementation libs.hilt
+    implementation libs.androidx.hilt.navigation.compose
     // KAPT(Kotlin Annotation Processing Tools), 어노테이션 사용, annotationProcessor의 대체
     kapt libs.hilt.compiler
 
     //lottie
     implementation libs.lottie
+
+    // compose
+    implementation platform(libs.androidx.compose.bom)
+    implementation libs.bundles.compose
+    debugImplementation libs.androidx.compose.ui.tooling
+    debugImplementation libs.androidx.compose.ui.test.manifest
 }
 
 kapt {
     correctErrorTypes true
 }
+

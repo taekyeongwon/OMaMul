@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.tkw.base.BaseViewModel
 import com.tkw.base.launch
 import com.tkw.common.SingleLiveEvent
@@ -18,9 +19,12 @@ import com.tkw.domain.model.Water
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,16 +46,24 @@ class WaterViewModel
 
     //현재 날짜로 조회한 DayOfWater, 마지막 데이터 제거하기 위해 관찰
     @OptIn(ExperimentalCoroutinesApi::class)
-    val amountLiveData: LiveData<DayOfWater> = dateStringFlow.flatMapLatest { date ->
+    val amountLiveData: StateFlow<DayOfWater> = dateStringFlow.flatMapLatest { date ->
         waterRepository.getAmountByFlow(date)
-    }.asLiveData()
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        DayOfWater("", listOf())
+    )
 
     //메인화면에 표시할 컵 리스트
     @OptIn(ExperimentalCoroutinesApi::class)
-    val cupListLiveData: LiveData<List<Cup>> =
+    val cupListLiveData: StateFlow<List<Cup>> =
         cupRepository.getCupList().mapLatest {
             it.cupList
-        }.asLiveData()
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            listOf()
+        )
 
     //컵 관리 화면 이동 후 돌아왔을 때 위치 저장용
     val cupPagerScrollPosition = MutableLiveData(0)

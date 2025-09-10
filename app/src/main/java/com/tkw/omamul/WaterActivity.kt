@@ -4,14 +4,12 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -28,8 +26,6 @@ import com.tkw.omamul.databinding.ActivityWaterBinding
 import com.tkw.home.WaterViewModel
 import com.tkw.record.LogViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit
 
@@ -51,7 +47,6 @@ class WaterActivity : AppCompatActivity() {
         com.tkw.record.R.id.waterLogFragment,
         com.tkw.setting.R.id.settingFragment
     )
-    private var prevAmount: Int = 0
 
     private val broadcastReceiver = DateChangeReceiver {
         waterViewModel.setToday()
@@ -81,7 +76,6 @@ class WaterActivity : AppCompatActivity() {
         initLanguage()
         initBinding()
         initView()
-        initObserver()
         setWorkManager()
     }
 
@@ -176,33 +170,6 @@ class WaterActivity : AppCompatActivity() {
             // CupManageFragment 등 특정 flag에서 백 키 또는 업 버튼 눌렀을 때 백스택 이동 제어하기 위해 설정.
             // 다른 프래그먼트에서 onBackPressedDispatcher에 콜백을 설정함으로써 백스택 이동을 제어할 수 있음.
             onBackPressedDispatcher.onBackPressed()
-        }
-    }
-
-    private fun initObserver() {
-        waterViewModel.amountLiveData.observe(this) {
-            lifecycleScope.launch {
-                val prev = prevAmount
-                if(it.getTotalIntakeByDate() >= waterViewModel.getIntakeAmount()) {
-                    if(prev < waterViewModel.getIntakeAmount()) {
-                        Toast.makeText(
-                            this@WaterActivity,
-                            getString(com.tkw.ui.R.string.intake_complete),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    alarmViewModel.saveReachedGoal(true)
-                } else {
-                    alarmViewModel.saveReachedGoal(false)
-                }
-                prevAmount = it.getTotalIntakeByDate()
-            }
-        }
-        alarmViewModel.isReachedGoal.observe(this) {
-            lifecycleScope.launch {
-                val isNotificationEnabled = alarmViewModel.isNotificationAlarmEnabled().first()
-                alarmViewModel.delayAllAlarm(it, isNotificationEnabled)
-            }
         }
     }
 
