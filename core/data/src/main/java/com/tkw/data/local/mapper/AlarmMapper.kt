@@ -80,13 +80,8 @@ object AlarmMapper {
     }
 
     fun alarmListToModel(alarmListEntity: AlarmListEntity): AlarmList {
-        val newList = ArrayList<Alarm>()
-        alarmListEntity.alarmList.forEach {
-            val model = alarmToModel(it)
-            newList.add(model)
-        }
-
-        return AlarmList(alarmList = newList)
+        val modelList = alarmListEntity.alarmList.map(::alarmToModel)
+        return AlarmList(alarmList = modelList)
     }
 
     fun alarmListToEntity(alarmList: List<Alarm>): List<AlarmEntity> {

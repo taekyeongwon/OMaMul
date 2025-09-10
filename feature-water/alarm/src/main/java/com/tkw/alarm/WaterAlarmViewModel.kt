@@ -1,7 +1,5 @@
 package com.tkw.alarm
 
-import android.annotation.SuppressLint
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
@@ -19,7 +17,6 @@ import com.tkw.domain.model.AlarmModeSetting
 import com.tkw.domain.model.AlarmSettings
 import com.tkw.domain.model.RingToneMode
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -30,10 +27,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapLatest
-import java.lang.StringBuilder
 import javax.inject.Inject
 
-@SuppressLint("StaticFieldLeak")
 @HiltViewModel
 class WaterAlarmViewModel @Inject constructor(
     private val prefDataRepository: PrefDataRepository,

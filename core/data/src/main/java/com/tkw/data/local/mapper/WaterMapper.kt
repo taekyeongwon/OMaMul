@@ -28,11 +28,6 @@ object WaterMapper {
     }
 
     private fun toWaterList(entity: DayOfWaterEntity): List<Water> {
-        val newArrayList = ArrayList<Water>()
-        val sortedList = entity.getSortedList()
-        for(water in sortedList) {
-            newArrayList.add(waterToModel(water))
-        }
-        return newArrayList
+        return entity.getSortedList().map(::waterToModel)
     }
 }
