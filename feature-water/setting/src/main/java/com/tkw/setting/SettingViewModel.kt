@@ -3,6 +3,10 @@ package com.tkw.setting
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.SharingStarted
 import com.tkw.base.BaseViewModel
 import com.tkw.base.launch
 import com.tkw.common.SingleLiveEvent
@@ -58,6 +62,15 @@ class SettingViewModel
     val goalOfIntake = settings.mapLatest {
         "${it.intake}ml"
     }.asLiveData()
+    
+    // StateFlow versions for Compose
+    val goalIntakeFlow: StateFlow<Int> = settings.mapLatest {
+        it.intake
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = 2000
+    )
 
     val currentLangFlow = prefDataRepository.fetchLanguage()
     val currentLang = currentLangFlow.mapLatest {
@@ -72,7 +85,12 @@ class SettingViewModel
 
     val unitFlow = settings.mapLatest {
         it.unit
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = com.tkw.domain.model.DrinkUnit.ML
+    )
+    
     val unit = settings.mapLatest {
         when(it.unit) {
             0 -> "ml, L"
@@ -81,7 +99,19 @@ class SettingViewModel
         }
     }.asLiveData()
 
-    val lastSync = prefDataRepository.fetchLastSync().asLiveData()
+    val lastSync = prefDataRepository.fetchLastSync().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = -1L
+    )
+    
+    val isLoggedIn: StateFlow<Boolean> = flow {
+        emit(false) // TODO: Implement actual login state
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = false
+    )
 
     private val alarmSetting = alarmRepository.getAlarmSetting()
     private val alarmModeSetting = alarmRepository.getAlarmModeSetting()

@@ -27,8 +27,6 @@ android {
     }
 
     buildFeatures {
-        dataBinding = true
-        viewBinding = true
         compose true
     }
 
@@ -58,17 +56,12 @@ dependencies {
     androidTestImplementation libs.androidx.test.junit
     androidTestImplementation libs.androidx.test.espresso
 
-    implementation libs.androidx.navigation.fragment
-    implementation libs.androidx.navigation.ui
 
     //Flow.asLiveData
     implementation libs.androidx.lifecycle.livedata
 
     //by viewModels
     implementation libs.androidx.activity.ktx
-
-    //by activityViewModels
-    implementation libs.androidx.fragment.ktx
 
     //hilt
     implementation libs.hilt

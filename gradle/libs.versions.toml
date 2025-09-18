@@ -70,6 +70,7 @@ androidx-activity-ktx = {module="androidx.activity:activity-ktx", version.ref="a
 androidx-fragment-ktx = {module="androidx.fragment:fragment-ktx", version.ref="fragment-ktx"}
 androidx-lifecycle-livedata = {module="androidx.lifecycle:lifecycle-livedata-ktx", version.ref="lifecycle-livedata-ktx"}
 androidx-lifecycle-viewmodel = {module="androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref="lifecycle-viewmodel-ktx"}
+androidx-lifecycle-compose = {module="androidx.lifecycle:lifecycle-runtime-compose", version.ref="lifecycle-viewmodel-ktx"}
 
 retrofit2-retrofit = {module="com.squareup.retrofit2:retrofit", version.ref="retrofit"}
 retrofit2-converter-gson = {module="com.squareup.retrofit2:converter-gson", version.ref="converter-gson"}

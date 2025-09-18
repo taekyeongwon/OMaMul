@@ -1,6 +1,7 @@
 plugins {
     alias libs.plugins.android.library
     alias libs.plugins.jetbrains.kotlin.android
+    alias libs.plugins.kotlin.compose
     id 'kotlin-kapt'
 }
 
@@ -31,6 +32,7 @@ android {
     }
 
     buildFeatures {
+        compose = true
         dataBinding = true
         viewBinding = true
     }
@@ -44,6 +46,12 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.androidx.test.junit
     androidTestImplementation libs.androidx.test.espresso
+
+    // compose
+    implementation platform(libs.androidx.compose.bom)
+    implementation libs.bundles.compose
+    debugImplementation libs.androidx.compose.ui.tooling
+    debugImplementation libs.androidx.compose.ui.test.manifest
 
     //chart
     implementation libs.android.chart

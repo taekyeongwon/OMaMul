@@ -2,7 +2,7 @@ plugins {
     alias libs.plugins.android.library
     alias libs.plugins.jetbrains.kotlin.android
     alias libs.plugins.hilt
-    alias libs.plugins.navigation.safeargs
+    alias libs.plugins.kotlin.compose
     id 'kotlin-kapt'
 }
 
@@ -26,8 +26,7 @@ android {
     }
 
     buildFeatures {
-        dataBinding = true
-        viewBinding = true
+        compose = true
     }
 
     compileOptions {
@@ -55,25 +54,26 @@ dependencies {
     androidTestImplementation libs.androidx.test.junit
     androidTestImplementation libs.androidx.test.espresso
 
-    implementation libs.androidx.navigation.fragment
-    implementation libs.androidx.navigation.ui
-
-    //hiltNavGraphViewModels
-    implementation libs.androidx.hilt.navigation.fragment
 
     //Flow.asLiveData
     implementation libs.androidx.lifecycle.livedata
+    implementation libs.androidx.lifecycle.compose
 
     //by viewModels
     implementation libs.androidx.activity.ktx
 
-    //by activityViewModels
-    implementation libs.androidx.fragment.ktx
 
     //hilt
     implementation libs.hilt
+    implementation libs.androidx.hilt.navigation.compose
     // KAPT(Kotlin Annotation Processing Tools), 어노테이션 사용, annotationProcessor의 대체
     kapt libs.hilt.compiler
+
+    // compose
+    implementation platform(libs.androidx.compose.bom)
+    implementation libs.bundles.compose
+    debugImplementation libs.androidx.compose.ui.tooling
+    debugImplementation libs.androidx.compose.ui.test.manifest
 }
 
 kapt {

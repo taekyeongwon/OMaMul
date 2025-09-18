@@ -21,12 +21,17 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.SharingStarted
+import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,10 +43,12 @@ class WaterAlarmViewModel @Inject constructor(
     val nextEvent: LiveData<Unit> = _nextEvent
 
     //알람 권한 허용 여부
-    private val isAlarmEnabled = prefDataRepository.fetchAlarmEnableFlag()
-    suspend fun getNotificationEnabled() = isAlarmEnabled.first()
-    suspend fun setAlarmEnabled(flag: Boolean) {
-        prefDataRepository.saveAlarmEnableFlag(flag)
+    private val isAlarmEnabledFlow = prefDataRepository.fetchAlarmEnableFlag()
+    suspend fun getNotificationEnabled() = isAlarmEnabledFlow.first()
+    fun setAlarmEnabled(flag: Boolean) {
+        launch {
+            prefDataRepository.saveAlarmEnableFlag(flag)
+        }
     }
 
     //설정에서 알람 허용 여부
@@ -52,7 +59,7 @@ class WaterAlarmViewModel @Inject constructor(
 
     //알람 및 설정에서 알람 허용했는지 여부
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun isNotificationAlarmEnabled() = isAlarmEnabled
+    fun isNotificationAlarmEnabled() = isAlarmEnabledFlow
         .combine(isNotificationEnabled) { isAlarm, isNoti ->
             isAlarm && isNoti
         }
@@ -62,8 +69,27 @@ class WaterAlarmViewModel @Inject constructor(
     val periodModeSettingsLiveData: LiveData<AlarmModeSetting> =
         alarmRepository.getAlarmModeSetting().asLiveData()
 
-    val alarmSettings: LiveData<AlarmSettings> =
+    val alarmSettingsLiveData: LiveData<AlarmSettings> =
         alarmSettingsFlow.asLiveData()
+    
+    // StateFlow versions for Compose
+    val alarmSettings: StateFlow<AlarmSettings?> = 
+        alarmSettingsFlow.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
+    
+    val isAlarmEnabled: StateFlow<Boolean> = 
+        isAlarmEnabledFlow.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
+        
+    fun loadAlarmSettings() {
+        // StateFlow는 자동으로 수집되므로 별도 로딩 로직 불필요
+    }
 
     val customAlarmList: LiveData<AlarmList> =
         alarmRepository.getAlarmList(AlarmMode.CUSTOM).asLiveData()
@@ -160,7 +186,7 @@ class WaterAlarmViewModel @Inject constructor(
         }
     }
 
-    suspend fun updateEtcSetting(etcSettings: AlarmEtcSettings) {
+    fun updateEtcSetting(etcSettings: AlarmEtcSettings) {
         launch {
             val currentSetting = alarmSettingsFlow.first()
             val newSetting = AlarmSettings(

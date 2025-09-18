@@ -3,6 +3,7 @@ package com.tkw.cup
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.tkw.base.AppError
 import com.tkw.base.BaseViewModel
 import com.tkw.base.launch
@@ -14,7 +15,10 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel(assistedFactory = CupViewModel.AssistFactory::class)
 class CupViewModel
@@ -29,10 +33,14 @@ class CupViewModel
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val cupListLiveData: LiveData<List<Cup>> =
+    val cupListLiveData: StateFlow<List<Cup>> =
         cupRepository.getCupList().mapLatest {
             it.cupList  //Flow<CupListEntity> -> Flow<List<Cup>>으로 최신값 매핑
-        }.asLiveData()
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            listOf()
+        )
 
     //cup create fragment에서 관찰할 변수
     val cupNameLiveData = MutableLiveData(params.cupName)
