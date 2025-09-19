@@ -41,9 +41,6 @@ class WaterActivity : AppCompatActivity() {
         com.tkw.setting.R.id.settingFragment
     )
     private val hideTitleFragmentSet = setOf(
-        com.tkw.init.R.id.initLanguageFragment,
-        com.tkw.init.R.id.initIntakeFragment,
-        com.tkw.init.R.id.initTimeFragment,
         com.tkw.record.R.id.waterLogFragment,
         com.tkw.setting.R.id.settingFragment
     )
@@ -102,7 +99,7 @@ class WaterActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
         val navController = navHostFragment.navController
-        val appBarConfiguration = AppBarConfiguration(mainFragmentSet.plus(com.tkw.init.R.id.initLanguageFragment))
+        val appBarConfiguration = AppBarConfiguration(mainFragmentSet)
         NavigationUI.setupWithNavController(dataBinding.toolbar, navController, appBarConfiguration)
         NavigationUI.setupWithNavController(dataBinding.bottomNav, navController)
 
@@ -120,7 +117,8 @@ class WaterActivity : AppCompatActivity() {
         if(waterViewModel.getInitFlag()) {
             navGraph.setStartDestination(com.tkw.home.R.id.home_nav_graph)
         } else {
-            navGraph.setStartDestination(com.tkw.init.R.id.init_nav_graph)
+            // TODO: Compose 온보딩 화면으로 이동하는 로직 구현 필요
+            navGraph.setStartDestination(com.tkw.home.R.id.home_nav_graph)
         }
         nav.graph = navGraph
     }

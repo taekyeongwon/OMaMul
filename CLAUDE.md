@@ -186,15 +186,23 @@ OMaMul 앱을 XML+Fragment 구조에서 Jetpack Compose로 단계적 전환합�
 - [x] Debug/Release 빌드 테스트 및 검증 완료
 - [ ] WaterFragment 및 XML 파일 제거 (선택적)
 
-#### 2단계: 온보딩 모듈 (feature-common:init)
+#### 2단계: 온보딩 모듈 (feature-common:init) ✅ 완료
 **대상 Fragment**: InitLanguageFragment, InitTimeFragment, InitIntakeFragment
 
 **작업 내용**:
-- [ ] LanguageSelectionScreen (언어 선택)
-- [ ] TimeSettingScreen (시간 설정)
-- [ ] IntakeGoalScreen (목표량 설정)
-- [ ] 슬라이드 애니메이션 및 진행 표시기
-- [ ] Fragment 제거 및 Navigation 전환
+- [x] LanguageSelectionScreen (언어 선택)
+- [x] TimeSettingScreen (시간 설정)
+- [x] IntakeGoalScreen (목표량 설정)
+- [x] 슬라이드 애니메이션 및 진행 표시기
+- [x] Fragment 제거 및 Navigation 전환
+
+**완료된 주요 기능들:**
+- ✅ **언어 선택 화면**: 4개 언어 지원 (한국어, 영어, 일본어, 중국어), 권한 요청 통합
+- ✅ **시간 설정 화면**: 기상/취침 시간 설정, Material 3 TimePicker 사용
+- ✅ **목표량 설정 화면**: 커스텀 Amount Picker, 정확한 알람 권한 다이얼로그
+- ✅ **Navigation 시스템**: InitNavHost로 3단계 흐름 관리
+- ✅ **UI 개선**: 물 테마 그라데이션, 진행 표시기, ViewModel 없는 Preview 함수 완비
+- ✅ **빌드 성공**: core:ui string resource 참조로 안정적 빌드
 
 #### 3단계: 컵 관리 모듈 (feature-water:cup)
 **대상 Fragment**: CupManageFragment, CupListEditFragment, CupCreateFragment
@@ -238,7 +246,7 @@ OMaMul 앱을 XML+Fragment 구조에서 Jetpack Compose로 단계적 전환합�
 #### 모듈 마이그레이션 완료 조건
 1. **Compose 화면 생성**: 모든 Fragment를 Compose Screen으로 변환
 2. **Navigation 전환**: XML Navigation을 Compose Navigation으로 변경
-3. **Preview 함수**: 각 Screen에 @Preview 추가
+3. **Preview 함수**: 각 Screen에 ViewModel 없는 @Preview 추가
 4. **Fragment 제거**: 기존 Fragment 및 XML 파일 삭제
 5. **의존성 정리**: Fragment 관련 의존성 제거
 6. **빌드 성공**: `./gradlew assembleDebug` 성공
@@ -281,17 +289,124 @@ buildTypes {
 }
 ```
 
+### Compose Preview 가이드라인
+
+#### ViewModel이 있는 Compose 함수의 Preview 패턴
+
+**문제점**: ViewModel 파라미터가 있는 Compose 함수는 Unstable 객체로 인해 Preview가 제대로 렌더링되지 않습니다.
+
+**해결 방법**: 다음 패턴을 **필수**로 사용해야 합니다:
+
+#### 1. 메인 함수 (ViewModel 사용)
+```kotlin
+@Composable
+fun LanguageSelectionScreen(
+    onNavigateNext: () -> Unit,
+    viewModel: InitViewModel = hiltViewModel() // Unstable 객체
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val sideEffect by viewModel.sideEffect.collectAsStateWithLifecycle(null)
+
+    var selectedLanguage by remember { mutableStateOf(Locale.KOREAN.language) }
+
+    // ViewModel 로직 처리
+    LaunchedEffect(sideEffect) {
+        when (sideEffect) {
+            is InitContract.SideEffect.OnMoveNext -> onNavigateNext()
+            else -> {}
+        }
+    }
+
+    // Content 함수 호출 (Preview와 동일한 UI)
+    LanguageSelectionScreenContent(
+        selectedLanguage = selectedLanguage,
+        onLanguageSelect = {
+            selectedLanguage = it
+            viewModel.setEvent(InitContract.Event.SaveLanguage(it))
+        },
+        onNavigateNext = { /* ViewModel 이벤트 */ }
+    )
+}
+```
+
+#### 2. Content 함수 (Preview용, ViewModel 없음)
+```kotlin
+@Composable
+private fun LanguageSelectionScreenContent(
+    selectedLanguage: String = Locale.KOREAN.language,
+    onLanguageSelect: (String) -> Unit = {},
+    onNavigateNext: () -> Unit = {}
+) {
+    // Preview에서 상호작용 테스트를 위한 로컬 상태
+    var localSelectedLanguage by remember { mutableStateOf(selectedLanguage) }
+
+    // 실제 UI 구현
+    Box(modifier = Modifier.fillMaxSize()) {
+        // UI 컴포넌트들...
+        languages.forEach { (code, name) ->
+            LanguageOption(
+                languageCode = code,
+                languageName = name,
+                isSelected = localSelectedLanguage == code,
+                onSelect = {
+                    localSelectedLanguage = code
+                    onLanguageSelect(code)
+                }
+            )
+        }
+    }
+}
+```
+
+#### 3. Preview 함수
+```kotlin
+@Preview(showBackground = true, backgroundColor = 0xFFE0F6FF)
+@Composable
+fun LanguageSelectionScreenPreview() {
+    LanguageSelectionScreenContent(
+        onNavigateNext = {}
+    )
+}
+```
+
+#### Preview 작성 규칙
+
+**필수 사항:**
+1. **함수명**: `[ScreenName]Content` 형식으로 명명
+2. **접근 제한자**: `private` 사용으로 외부 노출 방지
+3. **파라미터**: 필요한 상태값들을 파라미터로 받되, 기본값 제공
+4. **로컬 상태**: Preview에서 상호작용 테스트를 위해 `remember` 사용
+5. **콜백**: 빈 람다 `{}` 기본값으로 제공
+
+**Preview 어노테이션 옵션:**
+```kotlin
+@Preview(
+    showBackground = true,                    // 배경 표시
+    backgroundColor = 0xFFE0F6FF,            // 배경 색상 (물 테마)
+    showSystemUi = true,                     // 시스템 UI 표시 (전체 화면용)
+    device = Devices.PIXEL_4,                // 특정 기기
+    uiMode = Configuration.UI_MODE_NIGHT_YES // 다크 테마
+)
+```
+
+**Preview 장점:**
+- ✅ **안정적인 렌더링**: ViewModel 없이 정상 Preview 표시
+- ✅ **실제 상호작용**: 버튼 클릭, 값 변경 등 테스트 가능
+- ✅ **다양한 상태**: 다이얼로그, 선택 상태 등도 확인 가능
+- ✅ **빠른 개발**: Android Studio에서 실시간 UI 확인
+
 ### 현재 진행 상황
 - ✅ 화면 구조 분석 완료 (18개 Fragment 파악)
 - ✅ Navigation 구조 분석 완료
 - ✅ 마이그레이션 계획 수립 완료
 - ✅ 1단계: 홈 모듈 완료
-- 🔄 2단계: 온보딩 모듈 대기 중
+- ✅ 2단계: 온보딩 모듈 완료
+- 🔄 3단계: 컵 관리 모듈 대기 중
 
 ### 다음 단계
-1. 2단계: 온보딩 모듈 (feature-common:init) 시작
-   - InitLanguageFragment → LanguageSelectionScreen
-   - InitTimeFragment → TimeSettingScreen
-   - InitIntakeFragment → IntakeGoalScreen
-2. 슬라이드 애니메이션 및 진행 표시기 구현
+1. 3단계: 컵 관리 모듈 (feature-water:cup) 시작
+   - CupManageFragment → CupManagementScreen
+   - CupListEditFragment → CupEditScreen
+   - CupCreateFragment → CupCreationScreen
+2. 드래그 앤 드롭 기능 및 시각적 컵 디자인 구현
 3. Fragment 제거 및 Navigation 전환
