@@ -75,7 +75,6 @@ dependencies {
 
     //hilt
     implementation libs.hilt
-    implementation libs.androidx.hilt.navigation.compose
     // KAPT(Kotlin Annotation Processing Tools), 어노테이션 사용, annotationProcessor의 대체
     kapt libs.hilt.compiler
 
@@ -85,7 +84,6 @@ dependencies {
     // compose
     implementation platform(libs.androidx.compose.bom)
     implementation libs.bundles.compose
-    implementation 'androidx.compose.material:material-icons-extended'
     debugImplementation libs.androidx.compose.ui.tooling
     debugImplementation libs.androidx.compose.ui.test.manifest
 }

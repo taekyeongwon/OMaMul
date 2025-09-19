@@ -260,6 +260,107 @@ OMaMul 앱을 XML+Fragment 구조에서 Jetpack Compose로 단계적 전환합�
 ./gradlew --refresh-dependencies
 ```
 
+### Compose 설정 가이드라인
+
+#### Gradle 설정 (Kotlin 2.0.0+)
+Kotlin 2.0.0부터는 Compose 컴파일러가 내장되어 별도 버전 지정이 불필요합니다:
+
+```gradle
+plugins {
+    alias libs.plugins.kotlin.compose // Kotlin 2.0.0+ 필수
+}
+
+android {
+    buildFeatures {
+        compose = true
+        // kotlinCompilerExtensionVersion 설정 불필요 (Kotlin 2.0.0+)
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true // material-icons-extended 최적화를 위해 필수
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    // Compose BOM으로 버전 통합 관리
+    implementation platform(libs.androidx.compose.bom)
+
+    // 번들로 관리되는 Compose 의존성 (material-icons-extended 포함)
+    implementation libs.bundles.compose
+
+    // 디버그 전용
+    debugImplementation libs.androidx.compose.ui.tooling
+    debugImplementation libs.androidx.compose.ui.test.manifest
+}
+```
+
+#### String Resource 관리
+**중요**: 모든 string 리소스는 `core:ui` 모듈에서 통합 관리됩니다.
+
+**새 string 추가 시 확인 사항:**
+1. **기존 확인**: 먼저 `core:ui/src/main/res/values/strings.xml`에서 동일한 의미의 string이 있는지 확인
+2. **네이밍 규칙**:
+   - 기능별 그룹화: `cup_name`, `alarm_title`, `setting_language` 등
+   - 액션: `add`, `edit`, `delete`, `save`, `cancel`
+   - 메시지: `empty_*_message`, `*_hint`
+3. **다국어 지원**: 모든 언어 파일에 동일하게 추가 필요
+   - `values/strings.xml` (기본 한국어)
+   - `values-en-rUS/strings.xml` (영어)
+   - `values-ja/strings.xml` (일본어)
+   - `values-zh-rCN/strings.xml` (중국어)
+
+**예시:**
+```xml
+<!-- 기존 확인 후 추가 -->
+<string name="cup_name">컵 이름</string>
+<string name="add_cup">컵 추가</string>
+<string name="empty_cup_message">등록된 컵이 없습니다</string>
+```
+
+#### LiveData → StateFlow/SharedFlow 마이그레이션 가이드
+**권장사항**: 새로운 Compose 화면에서는 LiveData 대신 StateFlow/SharedFlow 사용
+
+**마이그레이션 패턴:**
+```kotlin
+// Before (LiveData)
+private val _data = MutableLiveData<String>()
+val data: LiveData<String> = _data
+
+// After (StateFlow)
+private val _dataStateFlow = MutableStateFlow("")
+val dataStateFlow: StateFlow<String> = _dataStateFlow.asStateFlow()
+
+// Repository Flow를 StateFlow로 변환
+val cupListStateFlow: StateFlow<List<Cup>> =
+    repository.getCupList().mapLatest { it.cupList }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+```
+
+**Compose에서 사용:**
+```kotlin
+@Composable
+fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
+    val data by viewModel.dataStateFlow.collectAsStateWithLifecycle()
+    // UI 구현...
+}
+```
+
+**호환성 유지**: 기존 Fragment와의 호환성을 위해 LiveData와 StateFlow 병행 지원
+```kotlin
+// 기존 Fragment용 LiveData 유지
+val dataLiveData: LiveData<String> = _dataStateFlow.asLiveData()
+
+// 새 Compose용 StateFlow 추가
+val dataStateFlow: StateFlow<String> = _dataStateFlow.asStateFlow()
+```
+
 ### Compose 디자인 가이드라인
 
 #### 물 앱 컨셉 디자인 요소
@@ -276,18 +377,19 @@ OMaMul 앱을 XML+Fragment 구조에서 Jetpack Compose로 단계적 전환합�
 - GlassmorphismCard (글래스 효과 카드) ✅
 - CustomTimePicker (시간 선택기)
 
-#### Material Icons Extended 최적화 설정
-```gradle
-// build.gradle
-implementation 'androidx.compose.material:material-icons-extended'
+#### Material Icons Extended 최적화
+**중요**: `libs.bundles.compose`에 material-icons-extended가 포함되어 있으므로, **반드시** `minifyEnabled true` 설정을 해야 합니다:
 
+```gradle
 buildTypes {
     release {
-        minifyEnabled true // R8로 사용하지 않는 아이콘 제거
+        minifyEnabled true // material-icons-extended 번들 사용 시 필수
         proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
     }
 }
 ```
+
+**이유**: material-icons-extended는 수천 개의 아이콘을 포함하므로 R8/ProGuard로 사용하지 않는 아이콘을 자동 제거해야 APK 크기를 최적화할 수 있습니다.
 
 ### Compose Preview 가이드라인
 
@@ -401,12 +503,30 @@ fun LanguageSelectionScreenPreview() {
 - ✅ 마이그레이션 계획 수립 완료
 - ✅ 1단계: 홈 모듈 완료
 - ✅ 2단계: 온보딩 모듈 완료
-- 🔄 3단계: 컵 관리 모듈 대기 중
+- ✅ 3단계: 컵 관리 모듈 완료
+
+#### 3단계: 컵 관리 모듈 (feature-water:cup) ✅ 완료
+**완료된 작업**:
+- [x] CupManageFragment → CupManagementScreen
+- [x] CupCreateFragment → CupCreationScreen
+- [x] CupListEditFragment 통합 (deprecated 상태였음)
+- [x] ViewModel StateFlow 호환성 추가
+- [x] Compose Navigation (CupNavHost) 구현
+- [x] Gradle 설정: compose = true, kotlin-compose 플러그인, libs.bundles.compose
+- [x] Material Icons Extended 최적화 (minifyEnabled = true)
+- [x] Preview 함수 완비 (Content 패턴 적용)
+- [x] 빌드 성공 및 검증 완료
+
+**주요 기능들:**
+- ✅ **컵 관리 화면**: 목록 표시, 순서 변경, 삭제 모드, 빈 상태 처리
+- ✅ **컵 생성/수정 화면**: 이름/용량 입력, 시각적 컵 프리뷰, 유효성 검증
+- ✅ **Navigation 시스템**: CupNavHost로 화면 간 이동 관리
+- ✅ **ViewModel 호환성**: StateFlow와 LiveData 병행 지원
+- ✅ **물 테마 디자인**: 블루 그라데이션, 글래스모피즘 카드, 물방울 아이콘
 
 ### 다음 단계
-1. 3단계: 컵 관리 모듈 (feature-water:cup) 시작
-   - CupManageFragment → CupManagementScreen
-   - CupListEditFragment → CupEditScreen
-   - CupCreateFragment → CupCreationScreen
-2. 드래그 앤 드롭 기능 및 시각적 컵 디자인 구현
-3. Fragment 제거 및 Navigation 전환
+4단계: 알람 모듈 (feature-water:alarm) 시작
+   - WaterAlarmFragment → AlarmSettingScreen
+   - AlarmModeFragment → AlarmModeScreen
+   - AlarmModePeriodFragment → 통합
+   - AlarmModeCustomFragment → CustomAlarmScreen
