@@ -4,15 +4,13 @@
 
 **환경**
 
-Android Studio : Android Studio Iguana | 2023.2.1 Patch 2
-
 compileSdk : 34
 
 gradle jdk : jbr-17
 
-gardle version : 8.0
+gardle version : 8.6
 
-AGP version : 8.1.1
+AGP version : 8.4.2
 <br>
 <br>
 
