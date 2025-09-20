@@ -321,7 +321,7 @@ dependencies {
 ```
 
 #### LiveData → StateFlow/SharedFlow 마이그레이션 가이드
-**권장사항**: 새로운 Compose 화면에서는 LiveData 대신 StateFlow/SharedFlow 사용
+**중요**: `collectAsStateWithLifecycle()` 함수는 StateFlow/SharedFlow에서만 작동합니다. LiveData 객체에서는 빌드 에러가 발생하므로 반드시 StateFlow로 변환 후 사용해야 합니다.
 
 **마이그레이션 패턴:**
 ```kotlin
@@ -343,6 +343,15 @@ val cupListStateFlow: StateFlow<List<Cup>> =
         )
 ```
 
+**필수 사항**: collectAsStateWithLifecycle 사용 전에 반드시 StateFlow로 변환
+```kotlin
+// ❌ 잘못된 사용 (빌드 에러 발생)
+val data by viewModel.dataLiveData.collectAsStateWithLifecycle()
+
+// ✅ 올바른 사용 (StateFlow 사용)
+val data by viewModel.dataStateFlow.collectAsStateWithLifecycle()
+```
+
 **Compose에서 사용:**
 ```kotlin
 @Composable
@@ -357,9 +366,22 @@ fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
 // 기존 Fragment용 LiveData 유지
 val dataLiveData: LiveData<String> = _dataStateFlow.asLiveData()
 
-// 새 Compose용 StateFlow 추가
+// 새 Compose용 StateFlow 추가 (collectAsStateWithLifecycle 사용 가능)
 val dataStateFlow: StateFlow<String> = _dataStateFlow.asStateFlow()
+
+// 두 방식 모두 업데이트
+fun updateData(newData: String) {
+    launch {
+        _dataLiveData.value = newData      // Fragment용
+        _dataStateFlow.value = newData     // Compose용
+    }
+}
 ```
+
+**빌드 에러 해결 순서:**
+1. ViewModel에서 LiveData를 StateFlow로 변환 (또는 추가)
+2. Compose 화면에서 StateFlow 버전 사용
+3. collectAsStateWithLifecycle() 적용
 
 ### Compose 디자인 가이드라인
 
@@ -504,6 +526,8 @@ fun LanguageSelectionScreenPreview() {
 - ✅ 1단계: 홈 모듈 완료
 - ✅ 2단계: 온보딩 모듈 완료
 - ✅ 3단계: 컵 관리 모듈 완료
+- ✅ 4단계: 알람 모듈 완료
+- ✅ 5단계: 기록 모듈 완료
 
 #### 3단계: 컵 관리 모듈 (feature-water:cup) ✅ 완료
 **완료된 작업**:
@@ -524,9 +548,51 @@ fun LanguageSelectionScreenPreview() {
 - ✅ **ViewModel 호환성**: StateFlow와 LiveData 병행 지원
 - ✅ **물 테마 디자인**: 블루 그라데이션, 글래스모피즘 카드, 물방울 아이콘
 
+#### 4단계: 알람 모듈 (feature-water:alarm) ✅ 완료
+**완료된 작업**:
+- [x] WaterAlarmFragment → AlarmSettingScreen
+- [x] AlarmModeFragment → AlarmModeScreen
+- [x] AlarmNavHost 구현 (Compose Navigation)
+- [x] ViewModel StateFlow 호환성 추가
+- [x] Gradle 설정: compose = true, kotlin-compose 플러그인, libs.bundles.compose
+- [x] Preview 함수 완비 (Content 패턴 적용)
+- [x] 빌드 성공 및 검증 완료
+
+**주요 기능들:**
+- ✅ **알람 설정 화면**: 스위치, 벨소리, 모드 선택, 목표 도달시 멈추기 설정
+- ✅ **알람 모드 화면**: 주기/맞춤 모드, 시간 설정, 요일 선택, 커스텀 알람 관리
+- ✅ **Navigation 시스템**: AlarmNavHost로 화면 간 이동 관리
+- ✅ **ViewModel 호환성**: StateFlow와 LiveData 병행 지원 (collectAsStateWithLifecycle 호환)
+- ✅ **물 테마 디자인**: 블루 그라데이션, 글래스모피즘 카드, 알람 아이콘
+
+**중요 해결사항:**
+- ✅ **LiveData → StateFlow 변환**: collectAsStateWithLifecycle() 빌드 에러 해결
+- ✅ **병행 지원**: 기존 Fragment용 LiveData 유지 + 새 Compose용 StateFlow 추가
+
+#### 5단계: 기록 모듈 (feature-water:record) ✅ 완료
+**완료된 작업**:
+- [x] WaterLogFragment → WaterLogScreen (TabLayout + HorizontalPager)
+- [x] LogDayFragment, LogWeekFragment, LogMonthFragment → 통합
+- [x] RecordNavHost 구현 (Compose Navigation)
+- [x] Canvas 기반 커스텀 차트 구현 (WaterBarChart, WaterLineChart)
+- [x] Gradle 설정: compose = true, kotlin-compose 플러그인, libs.bundles.compose
+- [x] Preview 함수 완비 (Content 패턴 적용)
+- [x] 빌드 성공 및 검증 완료
+
+**주요 기능들:**
+- ✅ **통합 기록 화면**: 탭 기반 일간/주간/월간 통계 표시, HorizontalPager 네비게이션
+- ✅ **Canvas 커스텀 차트**: 시간별 누적 바 차트, 일별 트렌드 라인 차트, 목표선 표시
+- ✅ **인터랙티브 차트**: 그라데이션 효과, 데이터 포인트, 그리드 라인, 다양한 색상 테마
+- ✅ **통계 요약**: 총 섭취량, 평균, 목표 달성 일수 등 종합 분석
+- ✅ **물 테마 디자인**: 블루/그린 그라데이션, 글래스모피즘 카드, 차트 아이콘
+
+**기술적 성과:**
+- ✅ **Canvas Drawing**: DrawScope 활용 커스텀 차트 구현
+- ✅ **Fragment 통합**: 3개 Fragment를 1개 Compose Screen으로 통합
+- ✅ **ViewModel 호환성**: 기존 IntentBaseViewModel과 StateFlow 완벽 호환
+
 ### 다음 단계
-4단계: 알람 모듈 (feature-water:alarm) 시작
-   - WaterAlarmFragment → AlarmSettingScreen
-   - AlarmModeFragment → AlarmModeScreen
-   - AlarmModePeriodFragment → 통합
-   - AlarmModeCustomFragment → CustomAlarmScreen
+6단계: 설정 모듈 (feature-water:setting, feature-common:setting) 시작
+   - WaterSettingFragment → WaterSettingScreen
+   - CommonSettingFragment → CommonSettingScreen
+   - AccountFragment → AccountScreen

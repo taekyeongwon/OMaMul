@@ -21,12 +21,17 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.SharingStarted
+import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
 
 @HiltViewModel
@@ -64,6 +69,47 @@ class WaterAlarmViewModel @Inject constructor(
 
     val alarmSettings: LiveData<AlarmSettings> =
         alarmSettingsFlow.asLiveData()
+
+    // Compose용 StateFlow 버전
+    val alarmSettingsStateFlow: StateFlow<AlarmSettings?> =
+        alarmSettingsFlow.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
+
+    val isAlarmEnabledStateFlow: StateFlow<Boolean> =
+        isAlarmEnabled.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
+
+    val isNotificationEnabledStateFlow: StateFlow<Boolean> =
+        isNotificationEnabled.asStateFlow()
+
+    val alarmModeStateFlow: StateFlow<AlarmMode?> =
+        alarmSettingsFlow.mapLatest { it.alarmMode }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
+
+    // Compose용 추가 StateFlow들
+    val periodModeSettingsStateFlow: StateFlow<AlarmModeSetting> =
+        alarmRepository.getAlarmModeSetting().stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = AlarmModeSetting()
+        )
+
+    val customAlarmListStateFlow: StateFlow<AlarmList?> =
+        alarmRepository.getAlarmList(AlarmMode.CUSTOM).stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
+
 
     val customAlarmList: LiveData<AlarmList> =
         alarmRepository.getAlarmList(AlarmMode.CUSTOM).asLiveData()
@@ -110,6 +156,9 @@ class WaterAlarmViewModel @Inject constructor(
 
     private val _remainTimeLiveData = MutableLiveData<String>()
     val remainTimeLiveData: LiveData<String> = _remainTimeLiveData
+
+    private val _remainTimeStateFlow = MutableStateFlow("")
+    val remainTimeStateFlow: StateFlow<String> = _remainTimeStateFlow.asStateFlow()
 
     fun wakeAllAlarm() {
         launch {
@@ -160,7 +209,7 @@ class WaterAlarmViewModel @Inject constructor(
         }
     }
 
-    suspend fun updateEtcSetting(etcSettings: AlarmEtcSettings) {
+    fun updateEtcSetting(etcSettings: AlarmEtcSettings) {
         launch {
             val currentSetting = alarmSettingsFlow.first()
             val newSetting = AlarmSettings(
@@ -172,36 +221,55 @@ class WaterAlarmViewModel @Inject constructor(
         }
     }
 
-    suspend fun updateAlarmModeSetting(setting: AlarmModeSetting) {
-        alarmRepository.updateAlarmModeSetting(setting)
-    }
-
-    suspend fun setPeriodAlarm(period: AlarmModeSetting) {
-        if(period.selectedDate.isNotEmpty()) {
-            var start = period.startTime
-            val end = period.endTime
-            val interval = period.interval * 1000
-            val alarmList = ArrayList<Alarm>()
-
-            while(start < end) {
-                alarmList.add(
-                    Alarm(
-                        DateTimeUtils.DateTime.getFormatTrim(start),
-                        start,
-                        period.selectedDate,
-                        true
-                    )
-                )
-                start += interval
-            }
-            setAlarmList(alarmList)
-        } else {
-            setAlarmList(listOf())
+    // Compose용 함수들 (기존 함수와 구분하기 위해 다른 이름 사용)
+    fun setAlarmEnabledCompose(enabled: Boolean) {
+        launch {
+            prefDataRepository.saveAlarmEnableFlag(enabled)
         }
     }
 
-    suspend fun setCustomAlarm(alarm: Alarm) {
-        alarmRepository.setAlarm(alarm, isNotificationAlarmEnabled().first(), isReachedGoal.value ?: false)
+    fun delayAllAlarmCompose(isDelayed: Boolean, isNotificationEnabled: Boolean = true) {
+        launch {
+            alarmRepository.delayAllAlarm(isDelayed, isNotificationEnabled)
+        }
+    }
+
+    fun updateAlarmModeSetting(setting: AlarmModeSetting) {
+        launch {
+            alarmRepository.updateAlarmModeSetting(setting)
+        }
+    }
+
+    fun setPeriodAlarm(period: AlarmModeSetting) {
+        launch {
+            if(period.selectedDate.isNotEmpty()) {
+                var start = period.startTime
+                val end = period.endTime
+                val interval = period.interval * 1000
+                val alarmList = ArrayList<Alarm>()
+
+                while(start < end) {
+                    alarmList.add(
+                        Alarm(
+                            DateTimeUtils.DateTime.getFormatTrim(start),
+                            start,
+                            period.selectedDate,
+                            true
+                        )
+                    )
+                    start += interval
+                }
+                setAlarmList(alarmList)
+            } else {
+                setAlarmList(listOf())
+            }
+        }
+    }
+
+    fun setCustomAlarm(alarm: Alarm) {
+        launch {
+            alarmRepository.setAlarm(alarm, isNotificationAlarmEnabled().first(), isReachedGoal.value ?: false)
+        }
     }
 
     private suspend fun setAlarmList(list: List<Alarm>) {
@@ -234,6 +302,7 @@ class WaterAlarmViewModel @Inject constructor(
     fun setRemainTimeContent(content: String) {
         launch {
             _remainTimeLiveData.value = content
+            _remainTimeStateFlow.value = content
         }
     }
 
