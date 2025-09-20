@@ -1,6 +1,7 @@
 plugins {
     alias libs.plugins.android.library
     alias libs.plugins.jetbrains.kotlin.android
+    alias libs.plugins.kotlin.compose
     alias libs.plugins.hilt
     id 'kotlin-kapt'
 }
@@ -30,7 +31,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -38,6 +39,7 @@ android {
     buildFeatures {
         dataBinding = true
         viewBinding = true
+        compose = true
     }
 
     compileOptions {
@@ -88,6 +90,12 @@ dependencies {
 
     //AuthorizationClient
     implementation libs.play.services.auth
+
+    // Compose
+    implementation platform(libs.androidx.compose.bom)
+    implementation libs.bundles.compose
+    debugImplementation libs.androidx.compose.ui.tooling
+    debugImplementation libs.androidx.compose.ui.test.manifest
 
 }
 
