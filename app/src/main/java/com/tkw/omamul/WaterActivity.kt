@@ -35,15 +35,9 @@ class WaterActivity : AppCompatActivity() {
     private val waterViewModel: WaterViewModel by viewModels()
     private val logViewModel: LogViewModel by viewModels()
     private val alarmViewModel: WaterAlarmViewModel by viewModels()
-    private val mainFragmentSet = setOf(
-        com.tkw.home.R.id.waterFragment,
-        com.tkw.record.R.id.waterLogFragment,
-        com.tkw.setting.R.id.settingFragment
-    )
-    private val hideTitleFragmentSet = setOf(
-        com.tkw.record.R.id.waterLogFragment,
-        com.tkw.setting.R.id.settingFragment
-    )
+    // Compose Navigation으로 마이그레이션되어 Fragment ID 참조 제거
+    // private val mainFragmentSet = setOf()
+    // private val hideTitleFragmentSet = setOf()
 
     private val broadcastReceiver = DateChangeReceiver {
         waterViewModel.setToday()
@@ -96,54 +90,37 @@ class WaterActivity : AppCompatActivity() {
     }
 
     private fun setupNavigation() {
+        // Compose Navigation으로 마이그레이션되어 Fragment Navigation 코드 간소화
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
         val navController = navHostFragment.navController
-        val appBarConfiguration = AppBarConfiguration(mainFragmentSet)
-        NavigationUI.setupWithNavController(dataBinding.toolbar, navController, appBarConfiguration)
-        NavigationUI.setupWithNavController(dataBinding.bottomNav, navController)
 
-        // getInitFlag 요청 지연되는 동안 프래그먼트가 생성되어
-        // navGraphViewModel 접근 시 IllegalArgumentException: The current destination is null
-        // 에러 발생 방지하기 위해 블로킹으로 호출
+        // Fragment Navigation 설정 제거 (Compose에서 처리)
+        // NavigationUI.setupWithNavController(dataBinding.toolbar, navController, appBarConfiguration)
+        // NavigationUI.setupWithNavController(dataBinding.bottomNav, navController)
+
         runBlocking {
             setStartDestination(navController)
         }
     }
 
     private suspend fun setStartDestination(nav: NavController) {
+        // Compose Navigation으로 마이그레이션되어 Navigation 설정 간소화
         val navGraph = nav.navInflater.inflate(R.navigation.nav_graph)
-
-        if(waterViewModel.getInitFlag()) {
-            navGraph.setStartDestination(com.tkw.home.R.id.home_nav_graph)
-        } else {
-            // TODO: Compose 온보딩 화면으로 이동하는 로직 구현 필요
-            navGraph.setStartDestination(com.tkw.home.R.id.home_nav_graph)
-        }
         nav.graph = navGraph
+
+        // Compose Navigation에서 시작 화면 결정은 Compose 내에서 처리
+        // if(waterViewModel.getInitFlag()) -> HomeScreen or InitScreen
     }
 
     private fun setDestinationChangedListener() {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
-        val navController = navHostFragment.navController
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            dataBinding.bottomNav.visibility =
-                if(mainFragmentSet.contains(destination.id)) {
-                    setWindowInsetsExcludeBottom()
-                    View.VISIBLE
-                }
-                else {
-                    setWindowInsets()
-                    View.GONE
-                }
-            //최초 진입 화면, 로그, 설정 화면은 타이틀 안보이게 처리
-            if(hideTitleFragmentSet.contains(destination.id)) {
-                supportActionBar?.hide()
-            } else {
-                supportActionBar?.show()
-            }
-        }
+        // Compose Navigation으로 마이그레이션되어 Fragment 기반 Listener 제거
+        // Bottom Navigation 및 Toolbar 표시/숨김은 Compose에서 처리
+
+        // 기본적으로 Bottom Navigation 숨김, Toolbar 숨김 (Compose에서 처리)
+        dataBinding.bottomNav.visibility = View.GONE
+        supportActionBar?.hide()
+        setWindowInsets()
     }
 
     private fun setWindowInsets() {

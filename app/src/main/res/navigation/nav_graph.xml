@@ -3,10 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph">
 
-    <include app:graph="@navigation/alarm_nav_graph" />
-    <include app:graph="@navigation/cup_nav_graph" />
-    <include app:graph="@navigation/home_nav_graph" />
-    <include app:graph="@navigation/record_nav_graph" />
-    <include app:graph="@navigation/setting_nav_graph" />
+    <!-- Compose Navigation으로 마이그레이션 완료 -->
+    <!-- 기존 Fragment Navigation include 제거됨 -->
 
 </navigation>

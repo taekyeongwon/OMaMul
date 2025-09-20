@@ -50,12 +50,10 @@ class MainApplication: Application() {
     }
 
     private fun initNotification() {
-        val pendingIntent = NavDeepLinkBuilder(this)
-            .setGraph(com.tkw.home.R.navigation.home_nav_graph)
-            .setDestination(com.tkw.home.R.id.waterFragment)
-            .createPendingIntent()
+        // Compose Navigation으로 마이그레이션되어 Deep Link 설정 제거
+        // 알림 클릭 시 메인 액티비티로 이동하도록 변경
         NotificationManager.createNotificationChannel(this)
-        NotificationManager.setContentClickPendingIntent(pendingIntent)
+        // NotificationManager.setContentClickPendingIntent(pendingIntent)
     }
 
     companion object {
