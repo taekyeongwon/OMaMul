@@ -783,20 +783,401 @@ rm feature-common/init/src/main/java/com/tkw/init/*Fragment.kt
 4. **테스트**: 각 단계마다 빌드 성공 확인
 5. **백업**: Git 커밋으로 변경사항 보존
 
-## 🎯 다음 단계: 정리 작업
+## 🚨 **현재 남은 핵심 작업**
 
-### **우선순위 1**: Fragment/XML 정리
-위의 [Fragment 및 XML 정리 가이드](#fragment-및-xml-정리-가이드)를 참고하여 실행:
+### **분석 결과 (2025년 1월 기준)**
+- ✅ **마이그레이션 완료**: 6개 모듈의 모든 Fragment → Compose Screen 변환 완료
+- 🔄 **남은 핵심 작업**: WaterActivity 전면 개편 및 최종 정리
 
-1. **즉시 제거 가능**: Deprecated Fragment, 완료된 모듈 XML (35개 파일)
-2. **신중히 제거**: Fragment.kt 파일들 (Navigation 확인 후)
-3. **유지 필요**: Core UI, AlarmNoti, Main Activity XML
+### **🎯 우선순위별 작업 계획**
 
-### **우선순위 2**: 추가 개선 사항
-- 성능 최적화 및 코드 품질 개선
-- 테스트 코드 작성 및 검증
-- CI/CD 파이프라인 구축
-- 문서화 및 주석 개선
+#### **우선순위 1**: WaterActivity Compose 전환 (핵심)
+**현재 문제**:
+- WaterActivity.kt에서 여전히 NavHostFragment 및 ViewBinding 사용
+- fragment_setting.xml이 DataBinding으로 구현되어 있음
+- activity_water.xml이 여전히 Fragment 기반 구조
+
+**작업 계획**:
+1. **WaterActivity Compose 전환**:
+   - ActivityWaterBinding → ComposeView로 교체
+   - NavHostFragment → Compose Navigation으로 전환
+   - 온보딩 플로우 개선 (최초 한 번만 표시)
+   - 메인 화면 Bottom Tab Navigation 구현
+
+2. **Setting 화면 완전한 Compose 전환**:
+   - fragment_setting.xml → WaterSettingScreen (이미 구현됨)
+   - DataBinding 제거
+   - setting_info.xml, setting_water.xml, setting_alarm.xml, setting_etc.xml 통합
+
+#### **우선순위 2**: ViewBinding/DataBinding 완전 제거
+**현재 ViewBinding/DataBinding 사용 중인 파일들**:
+- `WaterActivity.kt` - ActivityWaterBinding 사용 (🔴 즉시 제거 필요)
+- `core:ui` 커스텀 컴포넌트들 - 부분적 사용 (🟡 점진적 제거)
+
+#### **우선순위 3**: XML 파일 완전 정리
+**남은 XML 파일들**:
+- `activity_water.xml` (🔴 즉시 제거 후 ComposeView로 교체)
+- `fragment_setting.xml` + 관련 include XML들 (🔴 즉시 제거)
+- `core:ui` XML들 (🟡 필요시 Compose로 점진적 전환)
+- `core:alarmnoti` XML들 (🟢 시스템 연동용 유지)
+
+### **📋 세부 실행 계획**
+
+#### **1단계: WaterActivity 전면 개편**
+```kotlin
+// Before: Fragment 기반
+class WaterActivity : AppCompatActivity() {
+    private lateinit var dataBinding: ActivityWaterBinding
+    // NavHostFragment, BottomNavigationView 사용
+}
+
+// After: Compose 기반
+class WaterActivity : ComponentActivity() {
+    // ComposeView만 사용, 모든 UI가 Compose로 구현
+}
+```
+
+### **🗺️ Compose Navigation 구조 설계**
+
+#### **Navigation 플로우**
+```
+WaterActivity (ComponentActivity)
+├── 최초 실행: Onboarding Flow
+│   ├── LanguageSelectionScreen
+│   ├── TimeSettingScreen
+│   └── IntakeGoalScreen
+│
+└── 이후 실행: Main App Flow
+    ├── Bottom Navigation (HomeScreen, WaterLogScreen, WaterSettingScreen)
+    ├── HomeScreen → CupManagementScreen (onAddClick)
+    ├── CupManagementScreen → CupCreationScreen (컵 추가 버튼)
+    └── WaterSettingScreen → 각종 Compose Dialogs
+```
+
+#### **주요 Navigation 규칙**
+1. **시작 화면 결정**: `InitViewModel.getInitFlag()` 기반
+   - `true`: HomeScreen (기본 사용자)
+   - `false`: LanguageSelectionScreen (신규 사용자)
+
+2. **Bottom Navigation 구성**:
+   - **HomeScreen**: 메인 물 추적 화면
+   - **WaterLogScreen**: 통계 및 로그
+   - **WaterSettingScreen**: 설정
+
+3. **화면 간 이동 경로**:
+   - `HomeScreen` → `CupManagementScreen` (컵 선택 FAB 클릭)
+   - `CupManagementScreen` → `CupCreationScreen` (컵 추가 버튼)
+   - `WaterSettingScreen` → 각종 설정 다이얼로그
+
+#### **세부 작업**:
+- [ ] MainActivity 구조 설계
+- [ ] ComposeView 기반으로 전환
+- [ ] 온보딩 플로우 개선 (InitViewModel.getInitFlag() 활용)
+- [ ] 메인 화면 Bottom Tab Navigation (Home, Record, Setting)
+- [ ] 화면 간 Navigation 연결 (HomeScreen ↔ CupManagementScreen ↔ CupCreationScreen)
+- [ ] Splash Screen 유지
+- [ ] Edge-to-Edge 지원
+
+#### **2단계: 삭제된 Dialog들 Compose 변환**
+
+### **🗂️ 삭제된 Dialog 목록 (커밋 3d1ad75)**
+
+#### **알람 모듈 Dialog (6개)**
+```kotlin
+// 삭제된 파일들:
+feature-water/alarm/src/main/java/com/tkw/alarm/dialog/
+├── AlarmModeBottomDialog.kt         → AlarmModeBottomSheet (Compose)
+├── AlarmPeriodDialog.kt             → AlarmPeriodDialog (Compose)
+├── AlarmRingtoneDialog.kt           → AlarmRingtoneDialog (Compose)
+├── AlarmTimeBottomDialog.kt         → AlarmTimeBottomSheet (Compose)
+├── CustomAlarmBottomDialog.kt       → CustomAlarmBottomSheet (Compose)
+└── ExactAlarmDialog.kt              → ExactAlarmPermissionDialog (Compose)
+```
+
+#### **홈 모듈 Dialog (1개)**
+```kotlin
+// 삭제된 파일:
+feature-water/home/src/main/java/com/tkw/home/dialog/
+└── WaterIntakeDialog.kt             → WaterIntakeDialog (Compose)
+```
+
+#### **기록 모듈 Dialog (1개)**
+```kotlin
+// 삭제된 파일:
+feature-water/record/src/main/java/com/tkw/record/dialog/
+└── LogEditBottomDialog.kt           → LogEditBottomSheet (Compose)
+```
+
+#### **설정 모듈 Dialog (2개)**
+```kotlin
+// 삭제된 파일:
+feature-water/setting/src/main/java/com/tkw/setting/dialog/
+├── LanguageDialog.kt                → LanguageSelectionDialog (Compose)
+└── UnitDialog.kt                    → UnitSelectionDialog (Compose)
+```
+
+### **🎯 Dialog 복원 및 Compose 변환 계획**
+
+#### **우선순위별 Dialog 복원**
+1. **🔴 필수 (즉시 복원)**:
+   - `WaterIntakeDialog` - 물 섭취량 입력 (HomeScreen에서 사용)
+   - `LanguageSelectionDialog` - 언어 설정 (WaterSettingScreen에서 사용)
+   - `UnitSelectionDialog` - 단위 설정 (WaterSettingScreen에서 사용)
+
+2. **🟡 중요 (복원 필요)**:
+   - `AlarmModeBottomSheet` - 알람 모드 선택 (WaterSettingScreen에서 사용)
+   - `AlarmRingtoneDialog` - 벨소리 선택 (WaterSettingScreen에서 사용)
+   - `ExactAlarmPermissionDialog` - 정확한 알람 권한 (AlarmModeScreen에서 사용)
+
+3. **🟢 선택적 (필요시 복원)**:
+   - `AlarmPeriodDialog` - 알람 주기 설정
+   - `AlarmTimeBottomSheet` - 시간 선택
+   - `CustomAlarmBottomSheet` - 커스텀 알람 설정
+   - `LogEditBottomSheet` - 로그 편집
+
+#### **Dialog 구현 가이드라인**
+```kotlin
+// Compose Dialog 구현 패턴
+@Composable
+fun WaterIntakeDialog(
+    isVisible: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: (amount: Int) -> Unit,
+    initialAmount: Int = 250
+) {
+    if (isVisible) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text("물 섭취량 입력") },
+            text = {
+                // Dialog 내용 구현
+            },
+            confirmButton = {
+                TextButton(onClick = { onConfirm(amount) }) {
+                    Text("확인")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text("취소")
+                }
+            }
+        )
+    }
+}
+```
+
+#### **3단계: Setting 화면 DataBinding 제거**
+**제거 대상 XML 파일들**:
+```
+feature-water/setting/src/main/res/layout/
+├── fragment_setting.xml (DataBinding 사용)
+├── setting_info.xml
+├── setting_water.xml
+├── setting_alarm.xml
+└── setting_etc.xml
+```
+
+**WaterSettingScreen 개선**:
+- [ ] 모든 Setting 관련 XML을 Compose로 통합
+- [ ] DataBinding 의존성 완전 제거
+- [ ] Preview 함수 추가
+- [ ] 복원된 Compose Dialog들과 연결
+
+#### **4단계: ViewModel 이벤트 연결**
+
+### **🔗 화면별 ViewModel 이벤트 매핑**
+
+#### **HomeScreen 이벤트 연결**
+```kotlin
+@Composable
+fun HomeScreen(
+    onNavigateToCupManagement: () -> Unit,
+    viewModel: WaterViewModel = hiltViewModel()
+) {
+    // 물 추가 버튼 클릭 → WaterIntakeDialog 표시
+    val showWaterIntakeDialog by viewModel.showWaterIntakeDialog.collectAsStateWithLifecycle()
+
+    // Dialog 이벤트 연결
+    WaterIntakeDialog(
+        isVisible = showWaterIntakeDialog,
+        onDismiss = { viewModel.hideWaterIntakeDialog() },
+        onConfirm = { amount ->
+            viewModel.addWaterIntake(amount)
+            viewModel.hideWaterIntakeDialog()
+        }
+    )
+
+    // 컵 선택 FAB 클릭 → CupManagementScreen 이동
+    FloatingActionButton(
+        onClick = onNavigateToCupManagement
+    ) { /* FAB 내용 */ }
+}
+```
+
+#### **WaterSettingScreen 이벤트 연결**
+```kotlin
+@Composable
+fun WaterSettingScreen(
+    viewModel: SettingViewModel = hiltViewModel()
+) {
+    // 언어 설정 클릭 → LanguageSelectionDialog
+    val showLanguageDialog by viewModel.showLanguageDialog.collectAsStateWithLifecycle()
+
+    // 단위 설정 클릭 → UnitSelectionDialog
+    val showUnitDialog by viewModel.showUnitDialog.collectAsStateWithLifecycle()
+
+    // 알람 모드 클릭 → AlarmModeBottomSheet
+    val showAlarmModeDialog by viewModel.showAlarmModeDialog.collectAsStateWithLifecycle()
+
+    // Dialog들 이벤트 연결
+    LanguageSelectionDialog(
+        isVisible = showLanguageDialog,
+        onDismiss = { viewModel.hideLanguageDialog() },
+        onLanguageSelect = { language ->
+            viewModel.setLanguage(language)
+            viewModel.hideLanguageDialog()
+        }
+    )
+
+    UnitSelectionDialog(
+        isVisible = showUnitDialog,
+        onDismiss = { viewModel.hideUnitDialog() },
+        onUnitSelect = { unit ->
+            viewModel.setUnit(unit)
+            viewModel.hideUnitDialog()
+        }
+    )
+}
+```
+
+#### **CupManagementScreen 이벤트 연결**
+```kotlin
+@Composable
+fun CupManagementScreen(
+    onNavigateBack: () -> Unit,
+    onNavigateToCupCreation: () -> Unit,
+    viewModel: CupViewModel = hiltViewModel()
+) {
+    // 컵 추가 버튼 클릭 → CupCreationScreen 이동
+    Button(
+        onClick = onNavigateToCupCreation
+    ) { Text("컵 추가") }
+
+    // 컵 선택 이벤트
+    LazyColumn {
+        items(cupList) { cup ->
+            CupCard(
+                cup = cup,
+                onCupSelect = { selectedCup ->
+                    viewModel.selectCup(selectedCup)
+                    onNavigateBack()
+                }
+            )
+        }
+    }
+}
+```
+
+#### **AlarmModeScreen 이벤트 연결**
+```kotlin
+@Composable
+fun AlarmModeScreen(
+    viewModel: WaterAlarmViewModel = hiltViewModel()
+) {
+    // 정확한 알람 권한 요청 → ExactAlarmPermissionDialog
+    val showExactAlarmDialog by viewModel.showExactAlarmDialog.collectAsStateWithLifecycle()
+
+    ExactAlarmPermissionDialog(
+        isVisible = showExactAlarmDialog,
+        onDismiss = { viewModel.hideExactAlarmDialog() },
+        onConfirm = {
+            viewModel.requestExactAlarmPermission()
+            viewModel.hideExactAlarmDialog()
+        }
+    )
+}
+```
+
+### **🎯 ViewModel 상태 확장 필요**
+
+#### **각 ViewModel에 추가할 Dialog 상태들**
+```kotlin
+// WaterViewModel 확장
+class WaterViewModel : BaseViewModel() {
+    private val _showWaterIntakeDialog = MutableStateFlow(false)
+    val showWaterIntakeDialog = _showWaterIntakeDialog.asStateFlow()
+
+    fun showWaterIntakeDialog() { _showWaterIntakeDialog.value = true }
+    fun hideWaterIntakeDialog() { _showWaterIntakeDialog.value = false }
+}
+
+// SettingViewModel 확장
+class SettingViewModel : BaseViewModel() {
+    private val _showLanguageDialog = MutableStateFlow(false)
+    val showLanguageDialog = _showLanguageDialog.asStateFlow()
+
+    private val _showUnitDialog = MutableStateFlow(false)
+    val showUnitDialog = _showUnitDialog.asStateFlow()
+
+    private val _showAlarmModeDialog = MutableStateFlow(false)
+    val showAlarmModeDialog = _showAlarmModeDialog.asStateFlow()
+}
+```
+
+#### **5단계: Core UI 컴포넌트 정리**
+**ViewBinding 사용 중인 컴포넌트들**:
+- `ExpandableTextView`, `TextSwitchView`, `CustomTimePicker` 등
+- 선택적으로 Compose 전환 또는 사용하지 않는 경우 제거
+
+#### **6단계: 최종 정리 및 검증**
+- [ ] Fragment 관련 import 문 정리
+- [ ] Navigation XML 파일 정리
+- [ ] ViewBinding/DataBinding 의존성 제거
+- [ ] 빌드 최적화 (미사용 리소스 제거)
+- [ ] 전체 빌드 및 테스트 검증
+
+### **🎉 완료 목표**
+**최종 달성 상태**:
+- ✅ **100% Compose**: 모든 UI가 Jetpack Compose로 구현
+- ✅ **Fragment 제거**: Fragment/XML 완전 제거
+- ✅ **Single Activity**: WaterActivity만 Compose 기반으로 존재
+- ✅ **Navigation**: Compose Navigation 완전 전환
+- ✅ **현대적 아키텍처**: MVVM + Compose + StateFlow
+
+### **📊 진행률**
+- **UI 마이그레이션**: 95% 완료 (WaterActivity 남음)
+- **ViewBinding 제거**: 10% 완료 (대부분 남음)
+- **XML 정리**: 85% 완료 (Setting XML 남음)
+- **Dialog 복원**: 0% 완료 (10개 Dialog 복원 필요)
+- **Navigation 전환**: 0% 완료 (Fragment → Compose Navigation)
+- **ViewModel 연결**: 20% 완료 (Dialog 상태 추가 필요)
+- **전체 진행률**: 70% 완료
+
+### **📝 핵심 작업 요약**
+
+#### **🎯 3대 핵심 작업**
+1. **Navigation 화면 이동 로직 적용**:
+   - 온보딩 플로우: LanguageSelectionScreen → TimeSettingScreen → IntakeGoalScreen
+   - 메인 앱 플로우: Bottom Navigation (Home, Log, Setting)
+   - 화면 이동: HomeScreen → CupManagementScreen → CupCreationScreen
+
+2. **삭제된 Dialog들 Compose 변환**:
+   - 필수: WaterIntakeDialog, LanguageSelectionDialog, UnitSelectionDialog
+   - 중요: AlarmModeBottomSheet, AlarmRingtoneDialog, ExactAlarmPermissionDialog
+   - 선택적: AlarmPeriodDialog, CustomAlarmBottomSheet, LogEditBottomSheet
+
+3. **ViewModel 이벤트 연결**:
+   - 각 화면의 클릭 이벤트 → 해당 ViewModel 이벤트 연결
+   - Dialog 상태 관리 (show/hide) StateFlow 추가
+   - 기존 LiveData와 호환성 유지
+
+---
+
+## 🎯 기존 정리 작업 (낮은 우선순위)
+
+### **Fragment/XML 정리 작업**
+위의 핵심 작업 완료 후 진행:
 
 ## 📊 **최종 마이그레이션 통계**
 

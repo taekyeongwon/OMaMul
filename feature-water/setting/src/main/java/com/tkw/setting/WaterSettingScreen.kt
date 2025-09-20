@@ -52,6 +52,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tkw.common.util.DateTimeUtils
+import com.tkw.setting.dialog.LanguageSelectionDialog
+import com.tkw.setting.dialog.UnitSelectionDialog
 import com.tkw.ui.R
 
 @Composable
@@ -73,6 +75,10 @@ fun WaterSettingScreen(
     val unit by viewModel.unitStateFlow.collectAsStateWithLifecycle()
     val lastSync by viewModel.lastSyncStateFlow.collectAsStateWithLifecycle()
     val alarmMode by viewModel.alarmModeStateFlow.collectAsStateWithLifecycle()
+
+    // Dialog 상태
+    val showLanguageDialog by viewModel.showLanguageDialog.collectAsStateWithLifecycle()
+    val showUnitDialog by viewModel.showUnitDialog.collectAsStateWithLifecycle()
     val alarmRingtone by viewModel.alarmRingtoneStateFlow.collectAsStateWithLifecycle()
     val alarmSchedule by viewModel.alarmScheduleStateFlow.collectAsStateWithLifecycle()
     val alarmTime by viewModel.alarmTimeStateFlow.collectAsStateWithLifecycle()
@@ -91,11 +97,33 @@ fun WaterSettingScreen(
         onNavigateToCup = onNavigateToCup,
         onNavigateToAlarm = onNavigateToAlarm,
         onShowIntakeDialog = onShowIntakeDialog,
-        onShowUnitDialog = onShowUnitDialog,
-        onShowLanguageDialog = onShowLanguageDialog,
+        onShowUnitDialog = { viewModel.showUnitDialog() },
+        onShowLanguageDialog = { viewModel.showLanguageDialog() },
         onShowLogoutDialog = onShowLogoutDialog,
         onLoginClick = onLoginClick,
         onSyncClick = onSyncClick
+    )
+
+    // Language Selection Dialog
+    LanguageSelectionDialog(
+        isVisible = showLanguageDialog,
+        currentLanguage = currentLang.toString(), // TODO: Int를 String으로 변환 로직 필요
+        onDismiss = { viewModel.hideLanguageDialog() },
+        onLanguageSelect = { language ->
+            // TODO: 언어 변경 로직 구현
+            viewModel.hideLanguageDialog()
+        }
+    )
+
+    // Unit Selection Dialog
+    UnitSelectionDialog(
+        isVisible = showUnitDialog,
+        currentUnit = "ml", // TODO: unit에서 현재 단위 추출
+        onDismiss = { viewModel.hideUnitDialog() },
+        onUnitSelect = { selectedUnit ->
+            // TODO: 단위 변경 로직 구현
+            viewModel.hideUnitDialog()
+        }
     )
 }
 

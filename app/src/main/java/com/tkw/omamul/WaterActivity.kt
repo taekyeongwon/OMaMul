@@ -3,17 +3,44 @@ package com.tkw.omamul
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.view.View
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Timeline
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.tkw.cup.CupNavHost
+import com.tkw.home.HomeScreen
+import com.tkw.init.InitNavHost
+import com.tkw.record.WaterLogScreen
+import com.tkw.setting.WaterSettingScreen
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
@@ -22,22 +49,16 @@ import androidx.work.WorkManager
 import com.tkw.alarm.WaterAlarmViewModel
 import com.tkw.alarmnoti.NotificationManager
 import com.tkw.common.LocaleHelper
-import com.tkw.omamul.databinding.ActivityWaterBinding
 import com.tkw.home.WaterViewModel
 import com.tkw.record.LogViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
-class WaterActivity : AppCompatActivity() {
-    private lateinit var dataBinding: ActivityWaterBinding
+class WaterActivity : ComponentActivity() {
     private val waterViewModel: WaterViewModel by viewModels()
     private val logViewModel: LogViewModel by viewModels()
     private val alarmViewModel: WaterAlarmViewModel by viewModels()
-    // Compose Navigation으로 마이그레이션되어 Fragment ID 참조 제거
-    // private val mainFragmentSet = setOf()
-    // private val hideTitleFragmentSet = setOf()
 
     private val broadcastReceiver = DateChangeReceiver {
         waterViewModel.setToday()
@@ -65,8 +86,16 @@ class WaterActivity : AppCompatActivity() {
 
     private fun initialize() {
         initLanguage()
-        initBinding()
-        initView()
+        setContent {
+            MaterialTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    WaterApp()
+                }
+            }
+        }
         setWorkManager()
     }
 
@@ -76,77 +105,117 @@ class WaterActivity : AppCompatActivity() {
         LocaleHelper.setApplicationLocales(getLanguage)
     }
 
-    private fun initBinding() {
-        dataBinding = ActivityWaterBinding.inflate(layoutInflater)
-    }
+    @Composable
+    private fun WaterApp() {
+        val navController = rememberNavController()
+        val waterViewModel: WaterViewModel = hiltViewModel()
 
-    private fun initView() {
-        setContentView(dataBinding.root)
-        setupNavigation()
-        setSupportActionBar(dataBinding.toolbar)
-        //툴바 설정 후 호출
-        setDestinationChangedListener()
-        setNavBackListener()
-    }
+        // 초기화 상태 확인
+        val isInitialized by waterViewModel.initFlagStateFlow.collectAsStateWithLifecycle()
 
-    private fun setupNavigation() {
-        // Compose Navigation으로 마이그레이션되어 Fragment Navigation 코드 간소화
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
-        val navController = navHostFragment.navController
+        // 알림 권한 상태 업데이트
+        LaunchedEffect(Unit) {
+            alarmViewModel.setNotificationEnabled(NotificationManager.isNotificationEnabled(this@WaterActivity))
+        }
 
-        // Fragment Navigation 설정 제거 (Compose에서 처리)
-        // NavigationUI.setupWithNavController(dataBinding.toolbar, navController, appBarConfiguration)
-        // NavigationUI.setupWithNavController(dataBinding.bottomNav, navController)
+        NavHost(
+            navController = navController,
+            startDestination = if (isInitialized) "main_flow" else "onboarding_flow"
+        ) {
+            // 온보딩 플로우
+            composable("onboarding_flow") {
+                InitNavHost(
+                    onNavigateToHome = {
+                        navController.navigate("main_flow") {
+                            popUpTo("onboarding_flow") { inclusive = true }
+                        }
+                    }
+                )
+            }
 
-        runBlocking {
-            setStartDestination(navController)
+            // 메인 앱 플로우
+            composable("main_flow") {
+                MainNavHost()
+            }
         }
     }
 
-    private suspend fun setStartDestination(nav: NavController) {
-        // Compose Navigation으로 마이그레이션되어 Navigation 설정 간소화
-        val navGraph = nav.navInflater.inflate(R.navigation.nav_graph)
-        nav.graph = navGraph
+    @Composable
+    private fun MainNavHost() {
+        val navController = rememberNavController()
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
 
-        // Compose Navigation에서 시작 화면 결정은 Compose 내에서 처리
-        // if(waterViewModel.getInitFlag()) -> HomeScreen or InitScreen
-    }
+        Scaffold(
+            bottomBar = {
+                NavigationBar {
+                    val items = listOf(
+                        BottomNavItem("home", "홈", Icons.Default.Home),
+                        BottomNavItem("record", "기록", Icons.Default.Timeline),
+                        BottomNavItem("setting", "설정", Icons.Default.Person)
+                    )
 
-    private fun setDestinationChangedListener() {
-        // Compose Navigation으로 마이그레이션되어 Fragment 기반 Listener 제거
-        // Bottom Navigation 및 Toolbar 표시/숨김은 Compose에서 처리
+                    items.forEach { item ->
+                        NavigationBarItem(
+                            icon = { Icon(item.icon, contentDescription = item.label) },
+                            label = { Text(item.label) },
+                            selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                            onClick = {
+                                navController.navigate(item.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        ) { innerPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = "home",
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                composable("home") {
+                    HomeScreen(
+                        onNavigateToCupManagement = {
+                            navController.navigate("cup_management")
+                        }
+                    )
+                }
 
-        // 기본적으로 Bottom Navigation 숨김, Toolbar 숨김 (Compose에서 처리)
-        dataBinding.bottomNav.visibility = View.GONE
-        supportActionBar?.hide()
-        setWindowInsets()
-    }
+                composable("record") {
+                    WaterLogScreen(
+                        onNavigateBack = {
+                            // Bottom Navigation에서는 뒤로 가기 필요없음
+                        }
+                    )
+                }
 
-    private fun setWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+                composable("setting") {
+                    WaterSettingScreen()
+                }
+
+                composable("cup_management") {
+                    CupNavHost(
+                        navController = rememberNavController(),
+                        onNavigateBack = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
+            }
         }
     }
 
-    private fun setWindowInsetsExcludeBottom() {
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
-            insets
-        }
-    }
-
-    private fun setNavBackListener() {
-        dataBinding.toolbar.setNavigationOnClickListener {
-            // 시스템 back key 동작과 동일하게 설정.
-            // CupManageFragment 등 특정 flag에서 백 키 또는 업 버튼 눌렀을 때 백스택 이동 제어하기 위해 설정.
-            // 다른 프래그먼트에서 onBackPressedDispatcher에 콜백을 설정함으로써 백스택 이동을 제어할 수 있음.
-            onBackPressedDispatcher.onBackPressed()
-        }
-    }
+    data class BottomNavItem(
+        val route: String,
+        val label: String,
+        val icon: androidx.compose.ui.graphics.vector.ImageVector
+    )
 
     private fun setWorkManager() {
         val constraints = Constraints.Builder()

@@ -48,6 +48,29 @@ class SettingViewModel
 
     // Compose용 StateFlow 이벤트
     private val _nextEventStateFlow = MutableStateFlow<Unit?>(null)
+
+    // Dialog 상태 관리
+    private val _showLanguageDialog = MutableStateFlow(false)
+    val showLanguageDialog = _showLanguageDialog.asStateFlow()
+
+    private val _showUnitDialog = MutableStateFlow(false)
+    val showUnitDialog = _showUnitDialog.asStateFlow()
+
+    fun showLanguageDialog() {
+        _showLanguageDialog.value = true
+    }
+
+    fun hideLanguageDialog() {
+        _showLanguageDialog.value = false
+    }
+
+    fun showUnitDialog() {
+        _showUnitDialog.value = true
+    }
+
+    fun hideUnitDialog() {
+        _showUnitDialog.value = false
+    }
     val nextEventStateFlow: StateFlow<Unit?> = _nextEventStateFlow.asStateFlow()
 
     private val getAllDay = waterRepository.getAllDay().mapLatest { list ->

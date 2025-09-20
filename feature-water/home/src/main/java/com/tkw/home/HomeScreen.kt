@@ -35,8 +35,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tkw.alarm.WaterAlarmViewModel
 import com.tkw.domain.model.Cup
+import com.tkw.home.dialog.WaterIntakeDialog
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.math.*
@@ -44,6 +46,7 @@ import kotlin.math.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    onNavigateToCupManagement: () -> Unit = {},
     waterViewModel: WaterViewModel = hiltViewModel(),
     alarmViewModel: WaterAlarmViewModel = hiltViewModel()
 ) {
@@ -53,6 +56,10 @@ fun HomeScreen(
     val dayOfWater by waterViewModel.amountLiveData.collectAsState()
     val cupList by waterViewModel.cupListLiveData.collectAsState(initial = emptyList())
     var intakeGoal by remember { mutableStateOf(0) }
+
+    // Dialog 상태
+    val showWaterIntakeDialog: Boolean by waterViewModel.showWaterIntakeDialog.collectAsStateWithLifecycle()
+    var selectedCupAmount by remember { mutableIntStateOf(250) }
 
     LaunchedEffect(Unit) {
         intakeGoal = waterViewModel.getIntakeAmount()
@@ -152,8 +159,9 @@ fun HomeScreen(
                                 )
                             }
                             Spacer(modifier = Modifier.height(16.dp))
-                            CupListWithAnimation(cupList, onAddClick = { /*TODO*/ }) { cup ->
-                                waterViewModel.addCount(cup.cupAmount, com.tkw.common.util.DateTimeUtils.DateTime.getToday())
+                            CupListWithAnimation(cupList, onAddClick = onNavigateToCupManagement) { cup ->
+                                selectedCupAmount = cup.cupAmount
+                                waterViewModel.showWaterIntakeDialog()
                             }
                         }
                     }
@@ -167,6 +175,17 @@ fun HomeScreen(
             }
         }
     }
+
+    // Water Intake Dialog
+    WaterIntakeDialog(
+        isVisible = showWaterIntakeDialog,
+        onDismiss = { waterViewModel.hideWaterIntakeDialog() },
+        onConfirm = { amount ->
+            waterViewModel.addCount(amount, com.tkw.common.util.DateTimeUtils.DateTime.getToday())
+            waterViewModel.hideWaterIntakeDialog()
+        },
+        initialAmount = selectedCupAmount
+    )
 }
 
 // 물 웨이브 배경 애니메이션

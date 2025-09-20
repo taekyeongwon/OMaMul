@@ -21,6 +21,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapLatest
@@ -40,6 +41,25 @@ class WaterViewModel
     //최초 진입 여부
     private val initFlag = prefDataRepository.fetchInitialFlag()
     suspend fun getInitFlag(): Boolean = initFlag.first()
+
+    // Compose에서 사용하기 위한 StateFlow 버전
+    val initFlagStateFlow: StateFlow<Boolean> = initFlag.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = false
+    )
+
+    // Dialog 상태 관리
+    private val _showWaterIntakeDialog = MutableStateFlow(false)
+    val showWaterIntakeDialog = _showWaterIntakeDialog.asStateFlow()
+
+    fun showWaterIntakeDialog() {
+        _showWaterIntakeDialog.value = true
+    }
+
+    fun hideWaterIntakeDialog() {
+        _showWaterIntakeDialog.value = false
+    }
 
     //현재 날짜
     private val dateStringFlow = MutableStateFlow(DateTimeUtils.Date.getToday())
