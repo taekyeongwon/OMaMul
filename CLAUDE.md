@@ -591,6 +591,41 @@ fun LanguageSelectionScreenPreview() {
 - ✅ **Fragment 통합**: 3개 Fragment를 1개 Compose Screen으로 통합
 - ✅ **ViewModel 호환성**: 기존 IntentBaseViewModel과 StateFlow 완벽 호환
 
+### Git 커밋 정책
+
+#### 단계별 자동 커밋
+**중요**: 각 마이그레이션 단계가 완료될 때마다 반드시 Git 커밋을 수행해야 합니다.
+
+**커밋 시점:**
+- 각 모듈의 Compose 마이그레이션 완료 시
+- 빌드 성공 및 검증 완료 시
+- CLAUDE.md 업데이트 완료 시
+
+**커밋 메시지 형식:**
+```
+N단계: [모듈명] Compose 마이그레이션 완료
+
+## N단계: [모듈명] (feature-[path])
+- [Fragment명] → [Screen명]
+- [주요 작업 목록]
+- [기술적 성과]
+
+## 기술적 성과
+- [Fragment 통합 수]
+- [새로운 기능]
+- [빌드 상태]
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+**자동 커밋 절차:**
+1. `git status` - 변경사항 확인
+2. `git add .` - 모든 변경사항 스테이징
+3. `git commit -m "..."` - 단계별 커밋 메시지로 커밋
+4. `git status` - 커밋 완료 확인
+
 ### 다음 단계
 6단계: 설정 모듈 (feature-water:setting, feature-common:setting) 시작
    - WaterSettingFragment → WaterSettingScreen
