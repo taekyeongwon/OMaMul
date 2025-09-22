@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias libs.plugins.hilt
     id 'kotlin-kapt'
 }
@@ -16,9 +17,13 @@ android {
         consumerProguardFiles "consumer-rules.pro"
     }
 
+    buildFeatures {
+        compose = true
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -34,10 +39,21 @@ android {
 
 dependencies {
     implementation project(':core:domain')
+    implementation project(':core:ui')
 
     implementation libs.androidx.core
     implementation libs.androidx.appcompat
     implementation libs.android.material
+
+    // Compose
+    implementation platform(libs.androidx.compose.bom)
+    implementation libs.bundles.compose
+    debugImplementation libs.androidx.compose.ui.tooling
+    debugImplementation libs.androidx.compose.ui.test.manifest
+
+    // Activity Compose
+    implementation libs.androidx.activity.compose
+
     testImplementation libs.junit
     androidTestImplementation libs.androidx.test.junit
     androidTestImplementation libs.androidx.test.espresso
