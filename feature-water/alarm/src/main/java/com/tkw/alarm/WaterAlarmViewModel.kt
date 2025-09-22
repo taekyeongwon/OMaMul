@@ -1,11 +1,7 @@
 package com.tkw.alarm
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
 import com.tkw.base.BaseViewModel
 import com.tkw.base.launch
-import com.tkw.common.SingleLiveEvent
 import com.tkw.common.util.DateTimeUtils
 import com.tkw.domain.AlarmRepository
 import com.tkw.domain.PrefDataRepository
@@ -21,8 +17,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -39,8 +38,8 @@ class WaterAlarmViewModel @Inject constructor(
     private val prefDataRepository: PrefDataRepository,
     private val alarmRepository: AlarmRepository
 ): BaseViewModel() {
-    private val _nextEvent = SingleLiveEvent<Unit>()
-    val nextEvent: LiveData<Unit> = _nextEvent
+    private val _nextEvent = MutableSharedFlow<Unit>()
+    val nextEvent: SharedFlow<Unit> = _nextEvent.asSharedFlow()
 
     //알람 권한 허용 여부
     private val isAlarmEnabled = prefDataRepository.fetchAlarmEnableFlag()
@@ -64,11 +63,6 @@ class WaterAlarmViewModel @Inject constructor(
 
     private val alarmSettingsFlow: Flow<AlarmSettings> = alarmRepository.getAlarmSetting()
 
-    val periodModeSettingsLiveData: LiveData<AlarmModeSetting> =
-        alarmRepository.getAlarmModeSetting().asLiveData()
-
-    val alarmSettings: LiveData<AlarmSettings> =
-        alarmSettingsFlow.asLiveData()
 
     // Compose용 StateFlow 버전
     val alarmSettingsStateFlow: StateFlow<AlarmSettings?> =
@@ -111,26 +105,26 @@ class WaterAlarmViewModel @Inject constructor(
         )
 
 
-    val customAlarmList: LiveData<AlarmList> =
-        alarmRepository.getAlarmList(AlarmMode.CUSTOM).asLiveData()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val alarmRingTone: LiveData<RingToneMode> =
+    val alarmRingToneStateFlow: StateFlow<RingToneMode?> =
         alarmSettingsFlow.mapLatest {
             it.ringToneMode
-        }.asLiveData()
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val alarmMode: LiveData<AlarmMode> =
-        alarmSettingsFlow.mapLatest {
-            it.alarmMode
-        }.asLiveData()
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val alarmEtcSetting: LiveData<AlarmEtcSettings> =
+    val alarmEtcSettingStateFlow: StateFlow<AlarmEtcSettings?> =
         alarmSettingsFlow.mapLatest {
             it.etcSetting
-        }.asLiveData()
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val isStopWhenReachedGoal: Flow<Boolean> =
@@ -140,22 +134,24 @@ class WaterAlarmViewModel @Inject constructor(
             }
         }
 
-    val isReachedGoal: LiveData<Boolean> = prefDataRepository.fetchReachedGoal()
+    val isReachedGoalStateFlow: StateFlow<Boolean> = prefDataRepository.fetchReachedGoal()
         .combine(isStopWhenReachedGoal) { isReachedGoal, stopReachedFlag ->
             isReachedGoal && stopReachedFlag
-        }.distinctUntilChanged().asLiveData()
+        }.distinctUntilChanged().stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
 
     //period 모드 화면 변경사항 체크용
-    private val _tmpPeriodMode: MutableLiveData<AlarmModeSetting> = MutableLiveData()
-    val tmpPeriodMode: LiveData<AlarmModeSetting> = _tmpPeriodMode
+    private val _tmpPeriodModeStateFlow = MutableStateFlow<AlarmModeSetting?>(null)
+    val tmpPeriodModeStateFlow: StateFlow<AlarmModeSetting?> = _tmpPeriodModeStateFlow.asStateFlow()
 
     //알람 변경에 따라 remainTime 재요청
     @OptIn(ExperimentalCoroutinesApi::class)
     val timeTickerLiveData = isNotificationAlarmEnabled()
         .flatMapLatest { alarmRepository.getRemainAlarmTime() }
 
-    private val _remainTimeLiveData = MutableLiveData<String>()
-    val remainTimeLiveData: LiveData<String> = _remainTimeLiveData
 
     private val _remainTimeStateFlow = MutableStateFlow("")
     val remainTimeStateFlow: StateFlow<String> = _remainTimeStateFlow.asStateFlow()
@@ -268,18 +264,18 @@ class WaterAlarmViewModel @Inject constructor(
 
     fun setCustomAlarm(alarm: Alarm) {
         launch {
-            alarmRepository.setAlarm(alarm, isNotificationAlarmEnabled().first(), isReachedGoal.value ?: false)
+            alarmRepository.setAlarm(alarm, isNotificationAlarmEnabled().first(), isReachedGoalStateFlow.value)
         }
     }
 
     private suspend fun setAlarmList(list: List<Alarm>) {
-        alarmRepository.setAlarmList(list, isNotificationAlarmEnabled().first(), isReachedGoal.value ?: false)
+        alarmRepository.setAlarmList(list, isNotificationAlarmEnabled().first(), isReachedGoalStateFlow.value)
     }
 
     fun deleteAlarm(list: List<Alarm>) {
         launch {
             alarmRepository.deleteAlarm(list, AlarmMode.CUSTOM)
-            _nextEvent.call()
+            _nextEvent.emit(Unit)
         }
     }
 
@@ -290,7 +286,7 @@ class WaterAlarmViewModel @Inject constructor(
     }
 
     fun setTmpPeriodMode(period: AlarmModeSetting) {
-        _tmpPeriodMode.value = period
+        _tmpPeriodModeStateFlow.value = period
     }
 
     fun saveReachedGoal(isReached: Boolean) {
@@ -300,10 +296,7 @@ class WaterAlarmViewModel @Inject constructor(
     }
 
     fun setRemainTimeContent(content: String) {
-        launch {
-            _remainTimeLiveData.value = content
-            _remainTimeStateFlow.value = content
-        }
+        _remainTimeStateFlow.value = content
     }
 
     companion object {

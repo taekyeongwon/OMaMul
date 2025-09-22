@@ -29,7 +29,7 @@ import com.tkw.ui.R
 
 @Composable
 fun CupCreationScreen(
-    cup: Cup?,
+    cup: Cup?,  // 수정화면일 때 저장된 컵 정보
     onNavigateBack: () -> Unit,
     viewModel: CupViewModel = hiltViewModel()
 ) {
@@ -41,13 +41,20 @@ fun CupCreationScreen(
     val cupName by viewModel.cupNameStateFlow.collectAsStateWithLifecycle()
     val cupAmount by viewModel.cupAmountStateFlow.collectAsStateWithLifecycle()
 
-    // NextEvent와 ToastEvent 처리
+    // cup 파라미터를 ViewModel에 전달하여 초기화
+    LaunchedEffect(cup) {
+        viewModel.initWithCup(cup)
+    }
+
+    // NextEvent와 ToastEvent 처리 (SharedFlow 방식)
     LaunchedEffect(Unit) {
-        viewModel.nextEvent.observe(context as androidx.lifecycle.LifecycleOwner) {
+        viewModel.nextEvent.collect {
             onNavigateBack()
         }
+    }
 
-        viewModel.toastEvent.observe(context as androidx.lifecycle.LifecycleOwner) { error ->
+    LaunchedEffect(Unit) {
+        viewModel.toastEvent.collect { error ->
             Toast.makeText(context, error.getMessage(context), Toast.LENGTH_SHORT).show()
         }
     }

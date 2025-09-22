@@ -1,13 +1,9 @@
 package com.tkw.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.tkw.base.BaseViewModel
 import com.tkw.base.launch
-import com.tkw.common.SingleLiveEvent
 import com.tkw.common.util.DateTimeUtils
 import com.tkw.domain.CupRepository
 import com.tkw.domain.PrefDataRepository
@@ -19,9 +15,12 @@ import com.tkw.domain.model.Water
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapLatest
@@ -42,11 +41,11 @@ class WaterViewModel
     private val initFlag = prefDataRepository.fetchInitialFlag()
     suspend fun getInitFlag(): Boolean = initFlag.first()
 
-    // Compose에서 사용하기 위한 StateFlow 버전
-    val initFlagStateFlow: StateFlow<Boolean> = initFlag.stateIn(
+    // Compose에서 사용하기 위한 StateFlow 버전 (null로 초기화하여 로딩 상태 처리)
+    val initFlagStateFlow: StateFlow<Boolean?> = initFlag.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = false
+        initialValue = null
     )
 
     // Dialog 상태 관리
@@ -76,7 +75,7 @@ class WaterViewModel
 
     //메인화면에 표시할 컵 리스트
     @OptIn(ExperimentalCoroutinesApi::class)
-    val cupListLiveData: StateFlow<List<Cup>> =
+    val cupListStateFlow: StateFlow<List<Cup>> =
         cupRepository.getCupList().mapLatest {
             it.cupList
         }.stateIn(
@@ -86,11 +85,12 @@ class WaterViewModel
         )
 
     //컵 관리 화면 이동 후 돌아왔을 때 위치 저장용
-    val cupPagerScrollPosition = MutableLiveData(0)
+    private val _cupPagerScrollPosition = MutableStateFlow(0)
+    val cupPagerScrollPosition: StateFlow<Int> = _cupPagerScrollPosition.asStateFlow()
 
-    //섭취량 변경 완료 여부
-    private val _amountSaveEvent = SingleLiveEvent<Unit>()
-    val amountSaveEvent: LiveData<Unit> = _amountSaveEvent
+    //섭취량 변경 완료 여부 (SharedFlow로 변경)
+    private val _amountSaveEvent = MutableSharedFlow<Unit>()
+    val amountSaveEvent: SharedFlow<Unit> = _amountSaveEvent.asSharedFlow()
 
     //date값 변경에 따라 flow에서 새로운 DayOfWater 객체 collect하기 위한 메서드
     fun setToday() {
@@ -115,7 +115,11 @@ class WaterViewModel
     fun saveIntakeAmount(amount: Int) {
         launch {
             settingRepository.saveIntake(amount)
-            _amountSaveEvent.call()
+            _amountSaveEvent.emit(Unit)
         }
+    }
+
+    fun updateCupPagerPosition(position: Int) {
+        _cupPagerScrollPosition.value = position
     }
 }

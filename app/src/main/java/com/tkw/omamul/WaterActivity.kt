@@ -26,6 +26,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -69,7 +74,14 @@ class WaterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        installSplashScreen()
+
+        // SplashScreen을 initFlag 로딩이 완료될 때까지 유지
+        val splashScreen = installSplashScreen()
+        splashScreen.setKeepOnScreenCondition {
+            // initFlag가 로딩될 때까지 스플래시 화면 유지
+            waterViewModel.initFlagStateFlow.value == null
+        }
+
         initialize()
     }
 
@@ -110,7 +122,7 @@ class WaterActivity : ComponentActivity() {
         val navController = rememberNavController()
         val waterViewModel: WaterViewModel = hiltViewModel()
 
-        // 초기화 상태 확인
+        // 초기화 상태 확인 (null이면 로딩 중)
         val isInitialized by waterViewModel.initFlagStateFlow.collectAsStateWithLifecycle()
 
         // 알림 권한 상태 업데이트
@@ -118,24 +130,39 @@ class WaterActivity : ComponentActivity() {
             alarmViewModel.setNotificationEnabled(NotificationManager.isNotificationEnabled(this@WaterActivity))
         }
 
-        NavHost(
-            navController = navController,
-            startDestination = if (isInitialized) "main_flow" else "onboarding_flow"
-        ) {
-            // 온보딩 플로우
-            composable("onboarding_flow") {
-                InitNavHost(
-                    onNavigateToHome = {
-                        navController.navigate("main_flow") {
-                            popUpTo("onboarding_flow") { inclusive = true }
-                        }
-                    }
-                )
+        // initFlag가 로딩될 때까지 대기
+        when (isInitialized) {
+            null -> {
+                // 로딩 중 - 빈 화면 또는 로딩 인디케이터 표시
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // 스플래시 스크린이 표시되므로 비워둘 수 있음
+                }
             }
+            else -> {
+                // 로딩 완료 - 적절한 화면으로 이동
+                NavHost(
+                    navController = navController,
+                    startDestination = if (isInitialized == true) "main_flow" else "onboarding_flow"
+                ) {
+                    // 온보딩 플로우
+                    composable("onboarding_flow") {
+                        InitNavHost(
+                            onNavigateToHome = {
+                                navController.navigate("main_flow") {
+                                    popUpTo("onboarding_flow") { inclusive = true }
+                                }
+                            }
+                        )
+                    }
 
-            // 메인 앱 플로우
-            composable("main_flow") {
-                MainNavHost()
+                    // 메인 앱 플로우
+                    composable("main_flow") {
+                        MainNavHost()
+                    }
+                }
             }
         }
     }

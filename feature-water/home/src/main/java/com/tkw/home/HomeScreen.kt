@@ -54,7 +54,7 @@ fun HomeScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val dayOfWater by waterViewModel.amountLiveData.collectAsState()
-    val cupList by waterViewModel.cupListLiveData.collectAsState(initial = emptyList())
+    val cupList by waterViewModel.cupListStateFlow.collectAsStateWithLifecycle()
     var intakeGoal by remember { mutableStateOf(0) }
 
     // Dialog 상태
@@ -85,10 +85,12 @@ fun HomeScreen(
         }
     }
 
-    LaunchedEffect(alarmViewModel.isReachedGoal.value) {
+    val isReachedGoal by alarmViewModel.isReachedGoalStateFlow.collectAsStateWithLifecycle()
+
+    LaunchedEffect(isReachedGoal) {
         coroutineScope.launch {
             val isNotificationEnabled = alarmViewModel.isNotificationAlarmEnabled().first()
-            alarmViewModel.delayAllAlarm(alarmViewModel.isReachedGoal.value ?: false, isNotificationEnabled)
+            alarmViewModel.delayAllAlarm(isReachedGoal, isNotificationEnabled)
         }
     }
 

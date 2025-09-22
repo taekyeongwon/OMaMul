@@ -31,7 +31,7 @@ fun CupManagementScreen(
     onNavigateBack: () -> Unit,
     viewModel: CupViewModel = hiltViewModel()
 ) {
-    val cupList by viewModel.cupListStateFlow.collectAsStateWithLifecycle()
+    val cupList by viewModel.cupListLiveData.collectAsStateWithLifecycle()
     val modifyMode by viewModel.modifyModeStateFlow.collectAsStateWithLifecycle()
 
     // 로컬 상태로 드래그된 리스트와 체크 상태 관리
