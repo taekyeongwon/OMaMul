@@ -6,7 +6,6 @@ constraintlayout = "2.1.4"
 junit = "4.13.2"
 ext-junit = "1.2.1"
 espresso-core = "3.6.1"
-navigation-fragment-ktx = "2.7.7"
 navigation-ui-ktx = "2.7.7"
 core-splashscreen = "1.0.1"
 coroutines = "1.8.1"
@@ -29,7 +28,6 @@ mp-android-chart = "v3.1.0"
 android-application = "8.4.2"
 android-library = "8.4.2"
 kotlin = "2.0.20"
-navigation-safeargs = "2.7.7"
 realm-kotlin = "2.3.0"
 
 hilt = "2.51.1"
@@ -62,7 +60,6 @@ junit = {module="junit:junit", version.ref="junit"}
 androidx-test-junit = {module="androidx.test.ext:junit", version.ref="ext-junit"}
 androidx-test-espresso = {module="androidx.test.espresso:espresso-core", version.ref="espresso-core"}
 
-androidx-navigation-fragment = {module="androidx.navigation:navigation-fragment-ktx", version.ref="navigation-fragment-ktx"}
 androidx-navigation-ui = {module="androidx.navigation:navigation-ui-ktx", version.ref="navigation-ui-ktx"}
 androidx-splash = {module="androidx.core:core-splashscreen", version.ref="core-splashscreen"}
 
@@ -113,7 +110,6 @@ androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
-androidx-hilt-navigation-fragment = { module = "androidx.hilt:hilt-navigation-fragment", version.ref = "hilt-navigation" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation" }
 androidx-compose-material-icons-extend = { module = "androidx.compose.material:material-icons-extended" }
 
@@ -123,7 +119,6 @@ android-library = {id="com.android.library", version.ref="android-library"}
 jetbrains-kotlin-android = {id="org.jetbrains.kotlin.android", version.ref="kotlin"}
 jetbrains-kotlin-jvm = {id="org.jetbrains.kotlin.jvm", version.ref="kotlin"}
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-navigation-safeargs = {id="androidx.navigation.safeargs.kotlin", version.ref="navigation-safeargs"}
 realm-kotlin = {id="io.realm.kotlin", version.ref="realm-kotlin"}
 
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }

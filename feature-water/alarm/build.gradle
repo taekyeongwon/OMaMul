@@ -3,7 +3,6 @@ plugins {
     alias libs.plugins.jetbrains.kotlin.android
     alias libs.plugins.kotlin.compose
     alias libs.plugins.hilt
-    alias libs.plugins.navigation.safeargs
     id 'kotlin-kapt'
 }
 
@@ -55,11 +54,11 @@ dependencies {
     androidTestImplementation libs.androidx.test.junit
     androidTestImplementation libs.androidx.test.espresso
 
-    implementation libs.androidx.navigation.fragment
+    
     implementation libs.androidx.navigation.ui
 
-    //hiltNavGraphViewModels
-    implementation libs.androidx.hilt.navigation.fragment
+    //hiltNavGraphViewModels - Compose로 전환됨
+    // implementation libs.androidx.hilt.navigation.fragment
 
     //Flow.asLiveData
     implementation libs.androidx.lifecycle.livedata

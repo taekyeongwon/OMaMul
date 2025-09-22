@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph">
-
-    <!-- Compose Navigation으로 마이그레이션 완료 -->
-    <!-- 기존 Fragment Navigation include 제거됨 -->
-
-</navigation>
