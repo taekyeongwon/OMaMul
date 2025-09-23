@@ -69,6 +69,7 @@ fun WaterSettingScreen(
     val totalIntake by viewModel.totalIntakeStateFlow.collectAsStateWithLifecycle()
     val totalAchieve by viewModel.totalAchieveStateFlow.collectAsStateWithLifecycle()
     val goalOfIntake by viewModel.goalOfIntakeStateFlow.collectAsStateWithLifecycle()
+    val goalOfIntakeInMl by viewModel.goalOfIntakeInMlStateFlow.collectAsStateWithLifecycle()
     val currentLang by viewModel.currentLangStateFlow.collectAsStateWithLifecycle()
     val unit by viewModel.unitStateFlow.collectAsStateWithLifecycle()
     val unitString by viewModel.unitStringStateFlow.collectAsStateWithLifecycle()
@@ -105,9 +106,15 @@ fun WaterSettingScreen(
         alarmTime = alarmTime,
         onNavigateToCup = onNavigateToCup,
         onNavigateToAlarm = onNavigateToAlarm,
-        onShowIntakeDialog = { viewModel.showIntakeDialog() },
-        onShowUnitDialog = { viewModel.showUnitDialog() },
-        onShowLanguageDialog = { viewModel.showLanguageDialog() },
+        onShowIntakeDialog = {
+            viewModel.showIntakeDialog()
+        },
+        onShowUnitDialog = {
+            viewModel.showUnitDialog()
+        },
+        onShowLanguageDialog = {
+            viewModel.showLanguageDialog()
+        },
         onShowLogoutDialog = { /* TODO: 로그아웃 다이얼로그 */ },
         onLoginClick = { /* TODO: 로그인 기능 */ },
         onSyncClick = { /* TODO: 동기화 기능 */ }
@@ -134,7 +141,7 @@ fun WaterSettingScreen(
     UnitSelectionDialog(
         isVisible = showUnitDialog,
         currentUnit = unitString,
-        currentIntake = goalOfIntake,
+        currentIntake = goalOfIntakeInMl, // ml 단위 값 직접 사용
         onDismiss = { viewModel.hideUnitDialog() },
         onUnitSelect = { selectedUnit, convertedIntake ->
             viewModel.saveUnitString(selectedUnit, convertedIntake)
@@ -145,7 +152,7 @@ fun WaterSettingScreen(
     // Water Intake Dialog
     WaterIntakeDialog(
         isVisible = showIntakeDialog,
-        currentIntake = goalOfIntake.replace("ml", "").toIntOrNull() ?: 2000, // 항상 ml 단위로 저장됨
+        currentIntake = goalOfIntakeInMl, // ml 단위 값 직접 사용
         currentUnit = currentUnitValue,
         onDismiss = { viewModel.hideIntakeDialog() },
         onConfirm = { newIntakeInMl ->

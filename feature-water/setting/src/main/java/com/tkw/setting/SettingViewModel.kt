@@ -4,6 +4,7 @@ import android.content.Context
 import com.tkw.base.BaseViewModel
 import com.tkw.base.launch
 import com.tkw.common.util.DateTimeUtils
+import com.tkw.common.util.UnitConverter
 import com.tkw.domain.AlarmRepository
 import com.tkw.domain.PrefDataRepository
 import com.tkw.domain.SettingRepository
@@ -85,10 +86,11 @@ class SettingViewModel
     }
 
 
-    // Compose용 StateFlow
-    val totalIntakeStateFlow: StateFlow<String> = getAllDay.flatMapLatest {
-        flow {
-            emit("${it.getTotalIntake()}ml")
+    // Compose용 StateFlow - 현재 선택된 단위로 변환
+    val totalIntakeStateFlow: StateFlow<String> = getAllDay.flatMapLatest { dayList ->
+        settings.mapLatest { setting ->
+            val totalIntakeInMl = dayList.getTotalIntake()
+            UnitConverter.formatIntake(totalIntakeInMl, setting.unitString)
         }
     }.stateIn(
         scope = viewModelScope,
@@ -110,13 +112,22 @@ class SettingViewModel
 
     private val settings = settingRepository.getSetting()
 
-    // Compose용 StateFlow
+    // Compose용 StateFlow - 현재 선택된 단위로 변환
     val goalOfIntakeStateFlow: StateFlow<String> = settings.mapLatest {
-        "${it.intake}ml"
+        UnitConverter.formatIntake(it.intake, it.unitString)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = "0ml"
+    )
+
+    // ml 단위로만 목표량 반환 (내부 로직 및 Dialog에서 사용)
+    val goalOfIntakeInMlStateFlow: StateFlow<Int> = settings.mapLatest {
+        it.intake
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = 2000
     )
 
     val currentLangFlow = prefDataRepository.fetchLanguage()

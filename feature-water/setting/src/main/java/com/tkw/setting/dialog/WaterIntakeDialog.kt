@@ -52,7 +52,8 @@ private fun WaterIntakeDialogContent(
     onConfirm: (Int) -> Unit // ml 단위로 반환
 ) {
     // 현재 단위로 변환된 값을 표시
-    val displayValue = UnitConverter.convertFromMl(currentIntake, currentUnit)
+    val unitString = UnitConverter.getUnitString(currentUnit)
+    val displayValue = UnitConverter.convertFromMl(currentIntake, unitString)
     var intakeValue by remember {
         mutableStateOf(
             when(currentUnit) {
@@ -63,8 +64,6 @@ private fun WaterIntakeDialogContent(
         )
     }
     var isError by remember { mutableStateOf(false) }
-
-    val unitString = UnitConverter.getUnitString(currentUnit)
 
     Card(
         modifier = Modifier
@@ -163,8 +162,8 @@ private fun WaterIntakeDialogContent(
                 isError = isError,
                 supportingText = if (isError) {
                     {
-                        val minDisplay = UnitConverter.formatIntake(100, currentUnit)
-                        val maxDisplay = UnitConverter.formatIntake(10000, currentUnit)
+                        val minDisplay = UnitConverter.formatIntake(100, unitString)
+                        val maxDisplay = UnitConverter.formatIntake(10000, unitString)
                         Text("${minDisplay} 이상 ${maxDisplay} 이하로 입력해주세요")
                     }
                 } else null,
@@ -197,8 +196,8 @@ private fun WaterIntakeDialogContent(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "• 성인 남성: ${UnitConverter.getRecommendedIntake("male", currentUnit)}\n" +
-                                "• 성인 여성: ${UnitConverter.getRecommendedIntake("female", currentUnit)}\n" +
+                        text = "• 성인 남성: ${UnitConverter.getRecommendedIntake("male", unitString)}\n" +
+                                "• 성인 여성: ${UnitConverter.getRecommendedIntake("female", unitString)}\n" +
                                 "• 활동량이 많거나 더운 날씨에는 더 많이 필요",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFF424242),
@@ -234,8 +233,8 @@ private fun WaterIntakeDialogContent(
                 Button(
                     onClick = {
                         val inputValue = intakeValue.toDoubleOrNull()
-                        if (inputValue != null && UnitConverter.isValidIntake(inputValue, currentUnit)) {
-                            val mlValue = UnitConverter.convertToMl(inputValue, currentUnit)
+                        if (inputValue != null && UnitConverter.isValidIntake(inputValue, unitString)) {
+                            val mlValue = UnitConverter.convertToMl(inputValue, unitString)
                             onConfirm(mlValue)
                         } else {
                             isError = true

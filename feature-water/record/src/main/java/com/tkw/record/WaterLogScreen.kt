@@ -197,6 +197,7 @@ private fun WaterLogScreenContent(
             when (page) {
                 0 -> DayLogContent(
                     state = state,
+                    isCurrentPage = pagerState.currentPage == 0,
                     onEvent = onDayEvent,
                     onEventByDate = onDayEventByDate,
                     onShowAddDialog = onShowAddDialog,
@@ -205,10 +206,12 @@ private fun WaterLogScreenContent(
                 )
                 1 -> WeekLogContent(
                     state = state,
+                    isCurrentPage = pagerState.currentPage == 1,
                     onEvent = onWeekEvent
                 )
                 2 -> MonthLogContent(
                     state = state,
+                    isCurrentPage = pagerState.currentPage == 2,
                     onEvent = onMonthEvent
                 )
             }
@@ -219,14 +222,17 @@ private fun WaterLogScreenContent(
 @Composable
 private fun DayLogContent(
     state: LogContract.State,
+    isCurrentPage: Boolean,
     onEvent: (LogContract.Move) -> Unit,
     onEventByDate: (String) -> Unit,
     onShowAddDialog: () -> Unit,
     onShowEditDialog: (com.tkw.domain.model.Water) -> Unit,
     onRemoveDayAmount: (com.tkw.domain.model.Water) -> Unit
 ) {
-    LaunchedEffect(Unit) {
-        onEvent(LogContract.Move.INIT)
+    LaunchedEffect(isCurrentPage) {
+        if (isCurrentPage) {
+            onEvent(LogContract.Move.INIT)
+        }
     }
 
     when (state) {
@@ -257,10 +263,13 @@ private fun DayLogContent(
 @Composable
 private fun WeekLogContent(
     state: LogContract.State,
+    isCurrentPage: Boolean,
     onEvent: (LogContract.Move) -> Unit
 ) {
-    LaunchedEffect(Unit) {
-        onEvent(LogContract.Move.INIT)
+    LaunchedEffect(isCurrentPage) {
+        if (isCurrentPage) {
+            onEvent(LogContract.Move.INIT)
+        }
     }
 
     when (state) {
@@ -284,10 +293,13 @@ private fun WeekLogContent(
 @Composable
 private fun MonthLogContent(
     state: LogContract.State,
+    isCurrentPage: Boolean,
     onEvent: (LogContract.Move) -> Unit
 ) {
-    LaunchedEffect(Unit) {
-        onEvent(LogContract.Move.INIT)
+    LaunchedEffect(isCurrentPage) {
+        if (isCurrentPage) {
+            onEvent(LogContract.Move.INIT)
+        }
     }
 
     when (state) {
@@ -360,15 +372,18 @@ private fun DayLogView(
                 AndroidView(
                     factory = { context ->
                         CustomBarChart(context).apply {
-                            val chartData = dayOfWater.getAccumulatedAmount().map { (hour, amount) ->
-                                BarEntry(hour.toFloat(), amount.toFloat())
-                            }
-                            setChartData(chartData)
+                            setXMinMax(0f, 24f)
                             setLimit(2000f)
                             setYUnit("ml")
                             setMarker(MarkerType.DAY)
                             setXValueFormat(arrayOf("0", "6", "12", "18", "24"))
                         }
+                    },
+                    update = { chart ->
+                        val chartData = dayOfWater.getAccumulatedAmount().map { (hour, amount) ->
+                            BarEntry(hour.toFloat(), amount.toFloat())
+                        }
+                        chart.setChartData(chartData)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -465,16 +480,19 @@ private fun WeekLogView(
                 AndroidView(
                     factory = { context ->
                         CustomLineChart(context).apply {
-                            val chartData = data.list.mapIndexed { index, dayOfWater ->
-                                Entry(index.toFloat(), dayOfWater.getTotalIntakeByDate().toFloat())
-                            }
-                            setChartData(chartData)
+                            setXMinMax(1f, 7f)
                             setLimit(2000f)
                             setYUnit("ml")
                             setMarker(MarkerType.WEEK)
-                            val dateLabels = data.list.map { it.date.split("-").last() }.toTypedArray()
-                            setXValueFormat(dateLabels)
                         }
+                    },
+                    update = { chart ->
+                        val chartData = data.list.mapIndexed { index, dayOfWater ->
+                            Entry(index.toFloat(), dayOfWater.getTotalIntakeByDate().toFloat())
+                        }
+                        chart.setChartData(chartData)
+                        val dateLabels = data.list.map { it.date.split("-").last() }.toTypedArray()
+                        chart.setXValueFormat(dateLabels)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -560,16 +578,19 @@ private fun MonthLogView(
                 AndroidView(
                     factory = { context ->
                         CustomLineChart(context).apply {
-                            val chartData = data.list.mapIndexed { index, dayOfWater ->
-                                Entry(index.toFloat(), dayOfWater.getTotalIntakeByDate().toFloat())
-                            }
-                            setChartData(chartData)
+                            setXMinMax(1f, 7f)
                             setLimit(2000f)
                             setYUnit("ml")
                             setMarker(MarkerType.MONTH)
-                            val dateLabels = data.list.map { it.date.split("-").last() }.toTypedArray()
-                            setXValueFormat(dateLabels)
                         }
+                    },
+                    update = { chart ->
+                        val chartData = data.list.mapIndexed { index, dayOfWater ->
+                            Entry(index.toFloat(), dayOfWater.getTotalIntakeByDate().toFloat())
+                        }
+                        chart.setChartData(chartData)
+                        val dateLabels = data.list.map { it.date.split("-").last() }.toTypedArray()
+                        chart.setXValueFormat(dateLabels)
                     },
                     modifier = Modifier
                         .fillMaxWidth()

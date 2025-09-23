@@ -139,4 +139,32 @@ object UnitConverter {
             else -> "1ml = 1ml"
         }
     }
+
+    /**
+     * 단위 인덱스를 단위 문자열로 변환
+     * @param unitIndex 단위 인덱스 (0: ml, 1: fl oz)
+     * @return 단위 문자열
+     */
+    fun getUnitString(unitIndex: Int): String {
+        return when(unitIndex) {
+            0 -> Units.ML
+            1 -> Units.FL_OZ
+            2 -> Units.CUP
+            else -> Units.ML
+        }
+    }
+
+    /**
+     * 단위 문자열을 단위 인덱스로 변환
+     * @param unit 단위 문자열
+     * @return 단위 인덱스
+     */
+    fun getUnitIndex(unit: String): Int {
+        return when(unit) {
+            Units.ML -> 0
+            Units.FL_OZ -> 1
+            Units.CUP -> 2
+            else -> 0
+        }
+    }
 }
