@@ -39,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tkw.alarm.WaterAlarmViewModel
 import com.tkw.domain.model.Cup
 import com.tkw.home.dialog.WaterIntakeDialog
+import com.tkw.common.util.UnitConverter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.math.*
@@ -55,6 +56,7 @@ fun HomeScreen(
 
     val dayOfWater by waterViewModel.amountLiveData.collectAsState()
     val cupList by waterViewModel.cupListStateFlow.collectAsStateWithLifecycle()
+    val userUnit by waterViewModel.unitStringStateFlow.collectAsStateWithLifecycle()
     var intakeGoal by remember { mutableStateOf(0) }
 
     // Dialog 상태
@@ -134,7 +136,8 @@ fun HomeScreen(
                 item {
                     WaterProgressWithWave(
                         currentIntake = dayOfWater?.getTotalIntakeByDate() ?: 0,
-                        goal = intakeGoal
+                        goal = intakeGoal,
+                        userUnit = userUnit
                     )
                 }
 
@@ -313,7 +316,7 @@ fun GlassmorphismTopBar(
 
 // 물 웨이브가 있는 진행률 표시기
 @Composable
-fun WaterProgressWithWave(currentIntake: Int, goal: Int) {
+fun WaterProgressWithWave(currentIntake: Int, goal: Int, userUnit: String = "ml") {
     val progress = if (goal > 0) (currentIntake.toFloat() / goal).coerceIn(0f, 1f) else 0f
     val animatedProgress by animateFloatAsState(
         targetValue = progress,
@@ -400,13 +403,13 @@ fun WaterProgressWithWave(currentIntake: Int, goal: Int) {
             // 진행률 텍스트
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "${currentIntake}ml",
+                    text = UnitConverter.formatIntake(currentIntake, userUnit),
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF1976D2)
                 )
                 Text(
-                    text = "목표 ${goal}ml",
+                    text = "목표 ${UnitConverter.formatIntake(goal, userUnit)}",
                     fontSize = 16.sp,
                     color = Color(0xFF424242)
                 )
@@ -675,6 +678,7 @@ private fun HomeScreenContent(
     currentIntake: Int,
     goal: Int,
     cups: List<Cup>,
+    userUnit: String = "ml",
     onCupClick: (Cup) -> Unit,
     onAddCupClick: () -> Unit,
     onShareClick: () -> Unit,

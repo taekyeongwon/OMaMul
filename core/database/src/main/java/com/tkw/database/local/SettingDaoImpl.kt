@@ -33,6 +33,12 @@ class SettingDaoImpl @Inject constructor() : SettingDao {
         }
     }
 
+    override suspend fun saveUnitString(unit: String) {
+        this.write {
+            settings()?.unitString = unit
+        }
+    }
+
     override fun getSetting(): Flow<ResultsChange<SettingEntity>> {
         return this.stream(find(SettingEntity::class, "id == $0", 0))
     }

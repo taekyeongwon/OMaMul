@@ -27,6 +27,10 @@ class SettingRepositoryImpl @Inject constructor(
         settingDao.saveUnit(unit)
     }
 
+    override suspend fun saveUnitString(unit: String) {
+        settingDao.saveUnitString(unit)
+    }
+
     override fun getSetting(): Flow<Settings> {
         val settingFlow = settingDao.getSetting()
         return flow {

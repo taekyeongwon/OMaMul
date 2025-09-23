@@ -16,18 +16,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.tkw.common.util.UnitConverter
 
 @Composable
 fun UnitSelectionDialog(
     isVisible: Boolean,
     currentUnit: String = "ml",
+    currentIntake: Int = 2000,
     onDismiss: () -> Unit,
-    onUnitSelect: (String) -> Unit
+    onUnitSelect: (String, Int) -> Unit
 ) {
     if (isVisible) {
         Dialog(onDismissRequest = onDismiss) {
             UnitSelectionDialogContent(
                 currentUnit = currentUnit,
+                currentIntake = currentIntake,
                 onDismiss = onDismiss,
                 onUnitSelect = onUnitSelect
             )
@@ -38,15 +41,16 @@ fun UnitSelectionDialog(
 @Composable
 private fun UnitSelectionDialogContent(
     currentUnit: String = "ml",
+    currentIntake: Int = 2000,
     onDismiss: () -> Unit = {},
-    onUnitSelect: (String) -> Unit = {}
+    onUnitSelect: (String, Int) -> Unit = { _, _ -> }
 ) {
     var selectedUnit by remember { mutableStateOf(currentUnit) }
 
     val units = listOf(
-        "ml" to "밀리리터 (ml)",
-        "fl oz" to "플루이드 온스 (fl oz)",
-        "cup" to "컵 (cup)"
+        UnitConverter.Units.ML to UnitConverter.getUnitDisplayName(UnitConverter.Units.ML),
+        UnitConverter.Units.FL_OZ to UnitConverter.getUnitDisplayName(UnitConverter.Units.FL_OZ),
+        UnitConverter.Units.CUP to UnitConverter.getUnitDisplayName(UnitConverter.Units.CUP)
     )
 
     Card(
@@ -121,7 +125,13 @@ private fun UnitSelectionDialogContent(
 
                 Button(
                     onClick = {
-                        onUnitSelect(selectedUnit)
+                        // 단위 변경 시 기존 값을 새 단위 기준으로 변환
+                        val convertedIntake = UnitConverter.convertBetweenUnits(
+                            currentValue = currentIntake,
+                            fromUnit = currentUnit,
+                            toUnit = selectedUnit
+                        )
+                        onUnitSelect(selectedUnit, convertedIntake)
                         onDismiss()
                     },
                     modifier = Modifier.weight(1f),
@@ -170,12 +180,7 @@ private fun UnitOption(
                     color = if (isSelected) Color(0xFF1976D2) else Color(0xFF333333)
                 )
                 Text(
-                    text = when (unitCode) {
-                        "ml" -> "1ml = 1ml"
-                        "fl oz" -> "1fl oz ≈ 29.6ml"
-                        "cup" -> "1cup ≈ 240ml"
-                        else -> ""
-                    },
+                    text = UnitConverter.getUnitDescription(unitCode),
                     fontSize = 12.sp,
                     color = Color(0xFF666666)
                 )
@@ -198,7 +203,8 @@ private fun UnitOption(
 fun UnitSelectionDialogPreview() {
     UnitSelectionDialogContent(
         currentUnit = "ml",
+        currentIntake = 2000,
         onDismiss = {},
-        onUnitSelect = { }
+        onUnitSelect = { _, _ -> }
     )
 }

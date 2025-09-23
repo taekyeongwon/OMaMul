@@ -52,27 +52,26 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tkw.common.util.DateTimeUtils
+import com.tkw.home.WaterViewModel
 import com.tkw.setting.dialog.LanguageSelectionDialog
 import com.tkw.setting.dialog.UnitSelectionDialog
+import com.tkw.setting.dialog.WaterIntakeDialog
+import com.tkw.common.util.UnitConverter
 import com.tkw.ui.R
 
 @Composable
 fun WaterSettingScreen(
     onNavigateToCup: () -> Unit = {},
     onNavigateToAlarm: () -> Unit = {},
-    onShowIntakeDialog: () -> Unit = {},
-    onShowUnitDialog: () -> Unit = {},
-    onShowLanguageDialog: () -> Unit = {},
-    onShowLogoutDialog: () -> Unit = {},
-    onLoginClick: () -> Unit = {},
-    onSyncClick: () -> Unit = {},
-    viewModel: SettingViewModel = hiltViewModel()
+    viewModel: SettingViewModel = hiltViewModel(),
+    waterViewModel: WaterViewModel = hiltViewModel()
 ) {
     val totalIntake by viewModel.totalIntakeStateFlow.collectAsStateWithLifecycle()
     val totalAchieve by viewModel.totalAchieveStateFlow.collectAsStateWithLifecycle()
     val goalOfIntake by viewModel.goalOfIntakeStateFlow.collectAsStateWithLifecycle()
     val currentLang by viewModel.currentLangStateFlow.collectAsStateWithLifecycle()
     val unit by viewModel.unitStateFlow.collectAsStateWithLifecycle()
+    val unitString by viewModel.unitStringStateFlow.collectAsStateWithLifecycle()
     val lastSync by viewModel.lastSyncStateFlow.collectAsStateWithLifecycle()
     val alarmMode by viewModel.alarmModeStateFlow.collectAsStateWithLifecycle()
 
@@ -82,6 +81,16 @@ fun WaterSettingScreen(
     val alarmRingtone by viewModel.alarmRingtoneStateFlow.collectAsStateWithLifecycle()
     val alarmSchedule by viewModel.alarmScheduleStateFlow.collectAsStateWithLifecycle()
     val alarmTime by viewModel.alarmTimeStateFlow.collectAsStateWithLifecycle()
+
+    // 물 섭취량 다이얼로그 상태
+    val showIntakeDialog by viewModel.showIntakeDialog.collectAsStateWithLifecycle()
+
+    // 현재 단위값 추출 (0: ml, 1: fl.oz)
+    val currentUnitValue = when(unit) {
+        "ml, L" -> 0
+        "fl.oz" -> 1
+        else -> 0
+    }
 
     WaterSettingScreenContent(
         totalIntake = totalIntake,
@@ -96,33 +105,52 @@ fun WaterSettingScreen(
         alarmTime = alarmTime,
         onNavigateToCup = onNavigateToCup,
         onNavigateToAlarm = onNavigateToAlarm,
-        onShowIntakeDialog = onShowIntakeDialog,
+        onShowIntakeDialog = { viewModel.showIntakeDialog() },
         onShowUnitDialog = { viewModel.showUnitDialog() },
         onShowLanguageDialog = { viewModel.showLanguageDialog() },
-        onShowLogoutDialog = onShowLogoutDialog,
-        onLoginClick = onLoginClick,
-        onSyncClick = onSyncClick
+        onShowLogoutDialog = { /* TODO: 로그아웃 다이얼로그 */ },
+        onLoginClick = { /* TODO: 로그인 기능 */ },
+        onSyncClick = { /* TODO: 동기화 기능 */ }
     )
 
     // Language Selection Dialog
     LanguageSelectionDialog(
         isVisible = showLanguageDialog,
-        currentLanguage = currentLang.toString(), // TODO: Int를 String으로 변환 로직 필요
+        currentLanguage = when(currentLang) {
+            com.tkw.ui.R.string.lang_ko -> "ko"
+            com.tkw.ui.R.string.lang_en -> "en"
+            com.tkw.ui.R.string.lang_jp -> "ja"
+            com.tkw.ui.R.string.lang_cn -> "zh"
+            else -> "ko"
+        },
         onDismiss = { viewModel.hideLanguageDialog() },
         onLanguageSelect = { language ->
-            // TODO: 언어 변경 로직 구현
+            viewModel.saveLanguage(language)
             viewModel.hideLanguageDialog()
         }
     )
 
-    // Unit Selection Dialog
+    // Unit Selection Dialog (새로운 String 기반)
     UnitSelectionDialog(
         isVisible = showUnitDialog,
-        currentUnit = "ml", // TODO: unit에서 현재 단위 추출
+        currentUnit = unitString,
+        currentIntake = goalOfIntake,
         onDismiss = { viewModel.hideUnitDialog() },
-        onUnitSelect = { selectedUnit ->
-            // TODO: 단위 변경 로직 구현
+        onUnitSelect = { selectedUnit, convertedIntake ->
+            viewModel.saveUnitString(selectedUnit, convertedIntake)
             viewModel.hideUnitDialog()
+        }
+    )
+
+    // Water Intake Dialog
+    WaterIntakeDialog(
+        isVisible = showIntakeDialog,
+        currentIntake = goalOfIntake.replace("ml", "").toIntOrNull() ?: 2000, // 항상 ml 단위로 저장됨
+        currentUnit = currentUnitValue,
+        onDismiss = { viewModel.hideIntakeDialog() },
+        onConfirm = { newIntakeInMl ->
+            waterViewModel.saveIntakeAmount(newIntakeInMl) // ml 단위로 저장
+            viewModel.hideIntakeDialog()
         }
     )
 }
@@ -192,7 +220,7 @@ private fun WaterSettingScreenContent(
                     SettingItem(
                         icon = Icons.Default.LocalDrink,
                         title = "물 섭취량",
-                        subtitle = goalOfIntake,
+                        subtitle = goalOfIntake, // TODO: 단위 변환 적용 가능
                         onClick = onShowIntakeDialog
                     ),
                     SettingItem(

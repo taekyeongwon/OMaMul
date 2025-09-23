@@ -53,6 +53,9 @@ class SettingViewModel
     private val _showUnitDialog = MutableStateFlow(false)
     val showUnitDialog = _showUnitDialog.asStateFlow()
 
+    private val _showIntakeDialog = MutableStateFlow(false)
+    val showIntakeDialog = _showIntakeDialog.asStateFlow()
+
     fun showLanguageDialog() {
         _showLanguageDialog.value = true
     }
@@ -67,6 +70,14 @@ class SettingViewModel
 
     fun hideUnitDialog() {
         _showUnitDialog.value = false
+    }
+
+    fun showIntakeDialog() {
+        _showIntakeDialog.value = true
+    }
+
+    fun hideIntakeDialog() {
+        _showIntakeDialog.value = false
     }
 
     private val getAllDay = waterRepository.getAllDay().mapLatest { list ->
@@ -129,7 +140,16 @@ class SettingViewModel
         it.unit
     }
 
-    // Compose용 StateFlow
+    // Compose용 StateFlow (새로운 String 기반)
+    val unitStringStateFlow: StateFlow<String> = settings.mapLatest {
+        it.unitString
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = "ml"
+    )
+
+    // 호환성을 위한 기존 unitStateFlow (legacy)
     val unitStateFlow: StateFlow<String> = settings.mapLatest {
         when(it.unit) {
             0 -> "ml, L"
@@ -229,6 +249,18 @@ class SettingViewModel
     fun saveUnit(unit: Int) {
         launch {
             settingRepository.saveUnit(unit)
+            _nextEvent.emit(Unit)
+        }
+    }
+
+    // 새로운 String 기반 단위 저장
+    fun saveUnitString(unit: String, newIntake: Int? = null) {
+        launch {
+            settingRepository.saveUnitString(unit)
+            // 단위 변경 시 목표량도 함께 변경
+            newIntake?.let {
+                settingRepository.saveIntake(it)
+            }
             _nextEvent.emit(Unit)
         }
     }

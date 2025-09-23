@@ -235,24 +235,6 @@ class WaterActivity : ComponentActivity() {
                         },
                         onNavigateToAlarm = {
                             navController.navigate("alarm_setting")
-                        },
-                        onShowIntakeDialog = {
-                            // TODO: 물 섭취량 설정 다이얼로그 표시
-                        },
-                        onShowUnitDialog = {
-                            // TODO: 단위 설정 다이얼로그 표시 (WaterSettingScreen에서 처리됨)
-                        },
-                        onShowLanguageDialog = {
-                            // TODO: 언어 설정 다이얼로그 표시 (WaterSettingScreen에서 처리됨)
-                        },
-                        onShowLogoutDialog = {
-                            // TODO: 로그아웃 다이얼로그 표시
-                        },
-                        onLoginClick = {
-                            // TODO: 로그인 기능
-                        },
-                        onSyncClick = {
-                            // TODO: 동기화 기능
                         }
                     )
                 }

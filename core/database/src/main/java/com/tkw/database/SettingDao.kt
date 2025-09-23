@@ -11,5 +11,7 @@ interface SettingDao: RealmDao {
 
     suspend fun saveUnit(unit: Int)
 
+    suspend fun saveUnitString(unit: String)
+
     fun getSetting(): Flow<ResultsChange<SettingEntity>>
 }

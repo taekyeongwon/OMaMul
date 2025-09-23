@@ -60,6 +60,15 @@ class WaterViewModel
         _showWaterIntakeDialog.value = false
     }
 
+    // 단위 설정
+    val unitStringStateFlow: StateFlow<String> = settingRepository.getSetting().mapLatest {
+        it.unitString
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = "ml"
+    )
+
     //현재 날짜
     private val dateStringFlow = MutableStateFlow(DateTimeUtils.Date.getToday())
 

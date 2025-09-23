@@ -8,13 +8,15 @@ object SettingMapper {
         return SettingEntity().apply {
             this.intake = setting.intake
             this.unit = setting.unit
+            this.unitString = setting.unitString
         }
     }
 
     fun settingToModel(entity: SettingEntity): Settings {
         return Settings(
-            entity.intake,
-            entity.unit
+            intake = entity.intake,
+            unit = entity.unit,
+            unitString = entity.unitString.takeIf { it.isNotEmpty() } ?: "ml"
         )
     }
 }
