@@ -23,9 +23,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tkw.domain.model.DayOfWater
 import com.tkw.domain.model.DayOfWaterList
-import com.tkw.record.chart.ChartData
-import com.tkw.record.chart.WaterBarChart
-import com.tkw.record.chart.WaterLineChart
+import androidx.compose.ui.viewinterop.AndroidView
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.Entry
+import com.tkw.ui.chart.CustomBarChart
+import com.tkw.ui.chart.CustomLineChart
+import com.tkw.ui.chart.marker.MarkerType
 import com.tkw.ui.R
 import kotlinx.coroutines.launch
 
@@ -353,16 +356,23 @@ private fun DayLogView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // 일일 누적 차트
-                val chartData = dayOfWater.getAccumulatedAmount().map { (hour, amount) ->
-                    ChartData(hour.toFloat(), amount.toFloat(), "${hour}시")
-                }
-
-                WaterBarChart(
-                    data = chartData,
-                    maxValue = 2500f,
-                    targetValue = 2000f,
-                    modifier = Modifier.fillMaxWidth()
+                // 일일 누적 차트 (MPAndroidChart)
+                AndroidView(
+                    factory = { context ->
+                        CustomBarChart(context).apply {
+                            val chartData = dayOfWater.getAccumulatedAmount().map { (hour, amount) ->
+                                BarEntry(hour.toFloat(), amount.toFloat())
+                            }
+                            setChartData(chartData)
+                            setLimit(2000f)
+                            setYUnit("ml")
+                            setMarker(MarkerType.DAY)
+                            setXValueFormat(arrayOf("0", "6", "12", "18", "24"))
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -451,15 +461,24 @@ private fun WeekLogView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // 주간 차트 (7일간의 일일 총량)
-                val weekChartData = data.list.mapIndexed { index, dayOfWater ->
-                    ChartData(index.toFloat(), dayOfWater.getTotalIntakeByDate().toFloat(), dayOfWater.date)
-                }
-
-                WaterLineChart(
-                    data = weekChartData,
-                    maxValue = 3000f,
-                    modifier = Modifier.fillMaxWidth()
+                // 주간 차트 (7일간의 일일 총량, MPAndroidChart)
+                AndroidView(
+                    factory = { context ->
+                        CustomLineChart(context).apply {
+                            val chartData = data.list.mapIndexed { index, dayOfWater ->
+                                Entry(index.toFloat(), dayOfWater.getTotalIntakeByDate().toFloat())
+                            }
+                            setChartData(chartData)
+                            setLimit(2000f)
+                            setYUnit("ml")
+                            setMarker(MarkerType.WEEK)
+                            val dateLabels = data.list.map { it.date.split("-").last() }.toTypedArray()
+                            setXValueFormat(dateLabels)
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -537,17 +556,24 @@ private fun MonthLogView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // 월간 차트 (일별 총량)
-                val monthChartData = data.list.mapIndexed { index, dayOfWater ->
-                    ChartData(index.toFloat(), dayOfWater.getTotalIntakeByDate().toFloat(), dayOfWater.date)
-                }
-
-                WaterLineChart(
-                    data = monthChartData,
-                    maxValue = 3000f,
-                    lineColor = Color(0xFF66BB6A),
-                    fillColor = Color(0xFF66BB6A).copy(alpha = 0.3f),
-                    modifier = Modifier.fillMaxWidth()
+                // 월간 차트 (일별 총량, MPAndroidChart)
+                AndroidView(
+                    factory = { context ->
+                        CustomLineChart(context).apply {
+                            val chartData = data.list.mapIndexed { index, dayOfWater ->
+                                Entry(index.toFloat(), dayOfWater.getTotalIntakeByDate().toFloat())
+                            }
+                            setChartData(chartData)
+                            setLimit(2000f)
+                            setYUnit("ml")
+                            setMarker(MarkerType.MONTH)
+                            val dateLabels = data.list.map { it.date.split("-").last() }.toTypedArray()
+                            setXValueFormat(dateLabels)
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))

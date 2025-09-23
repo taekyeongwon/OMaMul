@@ -41,6 +41,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.tkw.alarm.AlarmNavHost
 import com.tkw.cup.CupNavHost
 import com.tkw.home.HomeScreen
 import com.tkw.init.InitNavHost
@@ -175,28 +176,33 @@ class WaterActivity : ComponentActivity() {
 
         Scaffold(
             bottomBar = {
-                NavigationBar {
-                    val items = listOf(
-                        BottomNavItem("home", "홈", Icons.Default.Home),
-                        BottomNavItem("record", "기록", Icons.Default.Timeline),
-                        BottomNavItem("setting", "설정", Icons.Default.Person)
-                    )
+                // Bottom Navigation은 home, record, setting 화면에서만 표시
+                val showBottomNav = currentDestination?.route in listOf("home", "record", "setting")
 
-                    items.forEach { item ->
-                        NavigationBarItem(
-                            icon = { Icon(item.icon, contentDescription = item.label) },
-                            label = { Text(item.label) },
-                            selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
-                            onClick = {
-                                navController.navigate(item.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
+                if (showBottomNav) {
+                    NavigationBar {
+                        val items = listOf(
+                            BottomNavItem("home", "홈", Icons.Default.Home),
+                            BottomNavItem("record", "기록", Icons.Default.Timeline),
+                            BottomNavItem("setting", "설정", Icons.Default.Person)
                         )
+
+                        items.forEach { item ->
+                            NavigationBarItem(
+                                icon = { Icon(item.icon, contentDescription = item.label) },
+                                label = { Text(item.label) },
+                                selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                                onClick = {
+                                    navController.navigate(item.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -223,7 +229,32 @@ class WaterActivity : ComponentActivity() {
                 }
 
                 composable("setting") {
-                    WaterSettingScreen()
+                    WaterSettingScreen(
+                        onNavigateToCup = {
+                            navController.navigate("cup_management")
+                        },
+                        onNavigateToAlarm = {
+                            navController.navigate("alarm_setting")
+                        },
+                        onShowIntakeDialog = {
+                            // TODO: 물 섭취량 설정 다이얼로그 표시
+                        },
+                        onShowUnitDialog = {
+                            // TODO: 단위 설정 다이얼로그 표시 (WaterSettingScreen에서 처리됨)
+                        },
+                        onShowLanguageDialog = {
+                            // TODO: 언어 설정 다이얼로그 표시 (WaterSettingScreen에서 처리됨)
+                        },
+                        onShowLogoutDialog = {
+                            // TODO: 로그아웃 다이얼로그 표시
+                        },
+                        onLoginClick = {
+                            // TODO: 로그인 기능
+                        },
+                        onSyncClick = {
+                            // TODO: 동기화 기능
+                        }
+                    )
                 }
 
                 composable("cup_management") {
@@ -232,6 +263,12 @@ class WaterActivity : ComponentActivity() {
                         onNavigateBack = {
                             navController.popBackStack()
                         }
+                    )
+                }
+
+                composable("alarm_setting") {
+                    AlarmNavHost(
+                        navController = rememberNavController()
                     )
                 }
             }
