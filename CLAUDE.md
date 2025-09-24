@@ -163,6 +163,72 @@
 - **언어**: 모든 코드 주석, 문서, 의사소통은 한국어로 작성
 - **답변**: 답변은 간결하게 최대 3-5문장으로 답변
 - **ViewModel 인터페이스 보존**: 각 모듈별로 사용하고 있던 ViewModel의 모든 필드와 메서드는 반드시 동일하게 사용해야 함. 프레젠테이션 레이어 변경 시에도 기존 ViewModel의 public 인터페이스는 변경 금지
+- **다국어 지원 규칙**: UI에 표시되는 모든 문구는 반드시 string 리소스로 관리해야 함
+
+### 다국어 번역 규칙
+
+#### 문구 추가 프로세스
+새로운 UI 문구가 추가될 때는 다음 절차를 따라야 합니다:
+
+1. **core:ui 모듈의 strings.xml 파일들에 번역 추가**
+   - `values/strings.xml` (기본, 한국어)
+   - `values-en-rUS/strings.xml` (영어)
+   - `values-ja/strings.xml` (일본어)
+   - `values-ko-rKR/strings.xml` (한국어)
+   - `values-zh-rCN/strings.xml` (중국어 간체)
+
+2. **번역 품질 기준**
+   - 각 언어의 자연스러운 표현 사용
+   - 문화적 맥락을 고려한 번역
+   - 일관된 톤앤매너 유지
+   - 기술 용어의 정확한 번역
+
+3. **string 리소스 명명 규칙**
+   - 기능별 접두사 사용 (예: `water_`, `alarm_`, `setting_`)
+   - 명확하고 직관적인 이름
+   - 스네이크 케이스 사용
+   - 포맷 문자열의 경우 매개변수 순서와 타입 명시
+
+#### 언어별 번역 가이드라인
+
+**한국어 (values/, values-ko-rKR/)**
+- 높임말 사용 지양, 친근한 반말 톤
+- "~해요", "~에요" 형태의 정중한 표현
+- 이모티콘 활용으로 친근감 표현
+
+**영어 (values-en-rUS/)**
+- 간결하고 명확한 표현
+- 능동태 우선 사용
+- 사용자 친화적인 톤
+
+**일본어 (values-ja/)**
+- 정중한 경어 사용
+- 자연스러운 일본어 어순
+- 카타카나 외래어 적절히 활용
+
+**중국어 간체 (values-zh-rCN/)**
+- 간체 문자 사용
+- 대륙 중국어 표현 기준
+- 간결하고 이해하기 쉬운 표현
+
+#### 예시: 물 관련 문구
+```xml
+<!-- 한국어 -->
+<string name="water_goal_achieved">목표 달성! 잘 하셨어요! 🎉</string>
+<string name="water_goal_close">목표까지 %dml 남았어요! 거의 다 왔어요! 🔥</string>
+
+<!-- 영어 -->
+<string name="water_goal_achieved">Goal achieved! Well done! 🎉</string>
+<string name="water_goal_close">Only %dml left to goal! Almost there! 🔥</string>
+
+<!-- 일본어 -->
+<string name="water_goal_achieved">目標達成！お疲れさまでした！ 🎉</string>
+<string name="water_goal_close">目標まで%dml残っています！もうすぐです！ 🔥</string>
+
+<!-- 중국어 -->
+<string name="water_goal_achieved">目标达成！做得好！ 🎉</string>
+<string name="water_goal_close">距离目标还有%dml！快达成了！ 🔥</string>
+```
 
 ### Compose 디자인 가이드라인
 

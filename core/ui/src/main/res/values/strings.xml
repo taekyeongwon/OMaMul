@@ -123,4 +123,18 @@
     <string name="title_cup_add">컵 추가/수정</string>
     <string name="title_alarm_setting">알람 설정</string>
     <string name="title_alarm_mode">알람 모드</string>
+
+    <!-- Water Home Screen -->
+    <string name="water_target">목표</string>
+    <string name="water_next_alarm">다음 알람</string>
+    <string name="water_add">물 추가</string>
+    <string name="water_undo">실행 취소</string>
+    <string name="water_cup_selection">컵 선택</string>
+    <string name="water_manage">관리</string>
+    <string name="water_alarm_off">알람 꺼짐</string>
+    <string name="water_goal_achieved">목표 달성! 잘 하셨어요! 🎉</string>
+    <string name="water_goal_close">목표까지 %dml 남았어요! 거의 다 왔어요! 🔥</string>
+    <string name="water_goal_near">목표까지 %dml 남았어요! 조금만 더! 💪</string>
+    <string name="water_goal_far">목표까지 %dml 남았어요! 화이팅! 🎯</string>
+    <string name="water_goal_ratio">/ %dml (%d%%)</string>
 </resources>

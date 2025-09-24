@@ -1,0 +1,12 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 컵 아이콘 -->
+    <path
+        android:fillColor="@color/water_blue"
+        android:pathData="M7,2L17,2A1,1 0,0 1,18 3L18,13A4,4 0,0 1,14 17L10,17A4,4 0,0 1,6 13L6,3A1,1 0,0 1,7 2M8,4L8,13A2,2 0,0 0,10 15L14,15A2,2 0,0 0,16 13L16,4L8,4M18,6L18,10L19,10A3,3 0,0 0,22 7A3,3 0,0 0,19 6L18,6M5,19L19,19A1,1 0,0 1,19 21L5,21A1,1 0,0 1,5 19Z"/>
+
+</vector>

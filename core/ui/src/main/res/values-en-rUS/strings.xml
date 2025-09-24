@@ -124,4 +124,17 @@
     <string name="title_alarm_setting">Alarm Settings</string>
     <string name="title_alarm_mode">Alarm Mode</string>
 
+    <!-- Water Home Screen -->
+    <string name="water_target">Goal</string>
+    <string name="water_next_alarm">Next Alarm</string>
+    <string name="water_add">Add Water</string>
+    <string name="water_undo">Undo</string>
+    <string name="water_cup_selection">Cup Selection</string>
+    <string name="water_manage">Manage</string>
+    <string name="water_alarm_off">Alarm Off</string>
+    <string name="water_goal_achieved">Goal achieved! Well done! 🎉</string>
+    <string name="water_goal_close">Only %dml left to goal! Almost there! 🔥</string>
+    <string name="water_goal_near">Only %dml left to goal! Just a little more! 💪</string>
+    <string name="water_goal_far">%dml left to goal! Keep going! 🎯</string>
+    <string name="water_goal_ratio">/ %dml (%d%%)</string>
 </resources>

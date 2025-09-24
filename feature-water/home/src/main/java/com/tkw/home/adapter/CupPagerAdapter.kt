@@ -6,41 +6,28 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.tkw.base.C
 import com.tkw.domain.model.Cup
-import com.tkw.home.databinding.ItemCupAddBinding
 import com.tkw.home.databinding.ItemCupBinding
 
 class CupPagerAdapter(
-    private val onClick: (Int) -> Unit,
-    private val onClickAdd: () -> Unit
+    private val onClick: (Int) -> Unit
 )
     : ListAdapter<Cup, ViewHolder>(CupDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return when(C.CupViewType.values()[viewType]) {
-            C.CupViewType.CUP -> {
-                val binding = ItemCupBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                CupViewHolder(binding, onClick)
-            }
-            C.CupViewType.ADD -> {
-                val binding = ItemCupAddBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                AddViewHolder(binding, onClickAdd)
-            }
-        }
+        val binding = ItemCupBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return CupViewHolder(binding, onClick)
     }
 
     override fun getItemCount(): Int {
-        return currentList.size + 1
+        return currentList.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if(holder is CupViewHolder) {
-            holder.onBind(getItem(position))
-        }
+        (holder as CupViewHolder).onBind(getItem(position))
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if(position == itemCount - 1) C.CupViewType.ADD.viewType
-        else C.CupViewType.CUP.viewType
+        return C.CupViewType.CUP.viewType
     }
 
     class CupViewHolder(private val binding: ItemCupBinding, listener: (Int) -> Unit): ViewHolder(binding.root) {
@@ -54,11 +41,4 @@ class CupPagerAdapter(
         }
     }
 
-    class AddViewHolder(binding: ItemCupAddBinding, listener: () -> Unit): ViewHolder(binding.root) {
-        init {
-            binding.ivAdd.setOnClickListener {
-                listener()
-            }
-        }
-    }
 }

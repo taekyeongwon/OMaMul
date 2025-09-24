@@ -124,4 +124,17 @@
     <string name="title_alarm_setting">闹钟设置</string>
     <string name="title_alarm_mode">闹钟模式</string>
 
+    <!-- Water Home Screen -->
+    <string name="water_target">目标</string>
+    <string name="water_next_alarm">下一个闹钟</string>
+    <string name="water_add">添加水</string>
+    <string name="water_undo">撤销</string>
+    <string name="water_cup_selection">杯子选择</string>
+    <string name="water_manage">管理</string>
+    <string name="water_alarm_off">闹钟关闭</string>
+    <string name="water_goal_achieved">目标达成！做得好！ 🎉</string>
+    <string name="water_goal_close">距离目标还有%dml！快达成了！ 🔥</string>
+    <string name="water_goal_near">距离目标还有%dml！再加油一点！ 💪</string>
+    <string name="water_goal_far">距离目标还有%dml！加油！ 🎯</string>
+    <string name="water_goal_ratio">/ %dml (%d%%)</string>
 </resources>

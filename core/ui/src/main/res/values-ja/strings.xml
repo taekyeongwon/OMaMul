@@ -124,4 +124,17 @@
     <string name="title_alarm_setting">アラーム設定</string>
     <string name="title_alarm_mode">アラームモード</string>
 
+    <!-- Water Home Screen -->
+    <string name="water_target">目標</string>
+    <string name="water_next_alarm">次のアラーム</string>
+    <string name="water_add">水を追加</string>
+    <string name="water_undo">元に戻す</string>
+    <string name="water_cup_selection">カップ選択</string>
+    <string name="water_manage">管理</string>
+    <string name="water_alarm_off">アラームオフ</string>
+    <string name="water_goal_achieved">目標達成！お疲れさまでした！ 🎉</string>
+    <string name="water_goal_close">目標まで%dml残っています！もうすぐです！ 🔥</string>
+    <string name="water_goal_near">目標まで%dml残っています！もう少し！ 💪</string>
+    <string name="water_goal_far">目標まで%dml残っています！頑張って！ 🎯</string>
+    <string name="water_goal_ratio">/ %dml (%d%%)</string>
 </resources>

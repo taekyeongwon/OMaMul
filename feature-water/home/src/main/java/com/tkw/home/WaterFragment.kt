@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.onNavDestinationSelected
 import com.airbnb.lottie.LottieProperty
@@ -48,14 +49,14 @@ class WaterFragment: Fragment() {
     }
 
     private val addListener = {
-        val lastPosition = cupPagerAdapter.itemCount - 1
-        if(dataBinding.vpList.currentItem == lastPosition) {
-            //add버튼 선택했고, snap된 상태면 관리화면 이동
+//        val lastPosition = cupPagerAdapter.itemCount - 1
+//        if(dataBinding.vpCupList.currentItem == lastPosition) {
+//            //add버튼 선택했고, snap된 상태면 관리화면 이동
             findNavController().deepLinkNavigateTo(requireContext(), DeepLinkDestination.Cup)
-        } else {
-            //snap되지 않은 상태면 맨 마지막으로 스크롤
-            scrollToPosition(lastPosition, true)
-        }
+//        } else {
+//            //snap되지 않은 상태면 맨 마지막으로 스크롤
+//            scrollToPosition(lastPosition, true)
+//        }
     }
 
     override fun onCreateView(
@@ -77,7 +78,7 @@ class WaterFragment: Fragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.cupPagerScrollPosition.value = dataBinding.vpList.currentItem
+        viewModel.cupPagerScrollPosition.value = dataBinding.vpCupList.currentItem
     }
 
     private fun initBinding() {
@@ -97,18 +98,21 @@ class WaterFragment: Fragment() {
     /**
      * PageTransformer
      * 현재 선택된 page기준 position은 0
-     * offsetPx -> 화면 가로 픽셀에서 카드뷰+마진 제외한 만큼의 길이
+     * offsetPx -> 카드 내부 ViewPager 영역에서 실제 아이템 크기 제외한 만큼의 길이
      * 각 page 포지션 값에 -offsetPx 곱한 만큼 옮긴다.
      */
     private fun initViewPager() {
-        cupPagerAdapter = CupPagerAdapter(clickScrollListener, addListener)
+        cupPagerAdapter = CupPagerAdapter(clickScrollListener)
 
         val pageMarginPx = DimenUtils.dpToPx(requireContext(), 10)
         val pagerWidth = DimenUtils.dpToPx(requireContext(), 100)
         val screenWidth = resources.displayMetrics.widthPixels
-        val offsetPx = screenWidth - pageMarginPx - pagerWidth
+        val cardPadding = DimenUtils.dpToPx(requireContext(), 16) * 2 // card_cup_selector padding 좌우 16dp씩
+        val containerPadding = DimenUtils.dpToPx(requireContext(), 16) * 2 // fragment padding 좌우 16dp씩
+        val availableWidth = screenWidth - cardPadding - containerPadding
+        val offsetPx = availableWidth - pageMarginPx - pagerWidth
 
-        dataBinding.vpList.apply {
+        dataBinding.vpCupList.apply {
             adapter = cupPagerAdapter
             offscreenPageLimit = 3
             setPageTransformer { page, position ->
@@ -155,9 +159,12 @@ class WaterFragment: Fragment() {
         lifecycleScope.launch {
             viewModel.amountLiveData.collect {
                 val intakeGoal = viewModel.getIntakeAmount()
+                val currentIntake = it.getTotalIntakeByDate()
                 val prevWater = dayOfWater
-                val currentAmount = minOf(it.getTotalIntakeByDate() / intakeGoal.toFloat(), 1.0f)
+                val currentAmount = minOf(currentIntake / intakeGoal.toFloat(), 1.0f)
                 val dy = lottieHeight * (1 - currentAmount)
+
+                // Lottie 애니메이션 업데이트
                 if(prevWater != null) {
                     val prevAmount = minOf(prevWater.getTotalIntakeByDate() / intakeGoal.toFloat(), 1.0f)
                     val prevDy = lottieHeight * (1 - prevAmount)
@@ -166,17 +173,50 @@ class WaterFragment: Fragment() {
                     startWaterAnimation(lottieHeight, dy)
                 }
 
+                // UI 데이터 업데이트
+                updateWaterDisplay(currentIntake, intakeGoal)
+
                 dayOfWater = it
                 countObject = it.dayOfList
             }
         }
 
         lifecycleScope.launch {
-            viewModel.cupListLiveData.collect {
-                cupPagerAdapter.submitList(it) {
-                    dataBinding.vpList.doOnLayout { snapSavedPosition() }
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.cupListLiveData.collect {
+                    cupPagerAdapter.submitList(it) {
+                        dataBinding.vpCupList.doOnLayout { snapSavedPosition() }
+                    }
                 }
             }
+        }
+
+        // 목표량 표시
+        lifecycleScope.launch {
+            val intakeGoal = viewModel.getIntakeAmount()
+            dataBinding.tvTargetAmount.text = "${intakeGoal}${getString(com.tkw.ui.R.string.unit_ml_no_bracket)}"
+        }
+
+        // 다음 알람 시간 표시
+        // TODO: 알람 기능 연동 시 실제 다음 알람 시간으로 업데이트
+        dataBinding.tvNextAlarm.text = getString(com.tkw.ui.R.string.water_alarm_off)
+    }
+
+    private fun updateWaterDisplay(currentIntake: Int, intakeGoal: Int) {
+        // 목표 대비 비율 계산
+        val percentage = if (intakeGoal > 0) {
+            ((currentIntake.toFloat() / intakeGoal.toFloat()) * 100).toInt()
+        } else 0
+
+        dataBinding.tvGoalRatio.text = getString(com.tkw.ui.R.string.water_goal_ratio, intakeGoal, percentage)
+
+        // 격려 메시지 업데이트
+        val remainingAmount = maxOf(0, intakeGoal - currentIntake)
+        dataBinding.tvEncouragement.text = when {
+            remainingAmount == 0 -> getString(com.tkw.ui.R.string.water_goal_achieved)
+            remainingAmount <= 250 -> getString(com.tkw.ui.R.string.water_goal_close, remainingAmount)
+            remainingAmount <= 500 -> getString(com.tkw.ui.R.string.water_goal_near, remainingAmount)
+            else -> getString(com.tkw.ui.R.string.water_goal_far, remainingAmount)
         }
     }
 
@@ -200,16 +240,16 @@ class WaterFragment: Fragment() {
      * 항목이 2~3개 일 때 살짝 스크롤 하고 나면 뷰가 그려지는 현상 발생
      */
     private fun snapSavedPosition() {
-        if(cupPagerAdapter.itemCount > 1) {
+        if(cupPagerAdapter.itemCount > 0) {
             val savedPosition = viewModel.cupPagerScrollPosition.value ?: 0
             scrollToPosition(savedPosition, false)
         }
     }
 
     private fun scrollToPosition(position: Int, smoothFlag: Boolean) {
-        dataBinding.vpList.setCurrentItem(position, smoothFlag)
+        dataBinding.vpCupList.setCurrentItem(position, smoothFlag)
         if(!smoothFlag) {
-            dataBinding.vpList.run {
+            dataBinding.vpCupList.run {
                 //PageTransformer의 transformPage 메서드가 제대로 발생하지 않았을 때 호출
                 post { requestTransform() }
             }
@@ -217,18 +257,23 @@ class WaterFragment: Fragment() {
     }
 
     private fun initListener() {
-        dataBinding.btnAdd.setOnClickListener {
-            val currentPosition = dataBinding.vpList.currentItem
-            if(currentPosition < cupPagerAdapter.itemCount - 1) {
+        dataBinding.btnAddWater.setOnClickListener {
+            val currentPosition = dataBinding.vpCupList.currentItem
+            if(currentPosition < cupPagerAdapter.itemCount) {
                 val currentCup = cupPagerAdapter.currentList[currentPosition]
                 viewModel.addCount(currentCup.cupAmount, DateTimeUtils.DateTime.getToday())
             }
         }
 
-        dataBinding.btnRemove.setOnClickListener {
+        dataBinding.btnRemoveWater.setOnClickListener {
             if(!countObject.isNullOrEmpty()) {
                 viewModel.removeCount(countObject!!.last())
             }
+        }
+
+        // 관리 버튼 클릭 이벤트
+        dataBinding.btnManageCups.setOnClickListener {
+            addListener()
         }
     }
 }

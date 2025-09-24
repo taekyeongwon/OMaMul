@@ -3,7 +3,7 @@ package com.tkw.base
 object C {
     val FirstInstallFlag = "firstInstallFlag"
     enum class CupViewType(val viewType: Int) {
-        CUP(0), ADD(1)
+        CUP(0)//, ADD(1)
     }
 
     enum class CupListViewType(val viewType: Int) {
