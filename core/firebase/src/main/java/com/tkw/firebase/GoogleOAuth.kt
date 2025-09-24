@@ -46,7 +46,7 @@ class GoogleOAuth @Inject constructor(
         val googleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(true)
             .setAutoSelectEnabled(true)
-            .setServerClientId(context.getString(R.string.google_web_client_id))
+//            .setServerClientId(context.getString(R.string.google_web_client_id))
             .build()
 
         val request = GetCredentialRequest.Builder()

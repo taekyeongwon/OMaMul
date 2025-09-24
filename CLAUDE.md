@@ -162,6 +162,7 @@
 - **Gradle 파일 수정 시**: 반드시 `./gradlew --refresh-dependencies` 명령어로 동기화 수행
 - **언어**: 모든 코드 주석, 문서, 의사소통은 한국어로 작성
 - **답변**: 답변은 간결하게 최대 3-5문장으로 답변
+- **ViewModel 인터페이스 보존**: 각 모듈별로 사용하고 있던 ViewModel의 모든 필드와 메서드는 반드시 동일하게 사용해야 함. 프레젠테이션 레이어 변경 시에도 기존 ViewModel의 public 인터페이스는 변경 금지
 
 ### Compose 디자인 가이드라인
 
@@ -184,3 +185,139 @@ buildTypes {
     }
 }
 ```
+
+## 디자인 변경 및 마이그레이션 계획
+
+### Phase 1: XML + Fragment 디자인 변경 (물 앱 컨셉 적용)
+
+#### 작업 목표
+- 기존 XML 레이아웃을 물 앱 컨셉에 맞게 디자인 변경
+- 프레젠테이션 로직, 비즈니스 로직은 유지
+- ViewModel의 모든 필드 및 메서드 참조 유지
+
+#### 디자인 컨셉 요소
+- **색상 팔레트**:
+  - Primary: #4A90E2 (블루)
+  - Primary Variant: #2196F3
+  - Secondary: #E3F2FD (라이트 블루)
+  - Surface: #FFFFFF with 90% opacity (글래스모피즘)
+- **효과**: 글래스모피즘 카드, 그라데이션 배경
+- **애니메이션**: 물 웨이브, 부드러운 전환, 물 채우기 효과
+- **아이콘**: Material Icons Extended 사용, 물방울/컵 테마
+- **레이아웃**: 라운드 코너(16dp), 카드 기반, 적절한 여백
+
+#### 모듈별 작업 우선순위
+1. **feature-water:home** (최우선) - 메인 화면, 사용자가 가장 많이 보는 화면
+2. **core:ui** - 공통 UI 컴포넌트, 다른 모듈에서 재사용
+3. **feature-water:cup** - 컵 관리 화면
+4. **feature-water:record** - 로그 및 차트 화면
+5. **feature-water:alarm** - 알람 설정 화면
+6. **feature-water:setting** - 물 관련 설정
+7. **feature-common:init** - 온보딩 화면
+8. **feature-common:setting** - 앱 설정
+
+#### 각 모듈별 작업 프로세스
+```bash
+# 1. 모듈 디자인 변경
+# 2. 모듈 빌드 테스트
+./gradlew :feature-water:home:assembleDevDebug
+
+# 3. 전체 빌드 테스트
+./gradlew assembleDevDebug
+
+# 4. 깃 커밋
+git add .
+git commit -m "feature-water:home 디자인 변경 - 물 앱 컨셉 적용"
+```
+
+### Phase 2: LiveData → StateFlow 마이그레이션
+
+#### 작업 목표
+- Compose 마이그레이션 준비를 위한 반응형 프로그래밍 업데이트
+- LiveData → StateFlow 변환
+- SingleLiveEvent → SharedFlow 변환
+- 변수명 리팩토링 (livedata → flow)
+
+#### 변환 규칙
+- **LiveData → StateFlow**: 초기값 없는 경우 null로 초기화
+- **SingleLiveEvent → SharedFlow**: replay=0, extraBufferCapacity=1
+- **MutableLiveData → MutableStateFlow**
+- **변수명 변경**: `xxxLiveData` → `xxxFlow`
+
+#### 작업 순서
+1. ViewModel 클래스별 변환
+2. Fragment에서 collect 방식으로 변경
+3. DataBinding에서 Flow 처리 확인
+4. 단위 테스트 업데이트
+
+### Phase 3: Compose UI 마이그레이션
+
+#### 작업 목표
+- 전체 UI를 Jetpack Compose로 마이그레이션
+- Fragment, XML, ViewBinding, DataBinding 제거
+- MPAndroidChart는 AndroidView로 래핑하여 사용
+
+#### Kotlin 2.0 Compose 설정
+```gradle
+plugins {
+    alias(libs.plugins.kotlin.compose) // Kotlin 2.0.0+ 필수
+}
+
+android {
+    buildFeatures {
+        compose = true
+        viewBinding = false
+        dataBinding = false
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled = true // material-icons-extended 최적화
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    // Compose BOM으로 버전 통합 관리
+    implementation platform(libs.androidx.compose.bom)
+    implementation libs.bundles.compose
+    debugImplementation libs.androidx.compose.ui.tooling
+    debugImplementation libs.androidx.compose.ui.test.manifest
+}
+```
+
+#### Compose 마이그레이션 순서
+1. **Navigation 구조 변경**: Fragment 기반 → Composable 기반
+2. **Activity 구조 단순화**: WaterActivity → Compose 전용
+3. **모듈별 Composable 구현**:
+   - HomeScreen (기존 WaterFragment)
+   - CupManageScreen (기존 CupManageFragment)
+   - WaterLogScreen (기존 WaterLogFragment)
+   - AlarmScreen (기존 WaterAlarmFragment)
+   - SettingScreen (기존 WaterSettingFragment)
+4. **공통 Composable 구현**: core:ui 모듈의 커스텀 컴포넌트들
+5. **MPAndroidChart 래핑**: AndroidView로 기존 차트 시스템 재사용
+
+#### Compose 디자인 시스템
+```kotlin
+// Color.kt
+val WaterBlue = Color(0xFF4A90E2)
+val WaterBlueVariant = Color(0xFF2196F3)
+val WaterLightBlue = Color(0xFFE3F2FD)
+val GlassSurface = Color(0xE6FFFFFF) // 90% 불투명도
+
+// Theme.kt
+val WaterAppColorScheme = lightColorScheme(
+    primary = WaterBlue,
+    primaryContainer = WaterBlueVariant,
+    secondary = WaterLightBlue,
+    surface = GlassSurface
+)
+```
+
+### 주의사항
+- **ViewModel 인터페이스 유지**: 모든 public 메서드와 프로퍼티는 반드시 유지
+- **비즈니스 로직 보존**: Repository, UseCase, Domain 레이어는 변경 금지
+- **점진적 마이그레이션**: 모듈별로 단계적 진행, 빌드 안정성 확보
+- **테스트 커버리지**: 각 단계별 단위 테스트 및 UI 테스트 검증
