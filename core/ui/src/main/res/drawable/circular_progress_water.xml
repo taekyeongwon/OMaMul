@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 배경 원 -->
+    <item android:id="@android:id/background">
+        <shape android:shape="ring"
+            android:thicknessRatio="12"
+            android:useLevel="false">
+            <solid android:color="#20FFFFFF" />
+        </shape>
+    </item>
+
+    <!-- 진행률 원 -->
+    <item android:id="@android:id/progress">
+        <shape android:shape="ring"
+            android:thicknessRatio="12"
+            android:useLevel="true">
+            <gradient
+                android:type="sweep"
+                android:startColor="@color/water_blue"
+                android:centerColor="@color/water_blue_variant"
+                android:endColor="@color/water_light_blue"
+                android:angle="0" />
+        </shape>
+    </item>
+</layer-list>

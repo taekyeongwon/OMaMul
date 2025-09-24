@@ -10,26 +10,23 @@
             type="com.tkw.home.WaterViewModel" />
     </data>
 
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/gradient_water_background">
+        android:background="@drawable/gradient_water_background"
+        android:padding="16dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <!-- 메인 물 트래킹 카드 -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_water_tracker"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
-
-            <!-- 메인 물 트래킹 카드 -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_water_tracker"
-                android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:layout_marginBottom="24dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@color/glass_surface"
+            android:layout_height="0dp"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/glass_surface"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/card_cup_selector"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
@@ -39,71 +36,132 @@
                     android:background="@drawable/glass_card_background"
                     android:padding="20dp">
 
-                    <!-- Lottie 물 애니메이션 -->
-                    <com.airbnb.lottie.LottieAnimationView
-                        android:id="@+id/lotti"
+                    <!-- 중앙 물 애니메이션 및 진행률 -->
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        android:scaleType="centerCrop"
-                        app:lottie_fileName="water_wave.json"
-                        app:lottie_autoPlay="true"
-                        app:lottie_loop="true"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center">
 
-                    <!-- 섭취량 표시 -->
-                    <TextView
-                        android:id="@+id/tv_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{Integer.toString(viewModel.amountLiveData.totalIntakeByDate)}"
-                        android:textSize="48sp"
-                        android:textColor="@color/water_blue"
-                        android:fontFamily="sans-serif-medium"
-                        android:gravity="center"
-                        app:layout_constraintTop_toBottomOf="@id/lotti"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        tools:text="1250" />
+                        <!-- 목표량 표시 -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="오늘의 목표"
+                            android:textSize="14sp"
+                            android:textColor="@color/water_blue_variant"
+                            android:layout_marginBottom="8dp" />
 
-                    <TextView
-                        android:id="@+id/tv_unit"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ml"
-                        android:textSize="16sp"
-                        android:textColor="@color/water_blue_variant"
-                        android:layout_marginStart="4dp"
-                        app:layout_constraintStart_toEndOf="@id/tv_count"
-                        app:layout_constraintBaseline_toBaselineOf="@id/tv_count" />
+                        <!-- 원형 진행률 표시기 (Lottie 애니메이션 배경) -->
+                        <FrameLayout
+                            android:layout_width="200dp"
+                            android:layout_height="200dp"
+                            android:layout_marginBottom="16dp">
 
-                    <!-- 진행률 텍스트 -->
-                    <TextView
-                        android:id="@+id/tv_progress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="오늘의 물 마시기"
-                        android:textSize="14sp"
-                        android:textColor="@color/water_blue_variant"
-                        android:layout_marginTop="8dp"
-                        app:layout_constraintTop_toBottomOf="@id/tv_count"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
+                            <!-- 원형 진행률 바 -->
+                            <ProgressBar
+                                android:id="@+id/progress_water"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:progressDrawable="@drawable/circular_progress_water"
+                                android:progress="62"
+                                android:max="100"
+                                style="?android:attr/progressBarStyleHorizontal" />
+
+                            <!-- 배경 Lottie 물 애니메이션 -->
+                            <com.airbnb.lottie.LottieAnimationView
+                                android:id="@+id/lotti"
+                                android:layout_width="160dp"
+                                android:layout_height="160dp"
+                                android:layout_gravity="center"
+                                android:scaleType="centerCrop"
+                                app:lottie_fileName="water_wave.json"
+                                app:lottie_autoPlay="true"
+                                app:lottie_loop="true" />
+
+                            <!-- 중앙 텍스트 -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:orientation="vertical"
+                                android:gravity="center">
+
+                                <!-- 현재 섭취량 -->
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical">
+
+                                    <TextView
+                                        android:id="@+id/tv_count"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@{Integer.toString(viewModel.amountLiveData.totalIntakeByDate)}"
+                                        android:textSize="36sp"
+                                        android:textColor="@color/water_blue"
+                                        android:fontFamily="sans-serif-bold"
+                                        tools:text="1250" />
+
+                                    <TextView
+                                        android:id="@+id/tv_unit"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="ml"
+                                        android:textSize="14sp"
+                                        android:textColor="@color/water_blue_variant"
+                                        android:layout_marginStart="4dp" />
+
+                                </LinearLayout>
+
+                                <!-- 목표량과 달성률 -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="/ 2000ml"
+                                    android:textSize="12sp"
+                                    android:textColor="@color/water_blue_variant"
+                                    android:layout_marginTop="4dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="62% 달성"
+                                    android:textSize="12sp"
+                                    android:textColor="@color/water_blue"
+                                    android:fontFamily="sans-serif-medium"
+                                    android:layout_marginTop="2dp" />
+
+                            </LinearLayout>
+
+                        </FrameLayout>
+
+                        <!-- 격려 메시지 -->
+                        <TextView
+                            android:id="@+id/tv_progress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="목표까지 750ml 남았어요! 🎯"
+                            android:textSize="14sp"
+                            android:textColor="@color/water_blue_variant"
+                            android:gravity="center" />
+
+                    </LinearLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
 
-            <!-- 컵 선택 ViewPager -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_cup_selector"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/glass_surface"
+        <!-- 컵 선택 ViewPager -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_cup_selector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/glass_surface"
                 app:layout_constraintTop_toBottomOf="@id/card_water_tracker"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -133,16 +191,17 @@
 
             </androidx.cardview.widget.CardView>
 
-            <!-- 액션 버튼들 -->
-            <LinearLayout
-                android:id="@+id/layout_actions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="2"
-                app:layout_constraintTop_toBottomOf="@id/card_cup_selector"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+        <!-- 액션 버튼들 -->
+        <LinearLayout
+            android:id="@+id/layout_actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            app:layout_constraintTop_toBottomOf="@id/card_cup_selector"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_add"
@@ -178,8 +237,6 @@
 
             </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
