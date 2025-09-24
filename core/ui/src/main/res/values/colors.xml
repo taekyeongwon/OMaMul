@@ -7,4 +7,15 @@
     <color name="deepskyblue">#00BFFF</color>
     <color name="gray">#808080</color>
     <color name="light_gray">#D9D9D9</color>
+
+    <!-- 물 앱 컨셉 색상 -->
+    <color name="water_blue">#4A90E2</color>
+    <color name="water_blue_variant">#2196F3</color>
+    <color name="water_light_blue">#E3F2FD</color>
+    <color name="glass_surface">#E6FFFFFF</color>
+
+    <!-- 그라데이션 색상들 -->
+    <color name="gradient_start">#4A90E2</color>
+    <color name="gradient_middle">#81C1F0</color>
+    <color name="gradient_end">#E3F2FD</color>
 </resources>
