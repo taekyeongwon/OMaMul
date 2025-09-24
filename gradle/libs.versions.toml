@@ -85,8 +85,6 @@ kotlinx-coroutines = {module="org.jetbrains.kotlinx:kotlinx-coroutines-core", ve
 
 hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt_compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
-androidx-hilt-navigation-fragment = { module = "androidx.hilt:hilt-navigation-fragment", version.ref = "hilt-navigation" }
-androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation" }
 
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore-preferences"}
 
@@ -115,6 +113,9 @@ androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
+androidx-hilt-navigation-fragment = { module = "androidx.hilt:hilt-navigation-fragment", version.ref = "hilt-navigation" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation" }
+androidx-compose-material-icons-extend = { module = "androidx.compose.material:material-icons-extended" }
 
 [plugins]
 android-application = { id="com.android.application", version.ref="android-application"}
@@ -138,4 +139,6 @@ compose = [
     "androidx-compose-ui-graphics",
     "androidx-compose-ui-tooling-preview",
     "androidx-compose-material3",
+    "androidx-hilt-navigation-compose",
+    "androidx-compose-material-icons-extend"
 ]

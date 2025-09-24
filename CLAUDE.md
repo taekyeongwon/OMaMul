@@ -163,95 +163,6 @@
 - **언어**: 모든 코드 주석, 문서, 의사소통은 한국어로 작성
 - **답변**: 답변은 간결하게 최대 3-5문장으로 답변
 
-## Compose 마이그레이션 가이드
-
-### 마이그레이션 전략
-OMaMul 앱을 XML+Fragment 구조에서 Jetpack Compose로 단계적 전환합니다.
-
-### 마이그레이션 순서 (모듈별)
-
-#### 1단계: 홈 모듈 (feature-water:home) ✅ 완료
-**현재 상태**: 마이그레이션 완료
-```bash
-# 홈 모듈 빌드 성공
-./gradlew :feature-water:home:assembleDebug
-```
-
-**완료된 작업**:
-- [x] HomeScreen 디자인 개선 (물 웨이브 애니메이션, 글래스모피즘)
-- [x] @Preview 함수 추가 (HomeScreenPreview, WaterProgressPreview, CupListPreview, AlarmInfoCardPreview)
-- [x] WaterFragment 분석 완료 (이미 ComposeView 사용)
-- [x] material-icons-extended 의존성 추가 및 LocalDrink 아이콘 적용
-- [x] R8/ProGuard 설정으로 사용하지 않는 아이콘 제거 최적화
-- [x] Debug/Release 빌드 테스트 및 검증 완료
-- [ ] WaterFragment 및 XML 파일 제거 (선택적)
-
-#### 2단계: 온보딩 모듈 (feature-common:init)
-**대상 Fragment**: InitLanguageFragment, InitTimeFragment, InitIntakeFragment
-
-**작업 내용**:
-- [ ] LanguageSelectionScreen (언어 선택)
-- [ ] TimeSettingScreen (시간 설정)
-- [ ] IntakeGoalScreen (목표량 설정)
-- [ ] 슬라이드 애니메이션 및 진행 표시기
-- [ ] Fragment 제거 및 Navigation 전환
-
-#### 3단계: 컵 관리 모듈 (feature-water:cup)
-**대상 Fragment**: CupManageFragment, CupListEditFragment, CupCreateFragment
-
-**작업 내용**:
-- [ ] CupManagementScreen (컵 관리)
-- [ ] CupEditScreen (컵 편집)
-- [ ] CupCreationScreen (컵 생성)
-- [ ] 드래그 앤 드롭 기능
-- [ ] 시각적 컵 디자인
-
-#### 4단계: 알람 모듈 (feature-water:alarm)
-**대상 Fragment**: WaterAlarmFragment, AlarmModeFragment, AlarmModePeriodFragment, AlarmModeCustomFragment
-
-**작업 내용**:
-- [ ] AlarmSettingScreen (알람 설정)
-- [ ] AlarmModeScreen (알람 모드)
-- [ ] 커스텀 TimePicker
-- [ ] 토글 스위치 및 알람 목록
-
-#### 5단계: 기록 모듈 (feature-water:record)
-**대상 Fragment**: WaterLogFragment, LogDayFragment, LogWeekFragment, LogMonthFragment
-
-**작업 내용**:
-- [ ] WaterLogScreen (통계 메인)
-- [ ] DayLogScreen (일간 통계)
-- [ ] WeekLogScreen (주간 통계)
-- [ ] MonthLogScreen (월간 통계)
-- [ ] Canvas 기반 커스텀 차트
-
-#### 6단계: 설정 모듈 (feature-water:setting, feature-common:setting)
-**대상 Fragment**: WaterSettingFragment, CommonSettingFragment, AccountFragment
-
-**작업 내용**:
-- [ ] AppSettingScreen (앱 설정)
-- [ ] AccountScreen (계정 관리)
-- [ ] 설정 항목별 UI 컴포넌트
-
-### 각 단계별 체크리스트
-
-#### 모듈 마이그레이션 완료 조건
-1. **Compose 화면 생성**: 모든 Fragment를 Compose Screen으로 변환
-2. **Navigation 전환**: XML Navigation을 Compose Navigation으로 변경
-3. **Preview 함수**: 각 Screen에 @Preview 추가
-4. **Fragment 제거**: 기존 Fragment 및 XML 파일 삭제
-5. **의존성 정리**: Fragment 관련 의존성 제거
-6. **빌드 성공**: `./gradlew assembleDebug` 성공
-7. **테스트**: 기본 기능 동작 확인
-
-#### 마이그레이션 후 작업
-```bash
-# 각 모듈 완료 후 실행
-./gradlew :feature-xxx:clean
-./gradlew :feature-xxx:assembleDebug
-./gradlew --refresh-dependencies
-```
-
 ### Compose 디자인 가이드라인
 
 #### 물 앱 컨셉 디자인 요소
@@ -260,13 +171,6 @@ OMaMul 앱을 XML+Fragment 구조에서 Jetpack Compose로 단계적 전환합�
 - **아이콘**: 물방울, 컵, 웨이브 모션
 - **레이아웃**: 카드 기반, 라운드 코너
 - **애니메이션**: 부드러운 전환, 물 채우기 효과
-
-#### 공통 컴포넌트 우선 개발
-- WaterProgressIndicator (물 진행률) ✅
-- CupCard (컵 선택 카드) ✅
-- WaterWaveAnimation (물 웨이브) ✅
-- GlassmorphismCard (글래스 효과 카드) ✅
-- CustomTimePicker (시간 선택기)
 
 #### Material Icons Extended 최적화 설정
 ```gradle
@@ -280,18 +184,3 @@ buildTypes {
     }
 }
 ```
-
-### 현재 진행 상황
-- ✅ 화면 구조 분석 완료 (18개 Fragment 파악)
-- ✅ Navigation 구조 분석 완료
-- ✅ 마이그레이션 계획 수립 완료
-- ✅ 1단계: 홈 모듈 완료
-- 🔄 2단계: 온보딩 모듈 대기 중
-
-### 다음 단계
-1. 2단계: 온보딩 모듈 (feature-common:init) 시작
-   - InitLanguageFragment → LanguageSelectionScreen
-   - InitTimeFragment → TimeSettingScreen
-   - InitIntakeFragment → IntakeGoalScreen
-2. 슬라이드 애니메이션 및 진행 표시기 구현
-3. Fragment 제거 및 Navigation 전환
