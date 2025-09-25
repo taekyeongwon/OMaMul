@@ -209,6 +209,7 @@ class WaterFragment: Fragment() {
             currentCup?.let { cup ->
                 viewModel.addCount(cup.cupAmount, DateTimeUtils.DateTime.getToday())
             }
+            // 메뉴가 열려있어도 닫지 않음
         }
 
         // 메인 플로팅 버튼 롱클릭 - 메뉴 토글
@@ -224,13 +225,18 @@ class WaterFragment: Fragment() {
             if (!countObject.isNullOrEmpty()) {
                 viewModel.removeCount(countObject!!.last())
             }
-            toggleFabMenu()
+            // 메뉴를 닫지 않음
         }
 
         // 설정 버튼
         dataBinding.fabCupSettings.setOnClickListener {
             findNavController().deepLinkNavigateTo(requireContext(), DeepLinkDestination.Cup)
-            toggleFabMenu()
+            // 메뉴를 닫지 않음
+        }
+
+        // 메인 FAB 컨테이너 클릭 - 메뉴를 닫지 않음
+        dataBinding.fabMenuContainer.setOnClickListener {
+            // 아무것도 하지 않음 (이벤트 소비)
         }
 
         // 배경 오버레이 클릭 - 메뉴 닫기
@@ -286,64 +292,38 @@ class WaterFragment: Fragment() {
             }
         }
 
-        // 메인 FAB 상단으로 이동 (슬라이딩)
-        val mainFabSlide = ObjectAnimator.ofFloat(
-            dataBinding.fabCurrentCup,
-            "translationY",
-            0f,
-            -120f
-        ).apply {
-            duration = 300
-            interpolator = OvershootInterpolator(0.8f)
-        }
-
-        // 실행 취소 버튼 애니메이션 (메인 FAB 상단)
-        dataBinding.fabUndo.apply {
+        // 메뉴 컨테이너 슬라이드 인 애니메이션 (아래에서 위로)
+        dataBinding.fabMenuContainer.apply {
             visibility = View.VISIBLE
-            ObjectAnimator.ofFloat(this, "alpha", 0f, 1f).apply {
-                duration = 200
-                startDelay = 100
-                interpolator = OvershootInterpolator()
-                start()
-            }
-            ObjectAnimator.ofFloat(this, "scaleX", 0.5f, 1f).apply {
-                duration = 300
-                startDelay = 100
-                interpolator = OvershootInterpolator()
-                start()
-            }
-            ObjectAnimator.ofFloat(this, "scaleY", 0.5f, 1f).apply {
-                duration = 300
-                startDelay = 100
-                interpolator = OvershootInterpolator()
-                start()
-            }
-        }
+            translationY = 200f // 아래에서 시작
+            alpha = 0f
 
-        // 설정 버튼 애니메이션 (메인 FAB 좌측 상단)
-        dataBinding.fabCupSettings.apply {
-            visibility = View.VISIBLE
+            // 슬라이드 인 애니메이션
+            ObjectAnimator.ofFloat(this, "translationY", 200f, 0f).apply {
+                duration = 300
+                interpolator = OvershootInterpolator(0.8f)
+                start()
+            }
+
             ObjectAnimator.ofFloat(this, "alpha", 0f, 1f).apply {
                 duration = 250
-                startDelay = 150
-                interpolator = OvershootInterpolator()
                 start()
             }
+
+            // 개별 버튼 애니메이션
             ObjectAnimator.ofFloat(this, "scaleX", 0.5f, 1f).apply {
-                duration = 350
-                startDelay = 150
+                duration = 300
+                startDelay = 50
                 interpolator = OvershootInterpolator()
                 start()
             }
             ObjectAnimator.ofFloat(this, "scaleY", 0.5f, 1f).apply {
-                duration = 350
-                startDelay = 150
+                duration = 300
+                startDelay = 50
                 interpolator = OvershootInterpolator()
                 start()
             }
         }
-
-        mainFabSlide.start()
     }
 
     private fun closeFabMenu() {
@@ -357,50 +337,35 @@ class WaterFragment: Fragment() {
             start()
         }
 
-        // 메인 FAB 원래 위치로 복귀 (슬라이딩)
-        ObjectAnimator.ofFloat(dataBinding.fabCurrentCup, "translationY", -120f, 0f).apply {
-            duration = 300
-            interpolator = OvershootInterpolator(0.8f)
-            start()
-        }
-
-        // 실행 취소 버튼 애니메이션
-        ObjectAnimator.ofFloat(dataBinding.fabUndo, "alpha", 1f, 0f).apply {
-            duration = 150
-            start()
-        }
-        ObjectAnimator.ofFloat(dataBinding.fabUndo, "scaleX", 1f, 0.5f).apply {
-            duration = 150
-            start()
-        }
-        ObjectAnimator.ofFloat(dataBinding.fabUndo, "scaleY", 1f, 0.5f).apply {
-            duration = 150
-            start()
-        }.also {
-            it.doOnEnd {
-                dataBinding.fabUndo.visibility = View.GONE
-                dataBinding.fabUndo.scaleX = 1f
-                dataBinding.fabUndo.scaleY = 1f
+        // 메뉴 컨테이너 슬라이드 아웃 애니메이션 (위에서 아래로)
+        dataBinding.fabMenuContainer.apply {
+            ObjectAnimator.ofFloat(this, "translationY", 0f, 200f).apply {
+                duration = 250
+                interpolator = DecelerateInterpolator()
+                start()
             }
-        }
 
-        // 설정 버튼 애니메이션
-        ObjectAnimator.ofFloat(dataBinding.fabCupSettings, "alpha", 1f, 0f).apply {
-            duration = 150
-            start()
-        }
-        ObjectAnimator.ofFloat(dataBinding.fabCupSettings, "scaleX", 1f, 0.5f).apply {
-            duration = 150
-            start()
-        }
-        ObjectAnimator.ofFloat(dataBinding.fabCupSettings, "scaleY", 1f, 0.5f).apply {
-            duration = 150
-            start()
-        }.also {
-            it.doOnEnd {
-                dataBinding.fabCupSettings.visibility = View.GONE
-                dataBinding.fabCupSettings.scaleX = 1f
-                dataBinding.fabCupSettings.scaleY = 1f
+            ObjectAnimator.ofFloat(this, "alpha", 1f, 0f).apply {
+                duration = 200
+                start()
+            }
+
+            ObjectAnimator.ofFloat(this, "scaleX", 1f, 0.5f).apply {
+                duration = 200
+                start()
+            }
+
+            ObjectAnimator.ofFloat(this, "scaleY", 1f, 0.5f).apply {
+                duration = 200
+                start()
+            }.also {
+                it.doOnEnd {
+                    visibility = View.GONE
+                    translationY = 0f
+                    alpha = 1f
+                    scaleX = 1f
+                    scaleY = 1f
+                }
             }
         }
     }
