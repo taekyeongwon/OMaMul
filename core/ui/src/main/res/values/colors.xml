@@ -18,4 +18,29 @@
     <color name="gradient_start">#4A90E2</color>
     <color name="gradient_middle">#81C1F0</color>
     <color name="gradient_end">#E3F2FD</color>
+
+    <!-- Material Design 3 색상 -->
+    <color name="md_theme_light_primary">#4A90E2</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer">#E3F2FD</color>
+    <color name="md_theme_light_onPrimaryContainer">#001D35</color>
+
+    <color name="md_theme_light_secondary">#2196F3</color>
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_secondaryContainer">#BBE0FF</color>
+    <color name="md_theme_light_onSecondaryContainer">#001B3D</color>
+
+    <color name="md_theme_light_tertiary">#81C1F0</color>
+    <color name="md_theme_light_onTertiary">#FFFFFF</color>
+    <color name="md_theme_light_tertiaryContainer">#D1E9FF</color>
+    <color name="md_theme_light_onTertiaryContainer">#001529</color>
+
+    <color name="md_theme_light_surface">#FEFBFF</color>
+    <color name="md_theme_light_onSurface">#1B1B1F</color>
+    <color name="md_theme_light_surfaceVariant">#E2E1E5</color>
+    <color name="md_theme_light_onSurfaceVariant">#46464A</color>
+
+    <!-- FAB 특별 색상 -->
+    <color name="fab_ripple_color">#264A90E2</color>
+    <color name="fab_pressed_overlay">#1A4A90E2</color>
 </resources>

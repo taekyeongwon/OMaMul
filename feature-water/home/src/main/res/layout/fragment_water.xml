@@ -10,144 +10,153 @@
             type="com.tkw.home.WaterViewModel" />
     </data>
 
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/gradient_water_background"
-        android:fillViewport="true">
+        android:padding="20dp"
+        android:clipToPadding="false">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <!-- 헤더 정보 카드 -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_header_info"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="20dp">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="12dp"
+            app:cardBackgroundColor="@color/md_theme_light_surface"
+            android:translationZ="2dp"
+            app:strokeWidth="0dp"
+            style="@style/Widget.Material3.CardView.Elevated"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- 헤더 정보 카드 -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_header_info"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@color/glass_surface"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                android:orientation="horizontal"
+                android:background="@drawable/glass_card_background"
+                android:padding="20dp"
+                android:gravity="center_vertical"
+                android:weightSum="2">
 
+                <!-- 목표량 정보 -->
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="20dp"
-                    android:gravity="center_vertical"
-                    android:weightSum="2">
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
 
-                    <!-- 목표량 정보 -->
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_target"
+                        android:layout_marginBottom="8dp"
+                        app:tint="@color/md_theme_light_primary" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
+                        android:text="@string/water_target"
+                        android:textSize="12sp"
+                        android:textColor="@color/md_theme_light_onSurfaceVariant"
+                        android:layout_marginBottom="4dp"
+                        android:textAppearance="?attr/textAppearanceLabelSmall" />
 
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_target"
-                            android:layout_marginBottom="8dp"
-                            app:tint="@color/water_blue" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/water_target"
-                            android:textSize="12sp"
-                            android:textColor="@color/water_blue_variant"
-                            android:layout_marginBottom="4dp" />
-
-                        <TextView
-                            android:id="@+id/tv_target_amount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="18sp"
-                            android:textColor="@color/water_blue"
-                            android:fontFamily="sans-serif-bold"
-                            tools:text="2000ml" />
-
-                    </LinearLayout>
-
-                    <!-- 구분선 -->
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="60dp"
-                        android:background="@color/water_light_blue"
-                        android:layout_marginHorizontal="16dp" />
-
-                    <!-- 다음 알람 정보 -->
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_target_amount"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_alarm"
-                            android:layout_marginBottom="8dp"
-                            app:tint="@color/water_blue" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/water_next_alarm"
-                            android:textSize="12sp"
-                            android:textColor="@color/water_blue_variant"
-                            android:layout_marginBottom="4dp" />
-
-                        <TextView
-                            android:id="@+id/tv_next_alarm"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="18sp"
-                            android:textColor="@color/water_blue"
-                            android:fontFamily="sans-serif-bold"
-                            tools:text="15:30" />
-
-                    </LinearLayout>
+                        android:textSize="18sp"
+                        android:textColor="@color/md_theme_light_primary"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        tools:text="2000ml" />
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+                <!-- 구분선 -->
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="60dp"
+                    android:background="@color/water_light_blue"
+                    android:layout_marginHorizontal="16dp" />
 
-            <!-- 메인 물 섭취량 시각화 카드 -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_water_visualization"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="12dp"
-                app:cardBackgroundColor="@color/glass_surface"
-                app:layout_constraintTop_toBottomOf="@id/card_header_info"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                <!-- 다음 알람 정보 -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_alarm"
+                        android:layout_marginBottom="8dp"
+                        app:tint="@color/md_theme_light_primary" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/water_next_alarm"
+                        android:textSize="12sp"
+                        android:textColor="@color/md_theme_light_onSurfaceVariant"
+                        android:layout_marginBottom="4dp"
+                        android:textAppearance="?attr/textAppearanceLabelSmall" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_next_alarm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textColor="@color/md_theme_light_primary"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        tools:text="15:30" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 메인 물 섭취량 시각화 카드 -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_water_visualization"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="80dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="16dp"
+            app:cardBackgroundColor="@color/md_theme_light_surface"
+            android:translationZ="4dp"
+            app:strokeWidth="0dp"
+            style="@style/Widget.Material3.CardView.Elevated"
+            app:layout_constraintTop_toBottomOf="@id/card_header_info"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:background="@drawable/glass_card_background"
-                    android:padding="24dp">
+                    android:padding="20dp">
 
                     <!-- 메인 물 컨테이너 -->
                     <FrameLayout
                         android:id="@+id/main_water_container"
-                        android:layout_width="280dp"
-                        android:layout_height="280dp"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
                         app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/tv_encouragement"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent">
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        android:layout_margin="8dp">
 
                         <!-- 물 웨이브 애니메이션 -->
                         <com.airbnb.lottie.LottieAnimationView
@@ -179,35 +188,35 @@
                                 android:gravity="center_vertical"
                                 android:layout_marginBottom="8dp">
 
-                                <TextView
+                                <com.google.android.material.textview.MaterialTextView
                                     android:id="@+id/tv_current_intake"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@{Integer.toString(viewModel.amountLiveData.totalIntakeByDate)}"
                                     android:textSize="42sp"
-                                    android:textColor="@color/water_blue"
-                                    android:fontFamily="sans-serif-bold"
+                                    android:textColor="@color/md_theme_light_primary"
+                                    android:textAppearance="?attr/textAppearanceDisplayLarge"
                                     tools:text="1250" />
 
-                                <TextView
+                                <com.google.android.material.textview.MaterialTextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/unit_ml_no_bracket"
                                     android:textSize="16sp"
-                                    android:textColor="@color/water_blue_variant"
+                                    android:textColor="@color/md_theme_light_onSurfaceVariant"
                                     android:layout_marginStart="4dp"
-                                    android:fontFamily="sans-serif-medium" />
+                                    android:textAppearance="?attr/textAppearanceTitleSmall" />
 
                             </LinearLayout>
 
                             <!-- 목표 대비 비율 -->
-                            <TextView
+                            <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/tv_goal_ratio"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="14sp"
-                                android:textColor="@color/water_blue_variant"
-                                android:fontFamily="sans-serif-medium"
+                                android:textColor="@color/md_theme_light_onSurfaceVariant"
+                                android:textAppearance="?attr/textAppearanceBodyMedium"
                                 tools:text="/ 2000ml (62%)" />
 
                         </LinearLayout>
@@ -215,161 +224,93 @@
                     </FrameLayout>
 
                     <!-- 격려 메시지 -->
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/tv_encouragement"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:textColor="@color/water_blue_variant"
+                        android:textSize="15sp"
+                        android:textColor="@color/md_theme_light_onSurfaceVariant"
                         android:gravity="center"
-                        android:fontFamily="sans-serif-medium"
-                        android:layout_marginTop="16dp"
-                        app:layout_constraintTop_toBottomOf="@id/main_water_container"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:layout_margin="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         tools:text="목표까지 750ml 남았어요! 💪" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <!-- 섭취량 조절 버튼들 -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_intake_controls"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@color/glass_surface"
-                app:layout_constraintTop_toBottomOf="@id/card_water_visualization"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+        <!-- FAB 메뉴 오버레이 (배경 클릭 감지용) -->
+        <View
+            android:id="@+id/fab_overlay"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/fab_pressed_overlay"
+            android:visibility="gone"
+            android:alpha="0"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="20dp"
-                    android:gravity="center"
-                    android:weightSum="2">
+        <!-- 설정 버튼 (기본 숨김) -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_cup_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="84dp"
+            android:layout_marginEnd="80dp"
+            android:src="@drawable/ic_settings"
+            android:visibility="gone"
+            android:alpha="0"
+            app:backgroundTint="@color/md_theme_light_secondaryContainer"
+            app:tint="@color/md_theme_light_onSecondaryContainer"
+            app:elevation="20dp"
+            android:translationZ="6dp"
+            app:fabSize="mini"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-                    <!-- 추가 버튼 -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_add_water"
-                        android:layout_width="0dp"
-                        android:layout_height="64dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="12dp"
-                        android:text="@string/water_add"
-                        android:textSize="16sp"
-                        android:textColor="@android:color/white"
-                        android:backgroundTint="@color/water_blue"
-                        app:cornerRadius="32dp"
-                        app:icon="@drawable/ic_add_drop"
-                        app:iconGravity="textStart"
-                        app:iconSize="24dp"
-                        app:iconTint="@android:color/white"
-                        android:elevation="4dp"
-                        style="@style/Widget.Material3.Button.Icon" />
+        <!-- 실행 취소 버튼 (기본 숨김) -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_undo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="84dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_remove_drop"
+            android:visibility="gone"
+            android:alpha="0"
+            app:backgroundTint="@color/md_theme_light_tertiaryContainer"
+            app:tint="@color/md_theme_light_onTertiaryContainer"
+            app:elevation="20dp"
+            android:translationZ="6dp"
+            app:fabSize="mini"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-                    <!-- 제거 버튼 -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_remove_water"
-                        android:layout_width="0dp"
-                        android:layout_height="64dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="12dp"
-                        android:text="@string/water_undo"
-                        android:textSize="16sp"
-                        android:textColor="@color/water_blue"
-                        android:backgroundTint="@android:color/white"
-                        app:cornerRadius="32dp"
-                        app:icon="@drawable/ic_remove_drop"
-                        app:iconGravity="textStart"
-                        app:iconSize="24dp"
-                        app:iconTint="@color/water_blue"
-                        app:strokeColor="@color/water_blue"
-                        app:strokeWidth="2dp"
-                        android:elevation="4dp"
-                        style="@style/Widget.Material3.Button.OutlinedButton.Icon" />
+        <!-- 메인 플로팅 컵 버튼 -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_current_cup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_cup"
+            app:backgroundTint="@color/md_theme_light_primary"
+            app:tint="@color/md_theme_light_onPrimary"
+            app:elevation="24dp"
+            android:translationZ="8dp"
+            app:fabSize="normal"
+            android:hapticFeedbackEnabled="true"
+            style="@style/Widget.Material3.FloatingActionButton.Primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- 컵 선택 카드 -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_cup_selection"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@color/glass_surface"
-                app:layout_constraintTop_toBottomOf="@id/card_intake_controls"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-
-                    <!-- 컵 선택 헤더 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="16dp">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_cup"
-                            android:layout_marginEnd="8dp"
-                            app:tint="@color/water_blue" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/water_cup_selection"
-                            android:textSize="18sp"
-                            android:textColor="@color/water_blue"
-                            android:fontFamily="sans-serif-bold" />
-
-                        <TextView
-                            android:id="@+id/btn_manage_cups"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/water_manage"
-                            android:textSize="14sp"
-                            android:textColor="@color/water_blue_variant"
-                            android:background="@drawable/manage_button_background"
-                            android:padding="8dp"
-                            android:clickable="true"
-                            android:focusable="true" />
-
-                    </LinearLayout>
-
-                    <!-- 컵 선택 ViewPager -->
-                    <androidx.viewpager2.widget.ViewPager2
-                        android:id="@+id/vp_cup_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="140dp"
-                        android:overScrollMode="never"
-                        android:clipToPadding="false"
-                        android:clipChildren="false" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

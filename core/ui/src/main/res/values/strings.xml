@@ -137,4 +137,5 @@
     <string name="water_goal_near">목표까지 %dml 남았어요! 조금만 더! 💪</string>
     <string name="water_goal_far">목표까지 %dml 남았어요! 화이팅! 🎯</string>
     <string name="water_goal_ratio">/ %dml (%d%%)</string>
+    <string name="water_selected_cup">선택된 컵</string>
 </resources>

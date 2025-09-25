@@ -1,14 +1,19 @@
 package com.tkw.home
 
 import android.animation.ValueAnimator
+import android.animation.ObjectAnimator
+import android.animation.AnimatorSet
 import android.graphics.PointF
 import android.os.Bundle
+import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
+import android.view.animation.DecelerateInterpolator
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.core.view.doOnLayout
@@ -17,6 +22,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.core.animation.doOnEnd
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.onNavDestinationSelected
 import com.airbnb.lottie.LottieProperty
@@ -26,7 +32,6 @@ import com.tkw.common.util.DateTimeUtils
 import com.tkw.common.util.DimenUtils
 import com.tkw.domain.model.DayOfWater
 import com.tkw.domain.model.Water
-import com.tkw.home.adapter.CupPagerAdapter
 import com.tkw.home.databinding.FragmentWaterBinding
 import com.tkw.home.dialog.WaterIntakeDialog
 import com.tkw.navigation.DeepLinkDestination
@@ -39,25 +44,12 @@ class WaterFragment: Fragment() {
     private var dataBinding by autoCleared<FragmentWaterBinding>()
     private val viewModel: WaterViewModel by activityViewModels()
     private var countObject: List<Water>? = null
-    private lateinit var cupPagerAdapter: CupPagerAdapter
-
     private var lottieHeight = 0f
     private var dayOfWater: DayOfWater? = null
+    private var isFabMenuOpen = false
+    private var currentCup: com.tkw.domain.model.Cup? = null
 
-    private val clickScrollListener: (Int) -> Unit = { position ->
-        scrollToPosition(position, true)
-    }
 
-    private val addListener = {
-//        val lastPosition = cupPagerAdapter.itemCount - 1
-//        if(dataBinding.vpCupList.currentItem == lastPosition) {
-//            //add버튼 선택했고, snap된 상태면 관리화면 이동
-            findNavController().deepLinkNavigateTo(requireContext(), DeepLinkDestination.Cup)
-//        } else {
-//            //snap되지 않은 상태면 맨 마지막으로 스크롤
-//            scrollToPosition(lastPosition, true)
-//        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,10 +68,6 @@ class WaterFragment: Fragment() {
         initListener()
     }
 
-    override fun onPause() {
-        super.onPause()
-        viewModel.cupPagerScrollPosition.value = dataBinding.vpCupList.currentItem
-    }
 
     private fun initBinding() {
         dataBinding.run {
@@ -90,33 +78,19 @@ class WaterFragment: Fragment() {
     }
 
     private fun initView() {
-        initViewPager()
         initItemMenu()
         initLottie()
+        initCurrentCup()
     }
 
-    /**
-     * PageTransformer
-     * 현재 선택된 page기준 position은 0
-     * offsetPx -> 카드 내부 ViewPager 영역에서 실제 아이템 크기 제외한 만큼의 길이
-     * 각 page 포지션 값에 -offsetPx 곱한 만큼 옮긴다.
-     */
-    private fun initViewPager() {
-        cupPagerAdapter = CupPagerAdapter(clickScrollListener)
-
-        val pageMarginPx = DimenUtils.dpToPx(requireContext(), 10)
-        val pagerWidth = DimenUtils.dpToPx(requireContext(), 100)
-        val screenWidth = resources.displayMetrics.widthPixels
-        val cardPadding = DimenUtils.dpToPx(requireContext(), 16) * 2 // card_cup_selector padding 좌우 16dp씩
-        val containerPadding = DimenUtils.dpToPx(requireContext(), 16) * 2 // fragment padding 좌우 16dp씩
-        val availableWidth = screenWidth - cardPadding - containerPadding
-        val offsetPx = availableWidth - pageMarginPx - pagerWidth
-
-        dataBinding.vpCupList.apply {
-            adapter = cupPagerAdapter
-            offscreenPageLimit = 3
-            setPageTransformer { page, position ->
-                page.translationX = position * -offsetPx
+    private fun initCurrentCup() {
+        // 현재 선택된 컵 정보를 표시하는 초기화 함수
+        lifecycleScope.launch {
+            viewModel.cupListLiveData.collect { cupList ->
+                if (cupList.isNotEmpty()) {
+                    currentCup = cupList.first() // 첫 번째 컵을 기본으로 사용
+                    // TODO: 컵 아이콘 또는 이미지 업데이트
+                }
             }
         }
     }
@@ -181,15 +155,6 @@ class WaterFragment: Fragment() {
             }
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.cupListLiveData.collect {
-                    cupPagerAdapter.submitList(it) {
-                        dataBinding.vpCupList.doOnLayout { snapSavedPosition() }
-                    }
-                }
-            }
-        }
 
         // 목표량 표시
         lifecycleScope.launch {
@@ -234,46 +199,209 @@ class WaterFragment: Fragment() {
         animator.start()
     }
 
-    /**
-     * PageTransformer에서 page 포지션 이동이 적용되어 있고,
-     * setCurrentItem(smoothFlag = false)를 호출하는 경우
-     * 항목이 2~3개 일 때 살짝 스크롤 하고 나면 뷰가 그려지는 현상 발생
-     */
-    private fun snapSavedPosition() {
-        if(cupPagerAdapter.itemCount > 0) {
-            val savedPosition = viewModel.cupPagerScrollPosition.value ?: 0
-            scrollToPosition(savedPosition, false)
-        }
-    }
-
-    private fun scrollToPosition(position: Int, smoothFlag: Boolean) {
-        dataBinding.vpCupList.setCurrentItem(position, smoothFlag)
-        if(!smoothFlag) {
-            dataBinding.vpCupList.run {
-                //PageTransformer의 transformPage 메서드가 제대로 발생하지 않았을 때 호출
-                post { requestTransform() }
-            }
-        }
-    }
 
     private fun initListener() {
-        dataBinding.btnAddWater.setOnClickListener {
-            val currentPosition = dataBinding.vpCupList.currentItem
-            if(currentPosition < cupPagerAdapter.itemCount) {
-                val currentCup = cupPagerAdapter.currentList[currentPosition]
-                viewModel.addCount(currentCup.cupAmount, DateTimeUtils.DateTime.getToday())
+        // 메인 플로팅 버튼 클릭 - 물 추가
+        dataBinding.fabCurrentCup.setOnClickListener {
+            // Pressed 애니메이션
+            animateFabPress()
+
+            currentCup?.let { cup ->
+                viewModel.addCount(cup.cupAmount, DateTimeUtils.DateTime.getToday())
             }
         }
 
-        dataBinding.btnRemoveWater.setOnClickListener {
-            if(!countObject.isNullOrEmpty()) {
+        // 메인 플로팅 버튼 롱클릭 - 메뉴 토글
+        dataBinding.fabCurrentCup.setOnLongClickListener {
+            // 진동 효과
+            it.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+            toggleFabMenu()
+            true
+        }
+
+        // 실행 취소 버튼
+        dataBinding.fabUndo.setOnClickListener {
+            if (!countObject.isNullOrEmpty()) {
                 viewModel.removeCount(countObject!!.last())
             }
+            toggleFabMenu()
         }
 
-        // 관리 버튼 클릭 이벤트
-        dataBinding.btnManageCups.setOnClickListener {
-            addListener()
+        // 설정 버튼
+        dataBinding.fabCupSettings.setOnClickListener {
+            findNavController().deepLinkNavigateTo(requireContext(), DeepLinkDestination.Cup)
+            toggleFabMenu()
+        }
+
+        // 배경 오버레이 클릭 - 메뉴 닫기
+        dataBinding.fabOverlay.setOnClickListener {
+            closeFabMenu()
+        }
+    }
+
+    private fun animateFabPress() {
+        val scaleUp = ObjectAnimator.ofFloat(dataBinding.fabCurrentCup, "scaleX", 1f, 1.1f)
+        val scaleUpY = ObjectAnimator.ofFloat(dataBinding.fabCurrentCup, "scaleY", 1f, 1.1f)
+        val scaleDown = ObjectAnimator.ofFloat(dataBinding.fabCurrentCup, "scaleX", 1.1f, 1f)
+        val scaleDownY = ObjectAnimator.ofFloat(dataBinding.fabCurrentCup, "scaleY", 1.1f, 1f)
+
+        val pressSet = AnimatorSet().apply {
+            playTogether(scaleUp, scaleUpY)
+            duration = 100
+        }
+
+        val releaseSet = AnimatorSet().apply {
+            playTogether(scaleDown, scaleDownY)
+            duration = 100
+        }
+
+        val fullAnimation = AnimatorSet().apply {
+            playSequentially(pressSet, releaseSet)
+        }
+
+        fullAnimation.start()
+
+        // 진동 효과
+        dataBinding.fabCurrentCup.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+    }
+
+    private fun toggleFabMenu() {
+        if (isFabMenuOpen) {
+            closeFabMenu()
+        } else {
+            openFabMenu()
+        }
+    }
+
+    private fun openFabMenu() {
+        isFabMenuOpen = true
+
+        // 배경 오버레이 표시
+        dataBinding.fabOverlay.apply {
+            visibility = View.VISIBLE
+            ObjectAnimator.ofFloat(this, "alpha", 0f, 0.5f).apply {
+                duration = 200
+                interpolator = DecelerateInterpolator()
+                start()
+            }
+        }
+
+        // 메인 FAB 상단으로 이동 (슬라이딩)
+        val mainFabSlide = ObjectAnimator.ofFloat(
+            dataBinding.fabCurrentCup,
+            "translationY",
+            0f,
+            -120f
+        ).apply {
+            duration = 300
+            interpolator = OvershootInterpolator(0.8f)
+        }
+
+        // 실행 취소 버튼 애니메이션 (메인 FAB 상단)
+        dataBinding.fabUndo.apply {
+            visibility = View.VISIBLE
+            ObjectAnimator.ofFloat(this, "alpha", 0f, 1f).apply {
+                duration = 200
+                startDelay = 100
+                interpolator = OvershootInterpolator()
+                start()
+            }
+            ObjectAnimator.ofFloat(this, "scaleX", 0.5f, 1f).apply {
+                duration = 300
+                startDelay = 100
+                interpolator = OvershootInterpolator()
+                start()
+            }
+            ObjectAnimator.ofFloat(this, "scaleY", 0.5f, 1f).apply {
+                duration = 300
+                startDelay = 100
+                interpolator = OvershootInterpolator()
+                start()
+            }
+        }
+
+        // 설정 버튼 애니메이션 (메인 FAB 좌측 상단)
+        dataBinding.fabCupSettings.apply {
+            visibility = View.VISIBLE
+            ObjectAnimator.ofFloat(this, "alpha", 0f, 1f).apply {
+                duration = 250
+                startDelay = 150
+                interpolator = OvershootInterpolator()
+                start()
+            }
+            ObjectAnimator.ofFloat(this, "scaleX", 0.5f, 1f).apply {
+                duration = 350
+                startDelay = 150
+                interpolator = OvershootInterpolator()
+                start()
+            }
+            ObjectAnimator.ofFloat(this, "scaleY", 0.5f, 1f).apply {
+                duration = 350
+                startDelay = 150
+                interpolator = OvershootInterpolator()
+                start()
+            }
+        }
+
+        mainFabSlide.start()
+    }
+
+    private fun closeFabMenu() {
+        isFabMenuOpen = false
+
+        // 배경 오버레이 숨김
+        ObjectAnimator.ofFloat(dataBinding.fabOverlay, "alpha", 0.5f, 0f).apply {
+            duration = 200
+            interpolator = DecelerateInterpolator()
+            doOnEnd { dataBinding.fabOverlay.visibility = View.GONE }
+            start()
+        }
+
+        // 메인 FAB 원래 위치로 복귀 (슬라이딩)
+        ObjectAnimator.ofFloat(dataBinding.fabCurrentCup, "translationY", -120f, 0f).apply {
+            duration = 300
+            interpolator = OvershootInterpolator(0.8f)
+            start()
+        }
+
+        // 실행 취소 버튼 애니메이션
+        ObjectAnimator.ofFloat(dataBinding.fabUndo, "alpha", 1f, 0f).apply {
+            duration = 150
+            start()
+        }
+        ObjectAnimator.ofFloat(dataBinding.fabUndo, "scaleX", 1f, 0.5f).apply {
+            duration = 150
+            start()
+        }
+        ObjectAnimator.ofFloat(dataBinding.fabUndo, "scaleY", 1f, 0.5f).apply {
+            duration = 150
+            start()
+        }.also {
+            it.doOnEnd {
+                dataBinding.fabUndo.visibility = View.GONE
+                dataBinding.fabUndo.scaleX = 1f
+                dataBinding.fabUndo.scaleY = 1f
+            }
+        }
+
+        // 설정 버튼 애니메이션
+        ObjectAnimator.ofFloat(dataBinding.fabCupSettings, "alpha", 1f, 0f).apply {
+            duration = 150
+            start()
+        }
+        ObjectAnimator.ofFloat(dataBinding.fabCupSettings, "scaleX", 1f, 0.5f).apply {
+            duration = 150
+            start()
+        }
+        ObjectAnimator.ofFloat(dataBinding.fabCupSettings, "scaleY", 1f, 0.5f).apply {
+            duration = 150
+            start()
+        }.also {
+            it.doOnEnd {
+                dataBinding.fabCupSettings.visibility = View.GONE
+                dataBinding.fabCupSettings.scaleX = 1f
+                dataBinding.fabCupSettings.scaleY = 1f
+            }
         }
     }
 }
