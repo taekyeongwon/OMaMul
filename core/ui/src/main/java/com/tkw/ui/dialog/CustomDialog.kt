@@ -32,7 +32,6 @@ open class CustomDialog: DialogFragment(), DialogResize by DialogResizeImpl() {
         dataBinding.llParent.addView(view)
         if(isOneButton) {
             dataBinding.btnCancel.visibility = View.GONE
-            dataBinding.divider.visibility = View.GONE
         }
     }
 

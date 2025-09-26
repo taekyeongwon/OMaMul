@@ -1,22 +1,87 @@
 <resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.OMaMul" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="bottomSheetDialogTheme">@style/BottomDialogStyle</item>
+        <!-- 물 앱 컨셉 색상 적용 -->
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_onPrimaryContainer</item>
+
+        <item name="colorSecondary">@color/md_theme_light_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_light_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_onSecondaryContainer</item>
+
+        <item name="colorTertiary">@color/md_theme_light_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_light_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_onTertiaryContainer</item>
+
+        <item name="colorSurface">@color/md_theme_light_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_onSurfaceVariant</item>
+
+        <!-- 커스텀 다이얼로그 테마 -->
+        <item name="bottomSheetDialogTheme">@style/WaterBottomDialogStyle</item>
+
+        <!-- 상태바 투명 설정 -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="Theme.OMaMul" parent="Base.Theme.OMaMul" />
 
-    <style name="BottomDialogStyle" parent="Theme.Material3.DayNight.BottomSheetDialog">
+    <!-- 물 앱 컨셉 바텀시트 다이얼로그 스타일 -->
+    <style name="WaterBottomDialogStyle" parent="Theme.Material3.DayNight.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowSoftInputMode">adjustResize</item>
-        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+        <item name="bottomSheetStyle">@style/WaterAppModalStyle</item>
     </style>
 
-    <style name="AppModalStyle"
-        parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@drawable/top_round_rect</item>
+    <style name="WaterAppModalStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/glass_card_background</item>
+        <item name="android:elevation">8dp</item>
+    </style>
+
+    <!-- 물 앱 컨셉 카드 스타일 -->
+    <style name="WaterCardStyle">
+        <item name="android:background">@drawable/glass_card_background</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <!-- 물 앱 컨셉 버튼 스타일 -->
+    <style name="WaterButtonStyle" parent="Widget.Material3.Button">
+        <item name="android:backgroundTint">@color/water_blue</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:elevation">2dp</item>
+        <item name="rippleColor">@color/fab_ripple_color</item>
+    </style>
+
+    <!-- 물 앱 컨셉 텍스트 스타일 -->
+    <style name="WaterTitleTextStyle">
+        <item name="android:textColor">@color/water_blue</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="WaterBodyTextStyle">
+        <item name="android:textColor">@color/md_theme_light_onSurface</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <!-- 물 앱 컨셉 FAB 스타일 -->
+    <style name="WaterFabStyle" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="backgroundTint">@color/water_blue</item>
+        <item name="tint">@color/white</item>
+        <item name="android:elevation">6dp</item>
+        <item name="pressedTranslationZ">8dp</item>
+        <item name="rippleColor">@color/fab_ripple_color</item>
     </style>
 </resources>

@@ -40,16 +40,16 @@ abstract class CustomBottomDialog<T: ViewBinding>: BottomSheetDialogFragment(), 
             0 -> {
                 dataBinding.btnSave.visibility = View.GONE
                 dataBinding.btnCancel.visibility = View.GONE
-                dataBinding.divider.visibility = View.GONE
+                dataBinding.btnContainer.visibility = View.GONE
             }
             1 -> {
                 dataBinding.btnCancel.visibility = View.GONE
-                dataBinding.divider.visibility = View.GONE
+                dataBinding.btnContainer.visibility = View.VISIBLE
             }
             else -> {
                 dataBinding.btnSave.visibility = View.VISIBLE
                 dataBinding.btnCancel.visibility = View.VISIBLE
-                dataBinding.divider.visibility = View.VISIBLE
+                dataBinding.btnContainer.visibility = View.VISIBLE
             }
         }
     }

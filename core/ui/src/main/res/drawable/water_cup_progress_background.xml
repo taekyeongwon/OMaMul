@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 컵 외곽선 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+            <stroke
+                android:width="3dp"
+                android:color="@color/water_blue" />
+            <corners
+                android:bottomLeftRadius="24dp"
+                android:bottomRightRadius="24dp"
+                android:topLeftRadius="8dp"
+                android:topRightRadius="8dp" />
+        </shape>
+    </item>
+
+    <!-- 물 채우기 영역 -->
+    <item android:bottom="3dp" android:left="3dp" android:right="3dp" android:top="3dp">
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="@color/water_light_blue"
+                android:centerColor="@color/water_blue"
+                android:endColor="@color/water_blue_variant"
+                android:angle="90"
+                android:type="linear" />
+            <corners
+                android:bottomLeftRadius="21dp"
+                android:bottomRightRadius="21dp"
+                android:topLeftRadius="5dp"
+                android:topRightRadius="5dp" />
+        </shape>
+    </item>
+
+    <!-- 물 표면 효과 -->
+    <item android:top="20dp" android:left="6dp" android:right="6dp" android:bottom="100dp">
+        <shape android:shape="oval">
+            <gradient
+                android:startColor="#40FFFFFF"
+                android:endColor="@android:color/transparent"
+                android:type="radial"
+                android:centerX="0.5"
+                android:centerY="0.1"
+                android:gradientRadius="60dp" />
+        </shape>
+    </item>
+</layer-list>

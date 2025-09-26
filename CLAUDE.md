@@ -306,10 +306,35 @@ buildTypes {
 # 3. 전체 빌드 테스트
 ./gradlew assembleDevDebug
 
-# 4. 깃 커밋
+# 4. 깃 커밋 (작업 완료 후 반드시 수행)
 git add .
-git commit -m "feature-water:home 디자인 변경 - 물 앱 컨셉 적용"
+git commit -m "$(cat <<'EOF'
+feature-water:home 물 앱 컨셉 적용
+
+## 주요 변경사항
+- 작업 내용 요약
+- 디자인 개선 사항
+- 기능 추가/수정 사항
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+EOF
+)"
 ```
+
+#### Git 커밋 가이드라인
+각 모듈 작업 완료 시 반드시 커밋을 수행하여 진행 상황을 추적하고 안정성을 확보합니다:
+
+**커밋 타이밍:**
+- 각 모듈 작업 완료 후
+- 빌드 테스트 성공 확인 후
+- 다음 모듈 작업 시작 전
+
+**커밋 메시지 형식:**
+- 제목: 모듈명과 주요 작업 내용
+- 본문: 상세 변경사항을 카테고리별로 정리
+- 푸터: Claude Code 생성 표시
 
 ### Phase 2: LiveData → StateFlow 마이그레이션
 
