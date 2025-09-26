@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Water App Bar Theme -->
+    <style name="Water.AppBar.Theme" parent="Theme.Material3.DayNight">
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
+        <item name="colorSurface">@android:color/transparent</item>
+        <item name="colorOnSurface">@color/md_theme_light_primary</item>
+        <item name="android:textColorPrimary">@color/md_theme_light_primary</item>
+    </style>
+
+</resources>

@@ -96,25 +96,7 @@ class WaterFragment: Fragment() {
     }
 
     private fun initItemMenu() {
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(object: MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.toolbar_menu, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when(menuItem.itemId) {
-                    R.id.waterIntakeDialog -> {
-                        val dialog = WaterIntakeDialog()
-                        dialog.show(childFragmentManager, dialog.tag)
-                        true
-                    }
-                    else -> {
-                        menuItem.onNavDestinationSelected(findNavController())
-                    }
-                }
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        // 더보기 메뉴를 제거하고 목표/알람 영역 클릭으로 기능 재배치
     }
 
     private fun initLottie() {
@@ -242,6 +224,17 @@ class WaterFragment: Fragment() {
         // 배경 오버레이 클릭 - 메뉴 닫기
         dataBinding.fabOverlay.setOnClickListener {
             closeFabMenu()
+        }
+
+        // 목표량 영역 클릭 - 물 섭취량 설정 다이얼로그
+        dataBinding.cardHeaderInfo.findViewById<View>(R.id.tv_target_amount).setOnClickListener {
+            val dialog = WaterIntakeDialog()
+            dialog.show(childFragmentManager, dialog.tag)
+        }
+
+        // 다음 알람 영역 클릭 - 알람 설정 화면으로 이동
+        dataBinding.cardHeaderInfo.findViewById<View>(R.id.tv_next_alarm).setOnClickListener {
+            findNavController().deepLinkNavigateTo(requireContext(), DeepLinkDestination.Alarm)
         }
     }
 

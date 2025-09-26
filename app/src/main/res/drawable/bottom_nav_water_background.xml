@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- 글래스모피즘 배경 -->
+    <gradient
+        android:startColor="#E6FFFFFF"
+        android:centerColor="#F0FFFFFF"
+        android:endColor="#F5FFFFFF"
+        android:angle="90" />
+
+    <!-- 상단에만 둥근 모서리 -->
+    <corners
+        android:topLeftRadius="20dp"
+        android:topRightRadius="20dp"
+        android:bottomLeftRadius="0dp"
+        android:bottomRightRadius="0dp" />
+
+    <!-- 세밀한 테두리 -->
+    <stroke
+        android:width="1dp"
+        android:color="#1A4A90E2" />
+
+</shape>

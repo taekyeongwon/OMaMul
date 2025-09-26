@@ -133,8 +133,8 @@
     <string name="water_manage">Manage</string>
     <string name="water_alarm_off">Alarm Off</string>
     <string name="water_goal_achieved">Goal achieved! Well done! 🎉</string>
-    <string name="water_goal_close">Only %dml left to goal! Almost there! 🔥</string>
-    <string name="water_goal_near">Only %dml left to goal! Just a little more! 💪</string>
-    <string name="water_goal_far">%dml left to goal! Keep going! 🎯</string>
+    <string name="water_goal_close">Only %dml left to goal!\nAlmost there! 🔥</string>
+    <string name="water_goal_near">Only %dml left to goal!\nJust a little more! 💪</string>
+    <string name="water_goal_far">%dml left to goal!\nKeep going! 🎯</string>
     <string name="water_goal_ratio">/ %dml (%d%%)</string>
 </resources>

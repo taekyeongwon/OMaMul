@@ -11,7 +11,13 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/toolbar_water_background"
+        android:elevation="8dp"
+        android:translationZ="4dp"
         app:titleCentered="true"
+        app:titleTextColor="@color/md_theme_light_primary"
+        app:navigationIconTint="@color/md_theme_light_primary"
+        android:theme="@style/Water.AppBar.Theme"
         app:layout_constraintTop_toTopOf="parent"/>
     <androidx.fragment.app.FragmentContainerView
         android:layout_width="match_parent"
@@ -26,9 +32,14 @@
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@drawable/bottom_nav_water_background"
+        android:elevation="16dp"
+        android:translationZ="8dp"
         app:menu="@menu/nav_bottom"
-        app:itemBackground="@color/white"
+        app:itemBackground="@android:color/transparent"
+        app:itemIconTint="@color/bottom_nav_item_selector"
+        app:itemTextColor="@color/bottom_nav_item_selector"
+        app:itemRippleColor="@color/water_light_blue"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
