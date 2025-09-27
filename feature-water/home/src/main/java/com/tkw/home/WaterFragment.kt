@@ -36,6 +36,7 @@ import com.tkw.home.databinding.FragmentWaterBinding
 import com.tkw.home.dialog.WaterIntakeDialog
 import com.tkw.navigation.DeepLinkDestination
 import com.tkw.navigation.deepLinkNavigateTo
+import com.tkw.ui.view.CupClipOutlineProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -89,7 +90,6 @@ class WaterFragment: Fragment() {
             viewModel.cupListLiveData.collect { cupList ->
                 if (cupList.isNotEmpty()) {
                     currentCup = cupList.first() // 첫 번째 컵을 기본으로 사용
-                    // TODO: 컵 아이콘 또는 이미지 업데이트
                 }
             }
         }
@@ -105,7 +105,11 @@ class WaterFragment: Fragment() {
 //        }
         val displayMetrics = resources.displayMetrics
         val density = displayMetrics.density
-        lottieHeight = density * 200    //애니메이션 픽셀 높이 값 : 200
+        lottieHeight = density * 200    // 새로운 큰 컵 크기에 맞춘 애니메이션 높이 (200dp)
+
+        // 원형 클립 처리
+        dataBinding.lotti.outlineProvider = CupClipOutlineProvider()
+        dataBinding.lotti.clipToOutline = true
     }
 
     private fun initObserver() {
@@ -227,13 +231,13 @@ class WaterFragment: Fragment() {
         }
 
         // 목표량 영역 클릭 - 물 섭취량 설정 다이얼로그
-        dataBinding.cardHeaderInfo.findViewById<View>(R.id.tv_target_amount).setOnClickListener {
+        dataBinding.layoutGoalArea.setOnClickListener {
             val dialog = WaterIntakeDialog()
             dialog.show(childFragmentManager, dialog.tag)
         }
 
         // 다음 알람 영역 클릭 - 알람 설정 화면으로 이동
-        dataBinding.cardHeaderInfo.findViewById<View>(R.id.tv_next_alarm).setOnClickListener {
+        dataBinding.layoutNextAlarmArea.setOnClickListener {
             findNavController().deepLinkNavigateTo(requireContext(), DeepLinkDestination.Alarm)
         }
     }

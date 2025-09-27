@@ -43,11 +43,15 @@
 
                 <!-- 목표량 정보 -->
                 <LinearLayout
+                    android:id="@+id/layout_goal_area"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:layout_width="24dp"
@@ -85,11 +89,15 @@
 
                 <!-- 다음 알람 정보 -->
                 <LinearLayout
+                    android:id="@+id/layout_next_alarm_area"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:layout_width="24dp"
@@ -155,15 +163,15 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_margin="8dp"
-                    android:background="@drawable/cup_shape_outline"
                     android:padding="12dp">
 
-                    <!-- 물 웨이브 애니메이션 -->
+                    <!-- 물 웨이브 애니메이션 (구 형태) -->
                     <com.airbnb.lottie.LottieAnimationView
                         android:id="@+id/lotti"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="240dp"
+                        android:layout_height="240dp"
                         android:layout_gravity="center"
+                        android:alpha="0.8"
                         app:lottie_autoPlay="true"
                         app:lottie_fileName="water_wave.json"
                         app:lottie_loop="true"
@@ -178,7 +186,7 @@
                         android:gravity="center"
                         android:background="@drawable/modern_info_background"
                         android:padding="24dp"
-                        android:elevation="4dp">
+                        android:elevation="6dp">
 
                         <!-- 현재 섭취량 -->
                         <LinearLayout
@@ -291,7 +299,7 @@
                 android:id="@+id/fab_undo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_remove_drop"
+                android:src="@drawable/ic_undo"
                 app:backgroundTint="@color/md_theme_light_tertiaryContainer"
                 app:tint="@color/md_theme_light_onTertiaryContainer"
                 app:elevation="8dp"

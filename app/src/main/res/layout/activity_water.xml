@@ -11,13 +11,14 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/toolbar_water_background"
-        android:elevation="8dp"
-        android:translationZ="4dp"
+        android:background="@android:color/transparent"
+        android:elevation="0dp"
+        android:translationZ="0dp"
         app:titleCentered="true"
         app:titleTextColor="@color/md_theme_light_primary"
         app:navigationIconTint="@color/md_theme_light_primary"
         android:theme="@style/Water.AppBar.Theme"
+        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"/>
     <androidx.fragment.app.FragmentContainerView
         android:layout_width="match_parent"
