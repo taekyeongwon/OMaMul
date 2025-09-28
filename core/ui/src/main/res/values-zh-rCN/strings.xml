@@ -137,4 +137,12 @@
     <string name="water_goal_near">距离目标还有%dml！再加油一点！ 💪</string>
     <string name="water_goal_far">距离目标还有%dml！加油！ 🎯</string>
     <string name="water_goal_ratio">/ %dml (%d%%)</string>
+
+    <!-- 컵 관련 추가 문구들 -->
+    <string name="cup_list_subtitle">管理杯子并追踪饮水量</string>
+    <string name="empty_cup_description">还没有注册的杯子。\n添加一个新杯子开始吧！</string>
+    <string name="cup_image_placeholder">选择杯子图片\n（可选）</string>
+    <string name="cup_selected_badge">已选择</string>
+    <string name="current_selected_cup">当前选择的杯子</string>
+    <string name="cup_manage_description">添加杯子并更改顺序</string>
 </resources>

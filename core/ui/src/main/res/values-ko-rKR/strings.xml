@@ -137,4 +137,12 @@
     <string name="water_goal_near">목표까지 %dml 남았어요!\n조금만 더! 💪</string>
     <string name="water_goal_far">목표까지 %dml 남았어요!\n화이팅! 🎯</string>
     <string name="water_goal_ratio">/ %dml (%d%%)</string>
+
+    <!-- 컵 관련 추가 문구들 -->
+    <string name="cup_list_subtitle">컵을 관리하고 물 섭취량을 추적하세요</string>
+    <string name="empty_cup_description">아직 등록된 컵이 없습니다.\n새 컵을 추가해보세요!</string>
+    <string name="cup_image_placeholder">컵 이미지를 선택하세요\n(선택사항)</string>
+    <string name="cup_selected_badge">선택됨</string>
+    <string name="current_selected_cup">현재 선택된 컵</string>
+    <string name="cup_manage_description">컵을 추가하고 순서를 변경하세요</string>
 </resources>

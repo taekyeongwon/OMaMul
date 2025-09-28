@@ -4,15 +4,23 @@ import com.tkw.data.local.mapper.CupMapper
 import com.tkw.database.CupDao
 import com.tkw.database.model.CupEntity
 import com.tkw.domain.CupRepository
+import com.tkw.domain.PrefDataRepository
 import com.tkw.domain.model.Cup
 import com.tkw.domain.model.CupList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class CupRepositoryImpl @Inject constructor(private val cupDao: CupDao): CupRepository {
-    override fun getCupById(id: String): Cup? = cupDao.getCup(id)?.let {
-        CupMapper.cupToModel(it)
+class CupRepositoryImpl @Inject constructor(
+    private val cupDao: CupDao,
+    private val prefDataRepository: PrefDataRepository
+): CupRepository {
+    override fun getCupById(id: String): Flow<Cup?> = flow {
+        val cup = cupDao.getCup(id)?.let {
+            CupMapper.cupToModel(it)
+        }
+        emit(cup)
     }
 
     override fun getCupList(): Flow<CupList> {
@@ -56,4 +64,13 @@ class CupRepositoryImpl @Inject constructor(private val cupDao: CupDao): CupRepo
     }
 
     override suspend fun deleteCup(cupId: String) = cupDao.deleteCup(cupId)
+
+    override fun getCurrentSelectedCupId(): Flow<String?> =
+        prefDataRepository.fetchCurrentSelectedCupId().map { cupId ->
+            if (cupId.isNullOrEmpty()) null else cupId
+        }
+
+    override suspend fun setCurrentSelectedCupId(cupId: String?) {
+        prefDataRepository.saveCurrentSelectedCupId(cupId)
+    }
 }

@@ -87,10 +87,12 @@ class WaterFragment: Fragment() {
     private fun initCurrentCup() {
         // 현재 선택된 컵 정보를 표시하는 초기화 함수
         lifecycleScope.launch {
-            viewModel.cupListLiveData.collect { cupList ->
-                if (cupList.isNotEmpty()) {
-                    currentCup = cupList.first() // 첫 번째 컵을 기본으로 사용
-                }
+            // 현재 선택된 컵이 없으면 첫 번째 컵을 기본으로 설정
+            viewModel.initCurrentCupIfNeeded()
+
+            // 현재 선택된 컵 flow 관찰
+            viewModel.currentSelectedCupFlow.collect { selectedCup ->
+                currentCup = selectedCup
             }
         }
     }
@@ -141,8 +143,29 @@ class WaterFragment: Fragment() {
             }
         }
 
+        // 목표량 실시간 반영을 위한 설정 변경 감지
+        lifecycleScope.launch {
+            viewModel.amountSaveEvent.collect {
+                // 목표량 변경 시 UI 즉시 업데이트
+                val intakeGoal = viewModel.getIntakeAmount()
+                dataBinding.tvTargetAmount.text = "${intakeGoal}${getString(com.tkw.ui.R.string.unit_ml_no_bracket)}"
 
-        // 목표량 표시
+                // 현재 물 섭취량으로 다시 계산하여 애니메이션과 표시 정보 업데이트
+                dayOfWater?.let { currentData ->
+                    val currentIntake = currentData.getTotalIntakeByDate()
+                    val currentAmount = minOf(currentIntake / intakeGoal.toFloat(), 1.0f)
+                    val dy = lottieHeight * (1 - currentAmount)
+
+                    // 애니메이션 즉시 업데이트
+                    startWaterAnimation(dataBinding.lotti.translationY, dy)
+
+                    // 표시 정보 업데이트
+                    updateWaterDisplay(currentIntake, intakeGoal)
+                }
+            }
+        }
+
+        // 목표량 초기 표시
         lifecycleScope.launch {
             val intakeGoal = viewModel.getIntakeAmount()
             dataBinding.tvTargetAmount.text = "${intakeGoal}${getString(com.tkw.ui.R.string.unit_ml_no_bracket)}"

@@ -34,6 +34,10 @@ class CupViewModel
             it.cupList  //Flow<CupListEntity> -> Flow<List<Cup>>으로 최신값 매핑
         }.asLiveData()
 
+    // 현재 선택된 컵 ID 정보
+    val currentSelectedCupIdLiveData: LiveData<String?> =
+        cupRepository.getCurrentSelectedCupId().asLiveData()
+
     //cup create fragment에서 관찰할 변수
     val cupNameLiveData = MutableLiveData(params.cupName)
     val cupAmountLiveData = MutableLiveData(params.cupAmount)
@@ -100,5 +104,12 @@ class CupViewModel
 
     fun setModifyMode(flag: Boolean) {
         _modifyMode.value = flag
+    }
+
+    // 현재 선택된 컵 설정
+    fun setCurrentSelectedCup(cupId: String?) {
+        launch {
+            cupRepository.setCurrentSelectedCupId(cupId)
+        }
     }
 }

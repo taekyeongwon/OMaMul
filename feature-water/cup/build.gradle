@@ -66,6 +66,9 @@ dependencies {
     //by activityViewModels
     implementation libs.androidx.fragment.ktx
 
+    //lottie
+    implementation libs.lottie
+
     //hilt
     implementation libs.hilt
     // KAPT(Kotlin Annotation Processing Tools), 어노테이션 사용, annotationProcessor의 대체

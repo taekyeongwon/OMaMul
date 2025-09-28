@@ -43,8 +43,10 @@ class WaterIntakeDialog : CustomDialog() {
     }
 
     private fun initObserver() {
-        viewModel.amountSaveEvent.observe(viewLifecycleOwner) {
-            dismiss()
+        lifecycleScope.launch {
+            viewModel.amountSaveEvent.collect {
+                dismiss()
+            }
         }
     }
 

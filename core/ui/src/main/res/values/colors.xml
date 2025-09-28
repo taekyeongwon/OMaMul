@@ -43,4 +43,14 @@
     <!-- FAB 특별 색상 -->
     <color name="fab_ripple_color">#264A90E2</color>
     <color name="fab_pressed_overlay">#1A4A90E2</color>
+
+    <!-- 추가 UI 색상들 -->
+    <color name="water_blue_light">#E3F2FD</color>
+    <color name="water_item_background">#F8FDFF</color>
+    <color name="water_accent_light">#E8F4FD</color>
+    <color name="text_secondary">#6C757D</color>
+
+    <!-- Material Design 3 에러 색상 -->
+    <color name="md_theme_light_error">#DC3545</color>
+    <color name="md_theme_light_onError">#FFFFFF</color>
 </resources>

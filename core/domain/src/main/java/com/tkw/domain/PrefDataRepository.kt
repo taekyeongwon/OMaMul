@@ -17,4 +17,7 @@ interface PrefDataRepository {
 
     suspend fun saveLastSync(time: Long)
     fun fetchLastSync(): Flow<Long>
+
+    suspend fun saveCurrentSelectedCupId(cupId: String?)
+    fun fetchCurrentSelectedCupId(): Flow<String?>
 }

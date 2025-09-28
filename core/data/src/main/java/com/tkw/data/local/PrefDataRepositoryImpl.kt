@@ -40,17 +40,25 @@ class PrefDataRepositoryImpl
 
     override fun fetchLastSync(): Flow<Long> = dataSource.fetchData(LAST_SYNC_KEY, DEFAULT_LAST_SYNC)
 
+    override suspend fun saveCurrentSelectedCupId(cupId: String?) {
+        dataSource.saveData(CURRENT_SELECTED_CUP_ID_KEY, cupId ?: "")
+    }
+
+    override fun fetchCurrentSelectedCupId(): Flow<String?> = dataSource.fetchData(CURRENT_SELECTED_CUP_ID_KEY, DEFAULT_CURRENT_SELECTED_CUP_ID)
+
     companion object {
         private val LANG_KEY = stringPreferencesKey("language")
         private val REACHED_GOAL_KEY = booleanPreferencesKey("reached_goal")
         private val INIT_FLAG_KEY = booleanPreferencesKey("init_flag")
         private val ALARM_ENABLED_KEY = booleanPreferencesKey("alarm_enabled")
         private val LAST_SYNC_KEY = longPreferencesKey("last_sync")
+        private val CURRENT_SELECTED_CUP_ID_KEY = stringPreferencesKey("current_selected_cup_id")
 
         private const val DEFAULT_LANG = "ko"
         private const val DEFAULT_REACHED_GOAL = false
         private const val DEFAULT_INIT_FLAG = false
         private const val DEFAULT_ALARM_ENABLED = false
         private const val DEFAULT_LAST_SYNC = -1L
+        private const val DEFAULT_CURRENT_SELECTED_CUP_ID = ""
     }
 }

@@ -5,7 +5,7 @@ import com.tkw.domain.model.CupList
 import kotlinx.coroutines.flow.Flow
 
 interface CupRepository {
-    fun getCupById(id: String): Cup?
+    fun getCupById(id: String): Flow<Cup?>
 
     fun getCupList(): Flow<CupList>
 
@@ -18,4 +18,9 @@ interface CupRepository {
     suspend fun updateAll(list: List<Cup>)
 
     suspend fun deleteCup(cupId: String)
+
+    // 현재 선택된 컵 관리
+    fun getCurrentSelectedCupId(): Flow<String?>
+
+    suspend fun setCurrentSelectedCupId(cupId: String?)
 }

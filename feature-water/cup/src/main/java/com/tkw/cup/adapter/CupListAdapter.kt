@@ -17,7 +17,9 @@ class CupListAdapter(
     private val editListener: (Int) -> Unit = {},
     private val deleteCheckListener: (Int, Boolean) -> Unit = {_, _ -> },
     private val longClickListener: (Int) -> Unit = {},
-    private val dragListener: OnItemDrag<Cup>? = null
+    private val dragListener: OnItemDrag<Cup>? = null,
+    private val cupSelectListener: (Cup) -> Unit = {},
+    private var currentSelectedCupId: String? = null
 ): ListAdapter<Cup, RecyclerView.ViewHolder>(CupDiffCallback()),
     ItemMoveListener {
 
@@ -31,7 +33,7 @@ class CupListAdapter(
                     parent,
                     false
                 )
-                CupListViewHolder(binding, editListener, longClickListener)
+                CupListViewHolder(binding, editListener, longClickListener, cupSelectListener)
             }
             C.CupListViewType.DRAG -> {
                 val binding = ItemCupListEditBinding.inflate(
@@ -46,7 +48,11 @@ class CupListAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when(holder) {
-            is CupListViewHolder -> holder.onBind(getItem(position))
+            is CupListViewHolder -> {
+                val cup = getItem(position)
+                val isSelected = cup.cupId == currentSelectedCupId
+                holder.onBind(cup, isSelected)
+            }
             is CupEditViewHolder -> holder.onBind(getItem(position))
         }
     }
@@ -73,14 +79,31 @@ class CupListAdapter(
         notifyDataSetChanged()
     }
 
+    // 현재 선택된 컵 ID 업데이트용 메서드 (프래그먼트에서 호출)
+    fun updateSelectedCupId(selectedCupId: String?) {
+        val oldSelectedCupId = currentSelectedCupId
+        currentSelectedCupId = selectedCupId
+
+        // 이전 선택된 아이템과 새로 선택된 아이템만 업데이트
+        if (oldSelectedCupId != selectedCupId) {
+            notifyDataSetChanged()
+        }
+    }
+
     class CupListViewHolder(
         private val binding: ItemCupListBinding,
         editListener: (Int) -> Unit,
-        longClickListener: (Int) -> Unit
+        longClickListener: (Int) -> Unit,
+        cupSelectListener: (Cup) -> Unit
     ): RecyclerView.ViewHolder(binding.root) {
+        private var currentCup: Cup? = null
+
         init {
             with(binding) {
                 ibEdit.setOnClickListener { editListener(adapterPosition) }
+                root.setOnClickListener {
+                    currentCup?.let { cupSelectListener(it) }
+                }
                 root.setOnLongClickListener {
                     longClickListener(adapterPosition)
                     return@setOnLongClickListener true
@@ -88,8 +111,11 @@ class CupListAdapter(
             }
         }
 
-        fun onBind(data: Cup) {
+        fun onBind(data: Cup, isSelected: Boolean = false) {
+            currentCup = data
             binding.cup = data
+            binding.isSelected = isSelected
+            binding.executePendingBindings()
         }
     }
 
@@ -116,6 +142,9 @@ class CupListAdapter(
 
         fun onBind(data: Cup) {
             binding.cup = data
+            // 체크박스 상태를 명시적으로 설정
+            binding.cbDelete.isChecked = data.isChecked
+            binding.executePendingBindings()
         }
     }
 }

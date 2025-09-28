@@ -18,9 +18,12 @@ import com.tkw.domain.model.DayOfWater
 import com.tkw.domain.model.Water
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapLatest
@@ -65,12 +68,35 @@ class WaterViewModel
             listOf()
         )
 
+    //현재 선택된 컵 ID
+    val currentSelectedCupIdFlow: StateFlow<String?> =
+        cupRepository.getCurrentSelectedCupId().stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            null
+        )
+
+    //현재 선택된 컵 정보
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val currentSelectedCupFlow: StateFlow<Cup?> =
+        currentSelectedCupIdFlow.flatMapLatest { cupId ->
+            if (cupId != null) {
+                cupRepository.getCupById(cupId)
+            } else {
+                MutableStateFlow(null)
+            }
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            null
+        )
+
     //컵 관리 화면 이동 후 돌아왔을 때 위치 저장용
     val cupPagerScrollPosition = MutableLiveData(0)
 
     //섭취량 변경 완료 여부
-    private val _amountSaveEvent = SingleLiveEvent<Unit>()
-    val amountSaveEvent: LiveData<Unit> = _amountSaveEvent
+    private val _amountSaveEvent = MutableSharedFlow<Unit>(replay = 0, extraBufferCapacity = 1)
+    val amountSaveEvent: SharedFlow<Unit> = _amountSaveEvent.asSharedFlow()
 
     //date값 변경에 따라 flow에서 새로운 DayOfWater 객체 collect하기 위한 메서드
     fun setToday() {
@@ -95,7 +121,26 @@ class WaterViewModel
     fun saveIntakeAmount(amount: Int) {
         launch {
             settingRepository.saveIntake(amount)
-            _amountSaveEvent.call()
+            _amountSaveEvent.tryEmit(Unit)
+        }
+    }
+
+    // 현재 선택된 컵 설정
+    fun setCurrentSelectedCup(cupId: String?) {
+        launch {
+            cupRepository.setCurrentSelectedCupId(cupId)
+        }
+    }
+
+    // 컵 리스트가 비어있지 않은 경우 첫 번째 컵을 기본 선택으로 설정
+    fun initCurrentCupIfNeeded() {
+        launch {
+            val currentSelected = currentSelectedCupIdFlow.first()
+            val cupList = cupListLiveData.first()
+
+            if (currentSelected == null && cupList.isNotEmpty()) {
+                setCurrentSelectedCup(cupList.first().cupId)
+            }
         }
     }
 }

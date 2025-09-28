@@ -9,6 +9,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.tkw.common.autoCleared
@@ -31,6 +32,7 @@ class CupManageFragment: Fragment() {
             }
         }
     )
+
     private lateinit var cupListAdapter: CupListAdapter
     private lateinit var itemTouchHelper: ItemTouchHelper
 
@@ -49,7 +51,12 @@ class CupManageFragment: Fragment() {
     }
 
     private val adapterLongClickListener: (Int) -> Unit = { position ->
+        // 기존 체크 상태 모두 초기화
+        clearChecked()
+        // 선택된 항목만 체크 상태로 설정
         cupListAdapter.currentList[position].isChecked = true
+        // 어댑터 업데이트
+        cupListAdapter.notifyDataSetChanged()
         viewModel.setModifyMode(true)
     }
 
@@ -120,7 +127,12 @@ class CupManageFragment: Fragment() {
             editListener = adapterEditListener,
             deleteCheckListener = deleteCheckListener,
             longClickListener = adapterLongClickListener,
-            dragListener = dragListener
+            dragListener = dragListener,
+            cupSelectListener = { cup ->
+                // 현재 선택된 컵으로 설정
+                viewModel.setCurrentSelectedCup(cup.cupId)
+            },
+            currentSelectedCupId = viewModel.currentSelectedCupIdLiveData.value
         )
         cupListAdapter.registerAdapterDataObserver(positionObserver)
 
@@ -144,6 +156,11 @@ class CupManageFragment: Fragment() {
             }
         }
 
+        // 현재 선택된 컵 ID 변경 시 어댑터 업데이트
+        viewModel.currentSelectedCupIdLiveData.observe(viewLifecycleOwner) { selectedCupId ->
+            cupListAdapter.updateSelectedCupId(selectedCupId)
+        }
+
         viewModel.modifyMode.observe(viewLifecycleOwner) {
             modeChanged(it)
         }
@@ -161,10 +178,6 @@ class CupManageFragment: Fragment() {
             dataBinding.rvCupList.visibility = View.VISIBLE
             dataBinding.tvEmptyCup.visibility = View.GONE
         }
-        dataBinding.btnReorder.visibility =
-            if(cupListAdapter.itemCount > 1 &&
-                viewModel.modifyMode.value == false) View.VISIBLE
-            else View.GONE
     }
 
     private fun modeChanged(isModified: Boolean) {
@@ -172,13 +185,9 @@ class CupManageFragment: Fragment() {
         if(isModified) {
             setDeleteBtnVisibility()
             dataBinding.btnNext.visibility = View.GONE
-            dataBinding.btnReorder.visibility = View.GONE
         } else {
             dataBinding.btnDelete.visibility = View.GONE
             dataBinding.btnNext.visibility = View.VISIBLE
-            dataBinding.btnReorder.visibility =
-                if(cupListAdapter.itemCount > 1) View.VISIBLE
-                else View.GONE
         }
     }
 
@@ -198,9 +207,6 @@ class CupManageFragment: Fragment() {
                 .actionCupManageFragmentToCupCreateFragment(null))
         }
 
-        dataBinding.btnReorder.setOnClickListener {
-            viewModel.setModifyMode(true)
-        }
 
         dataBinding.btnDelete.setOnClickListener {
             cupListAdapter.currentList

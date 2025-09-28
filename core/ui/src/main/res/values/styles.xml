@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- WaterApp 버튼 스타일들 -->
+    <style name="WaterApp.Button.Primary" parent="Widget.Material3.Button">
+        <item name="android:backgroundTint">@color/water_blue</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="rippleColor">@color/fab_ripple_color</item>
+    </style>
+
+    <style name="WaterApp.Button.Outline" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">@color/water_blue</item>
+        <item name="strokeColor">@color/water_blue</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="rippleColor">@color/fab_ripple_color</item>
+    </style>
+
+    <style name="WaterApp.Button.Danger" parent="Widget.Material3.Button">
+        <item name="android:backgroundTint">@color/md_theme_light_error</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- TextInputLayout 스타일 -->
+    <style name="WaterApp.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/water_blue</item>
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="hintTextColor">@color/water_blue_variant</item>
+    </style>
+
+</resources>
