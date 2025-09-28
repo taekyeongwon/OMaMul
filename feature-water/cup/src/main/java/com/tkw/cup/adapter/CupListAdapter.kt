@@ -122,7 +122,7 @@ class CupListAdapter(
     @SuppressLint("ClickableViewAccessibility")
     class CupEditViewHolder(
         private val binding: ItemCupListEditBinding,
-        deleteCheckListener: (Int, Boolean) -> Unit,
+        private val deleteCheckListener: (Int, Boolean) -> Unit,
         dragListener: OnItemDrag<Cup>?
     ): RecyclerView.ViewHolder(binding.root) {
         init {
@@ -133,17 +133,30 @@ class CupListAdapter(
                     }
                     true
                 }
-                cbDelete.setOnCheckedChangeListener { buttonView, isChecked ->
-                    deleteCheckListener(adapterPosition, isChecked)
+                root.setOnClickListener {
+                    if (adapterPosition != RecyclerView.NO_POSITION) {
+                        cbDelete.isChecked = !cbDelete.isChecked
+                    }
                 }
-                root.setOnClickListener { cbDelete.isChecked = !cbDelete.isChecked }
+                // 체크박스 영역 클릭도 처리
+                layoutCheckbox.setOnClickListener {
+                    if (adapterPosition != RecyclerView.NO_POSITION) {
+                        cbDelete.isChecked = !cbDelete.isChecked
+                    }
+                }
             }
         }
 
         fun onBind(data: Cup) {
             binding.cup = data
-            // 체크박스 상태를 명시적으로 설정
+            // 리스너를 임시로 제거하고 상태 설정 후 다시 연결
+            binding.cbDelete.setOnCheckedChangeListener(null)
             binding.cbDelete.isChecked = data.isChecked
+            binding.cbDelete.setOnCheckedChangeListener { _, isChecked ->
+                if (adapterPosition != RecyclerView.NO_POSITION) {
+                    deleteCheckListener(adapterPosition, isChecked)
+                }
+            }
             binding.executePendingBindings()
         }
     }

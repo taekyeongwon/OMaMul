@@ -25,18 +25,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:background="?attr/selectableItemBackground">
+            android:background="@drawable/glass_card_background">
 
             <!-- 체크박스 -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_checkbox"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_checkbox"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="2dp"
-                app:strokeColor="@color/water_blue_variant"
-                app:cardBackgroundColor="@{cup.isChecked ? @color/water_blue : @android:color/transparent}"
+                android:background="@{cup.isChecked ? @drawable/checkbox_selected_bg : @drawable/checkbox_unselected_bg}"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
@@ -45,10 +41,13 @@
                     android:id="@+id/iv_check"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_gravity="center"
                     android:src="@drawable/ic_check"
                     android:visibility="@{cup.isChecked ? android.view.View.VISIBLE : android.view.View.GONE}"
-                    app:tint="@android:color/white"/>
+                    app:tint="@android:color/white"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
                 <CheckBox
                     android:id="@+id/cb_delete"
@@ -58,30 +57,30 @@
                     android:button="@null"
                     android:checked="@{cup.isChecked}"
                     android:visibility="invisible"/>
-            </com.google.android.material.card.MaterialCardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- 컵 아이콘 -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_cup_icon"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_cup_icon"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="12dp"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="0dp"
-                app:cardBackgroundColor="@color/water_light_blue"
+                android:background="@drawable/cup_icon_background"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/card_checkbox">
+                app:layout_constraintStart_toEndOf="@id/layout_checkbox">
 
                 <ImageView
                     android:id="@+id/iv_cup"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:layout_gravity="center"
                     android:src="@drawable/ic_cup"
-                    app:tint="@color/water_blue"/>
-            </com.google.android.material.card.MaterialCardView>
+                    app:tint="@color/water_blue"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- 컵 정보 -->
             <LinearLayout
@@ -93,8 +92,8 @@
                 android:layout_marginEnd="8dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/card_cup_icon"
-                app:layout_constraintEnd_toStartOf="@id/card_drag_handle">
+                app:layout_constraintStart_toEndOf="@id/layout_cup_icon"
+                app:layout_constraintEnd_toStartOf="@id/layout_drag_handle">
 
                 <TextView
                     android:id="@+id/tv_alias"
@@ -135,14 +134,11 @@
             </LinearLayout>
 
             <!-- 드래그 핸들 -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_drag_handle"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_drag_handle"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="0dp"
-                app:cardBackgroundColor="@color/water_light_blue"
+                android:background="@drawable/drag_handle_background"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -156,7 +152,7 @@
                     android:scaleType="centerInside"
                     android:padding="6dp"
                     app:tint="@color/water_blue"/>
-            </com.google.android.material.card.MaterialCardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
