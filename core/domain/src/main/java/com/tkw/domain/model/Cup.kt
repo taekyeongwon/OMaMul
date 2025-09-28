@@ -6,14 +6,13 @@ data class Cup(
     var cupId: String = "",
     var cupName: String = "",
     var cupAmount: Int = DEFAULT_CUP_AMOUNT,
+    var isChecked: Boolean = false
 ): Serializable {
 
     var createMode: Boolean = true
-    var isChecked: Boolean = false
 
-    fun copy(): Cup = Cup(cupId, cupName, cupAmount).apply {
+    fun copy(): Cup = Cup(cupId, cupName, cupAmount, isChecked).apply {
         createMode = this@Cup.createMode
-        isChecked = this@Cup.isChecked
     }
 
     companion object {

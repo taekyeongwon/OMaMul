@@ -46,17 +46,24 @@ class CupManageFragment: Fragment() {
     }
 
     private val deleteCheckListener: (Int, Boolean) -> Unit = { position, isChecked ->
-        cupListAdapter.currentList[position].isChecked = isChecked
-        setDeleteBtnVisibility()
+        val updatedList = cupListAdapter.currentList.mapIndexed { index, cup ->
+            if (index == position) {
+                cup.copy(isChecked = isChecked)
+            } else cup
+        }
+        cupListAdapter.submitList(updatedList) {
+            setDeleteBtnVisibility()
+        }
     }
 
     private val adapterLongClickListener: (Int) -> Unit = { position ->
-        // 기존 체크 상태 모두 초기화
-        clearChecked()
-        // 선택된 항목만 체크 상태로 설정
-        cupListAdapter.currentList[position].isChecked = true
-        // 어댑터 업데이트
-        cupListAdapter.notifyDataSetChanged()
+        // 롱클릭 시 해당 항목만 체크 상태로 변경 (다중 선택 지원)
+        val updatedList = cupListAdapter.currentList.mapIndexed { index, cup ->
+            if (index == position) {
+                cup.copy(isChecked = true)
+            } else cup
+        }
+        cupListAdapter.submitList(updatedList)
         viewModel.setModifyMode(true)
     }
 
@@ -218,9 +225,9 @@ class CupManageFragment: Fragment() {
     }
 
     private fun clearChecked() {
-        cupListAdapter.currentList
-            .forEach {
-                it.isChecked = false
-            }
+        val updatedList = cupListAdapter.currentList.map { cup ->
+            cup.copy(isChecked = false)
+        }
+        cupListAdapter.submitList(updatedList)
     }
 }

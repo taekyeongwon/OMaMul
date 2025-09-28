@@ -125,6 +125,8 @@ class CupListAdapter(
         private val deleteCheckListener: (Int, Boolean) -> Unit,
         dragListener: OnItemDrag<Cup>?
     ): RecyclerView.ViewHolder(binding.root) {
+        private var isUpdatingProgrammatically = false
+
         init {
             with(binding) {
                 ibDrag.setOnTouchListener { v, event ->
@@ -144,19 +146,22 @@ class CupListAdapter(
                         cbDelete.isChecked = !cbDelete.isChecked
                     }
                 }
+
+                // 체크박스 상태 변경 리스너 (플래그로 무한 루프 방지)
+                cbDelete.setOnCheckedChangeListener { _, isChecked ->
+                    if (adapterPosition != RecyclerView.NO_POSITION && !isUpdatingProgrammatically) {
+                        deleteCheckListener(adapterPosition, isChecked)
+                    }
+                }
             }
         }
 
         fun onBind(data: Cup) {
             binding.cup = data
-            // 리스너를 임시로 제거하고 상태 설정 후 다시 연결
-            binding.cbDelete.setOnCheckedChangeListener(null)
+            // 플래그를 사용하여 프로그래매틱 변경임을 표시
+            isUpdatingProgrammatically = true
             binding.cbDelete.isChecked = data.isChecked
-            binding.cbDelete.setOnCheckedChangeListener { _, isChecked ->
-                if (adapterPosition != RecyclerView.NO_POSITION) {
-                    deleteCheckListener(adapterPosition, isChecked)
-                }
-            }
+            isUpdatingProgrammatically = false
             binding.executePendingBindings()
         }
     }
