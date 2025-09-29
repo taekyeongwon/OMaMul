@@ -14,8 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false">
-
-        <!-- 날짜 선택 영역 -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_slide"
             android:layout_width="match_parent"
@@ -27,7 +25,6 @@
             android:padding="8dp"
             android:clipToPadding="false"
             app:layout_constraintTop_toTopOf="parent">
-
             <ImageButton
                 android:id="@+id/ib_day_left"
                 android:layout_width="56dp"
@@ -40,10 +37,9 @@
                 app:tint="@color/water_blue"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/tv_date"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/tv_date"
                 app:layout_constraintHorizontal_chainStyle="packed"/>
-
             <TextView
                 android:id="@+id/tv_date"
                 android:layout_width="wrap_content"
@@ -54,10 +50,9 @@
                 android:textColor="@color/md_theme_light_primary"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/ib_day_left"
-                app:layout_constraintEnd_toStartOf="@id/ib_day_right"
+                app:layout_constraintLeft_toRightOf="@id/ib_day_left"
+                app:layout_constraintRight_toLeftOf="@id/ib_day_right"
                 tools:text="yyyy-MM-dd"/>
-
             <ImageButton
                 android:id="@+id/ib_day_right"
                 android:layout_width="56dp"
@@ -70,12 +65,10 @@
                 app:tint="@color/water_blue"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/tv_date"
-                app:layout_constraintEnd_toEndOf="parent"/>
-
+                app:layout_constraintLeft_toRightOf="@id/tv_date"
+                app:layout_constraintRight_toRightOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- CoordinatorLayout 기반 스크롤 영역 -->
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -85,65 +78,54 @@
             android:clipToPadding="false"
             app:layout_constraintTop_toBottomOf="@id/cl_slide"
             app:layout_constraintBottom_toBottomOf="parent">
-
             <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:clipToPadding="false">
-
+                android:background="@android:color/transparent">
                 <com.google.android.material.appbar.CollapsingToolbarLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_scrollFlags="scroll|snap"
-                    android:layout_marginBottom="12dp"
-                    android:clipToPadding="false">
-
+                    android:layout_marginBottom="12dp">
                     <com.tkw.ui.chart.CustomLineChart
                         android:id="@+id/bar_chart"
                         android:layout_width="match_parent"
                         android:layout_height="250dp"
                         android:background="@drawable/glass_card_background"
                         android:elevation="6dp"
-                        android:translationZ="3dp"/>
-
+                        android:translationZ="3dp" />
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp">
-
                         <TextView
                             android:id="@+id/tv_total_amount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="18sp"
+                            android:textSize="16sp"
                             android:textStyle="bold"
                             android:textColor="@color/md_theme_light_primary"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintLeft_toLeftOf="parent"/>
-
                         <TextView
                             android:id="@+id/tv_goal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
-                            android:textColor="@color/md_theme_light_onSurfaceVariant"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/md_theme_light_secondary"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintRight_toRightOf="parent"/>
-
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </com.google.android.material.appbar.CollapsingToolbarLayout>
-
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/glass_card_background"
-                    android:elevation="6dp"
-                    android:translationZ="3dp"
-                    android:padding="16dp"
-                    android:clipToPadding="false">
-
+                    android:elevation="4dp"
+                    android:translationZ="2dp"
+                    android:padding="12dp">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -151,26 +133,28 @@
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="@color/md_theme_light_primary"
+                        android:layout_marginLeft="8dp"
                         android:gravity="center_vertical"
+                        android:drawableStart="@drawable/ic_water_drop"
+                        android:drawablePadding="8dp"
+                        android:drawableTint="@color/water_blue"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent" />
-
                     <ImageButton
                         android:id="@+id/ib_day_add"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
                         android:src="@drawable/ic_add_water"
                         android:background="@drawable/transparent_circle_background"
-                        android:padding="12dp"
+                        android:padding="16dp"
                         android:elevation="4dp"
                         android:translationZ="2dp"
+                        app:tint="@color/water_blue"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"/>
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
             </com.google.android.material.appbar.AppBarLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -180,19 +164,16 @@
                 android:background="@drawable/glass_card_background"
                 android:elevation="6dp"
                 android:translationZ="3dp"
-                android:padding="16dp"
                 android:clipToPadding="false"
+                android:padding="8dp"
                 android:visibility="gone"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/nv_empty_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:clipToPadding="false"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -207,11 +188,9 @@
                     android:drawableTop="@drawable/ic_water_drop"
                     android:drawablePadding="16dp"
                     android:drawableTint="@color/water_light_blue"
-                    android:layout_margin="16dp"/>
-
+                    />
             </androidx.core.widget.NestedScrollView>
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

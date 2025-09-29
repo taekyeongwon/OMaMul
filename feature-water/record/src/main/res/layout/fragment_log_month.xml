@@ -12,19 +12,29 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:padding="16dp">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_slide"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/glass_card_background"
+            android:elevation="4dp"
+            android:translationZ="2dp"
+            android:padding="8dp"
+            android:clipToPadding="false"
             app:layout_constraintTop_toTopOf="parent">
             <ImageButton
                 android:id="@+id/ib_day_left"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/sort_left"
-                android:background="@android:color/transparent"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/ic_chevron_left"
+                android:background="@drawable/transparent_circle_background"
                 android:padding="16dp"
+                android:elevation="4dp"
+                android:translationZ="2dp"
+                app:tint="@color/water_blue"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -35,6 +45,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 monthDays="@{viewModel.monthStateFlow}"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/md_theme_light_primary"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/ib_day_left"
@@ -42,11 +55,14 @@
                 tools:text="yyyy-MM"/>
             <ImageButton
                 android:id="@+id/ib_day_right"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/sort_right"
-                android:background="@android:color/transparent"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/ic_chevron_right"
+                android:background="@drawable/transparent_circle_background"
                 android:padding="16dp"
+                android:elevation="4dp"
+                android:translationZ="2dp"
+                app:tint="@color/water_blue"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/tv_date"
@@ -56,23 +72,34 @@
             android:id="@+id/bar_chart"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/glass_card_background"
+            android:elevation="6dp"
+            android:translationZ="3dp"
             app:layout_constraintTop_toBottomOf="@id/cl_slide"
             app:layout_constraintBottom_toBottomOf="parent"/>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="16dp"
             android:padding="16dp"
             app:layout_constraintTop_toTopOf="@id/bar_chart">
             <TextView
                 android:id="@+id/tv_total_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/md_theme_light_primary"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"/>
             <TextView
                 android:id="@+id/tv_goal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/md_theme_light_secondary"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintRight_toRightOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
