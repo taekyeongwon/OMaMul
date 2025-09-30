@@ -313,7 +313,16 @@ buildTypes {
 
 **진행률: 6/8 완료**
 
-**6. feature-water:setting** - 물 관련 설정
+**✅ 6. feature-water:setting** - 물 관련 설정 (완료)
+- fragment_setting.xml 그라데이션 배경 및 섹션 스타일 통일
+- setting_info.xml MaterialCardView 적용, 계정 정보 및 통계 디자인 개선
+- setting_water.xml MaterialCardView 적용, 구분선 추가, right_arrow 아이콘 적용
+- setting_alarm.xml MaterialCardView 적용, 알람 설정 세부 항목 디자인 개선
+- setting_etc.xml MaterialCardView 적용, 언어 설정 디자인 개선
+- dialog_language.xml 터치 영역 확보 및 텍스트 스타일 개선
+
+**진행률: 7/8 완료**
+
 **7. feature-common:init** - 온보딩 화면
 **8. feature-common:setting** - 앱 설정
 
