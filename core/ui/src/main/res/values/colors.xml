@@ -48,7 +48,13 @@
     <color name="water_blue_light">#E3F2FD</color>
     <color name="water_item_background">#F8FDFF</color>
     <color name="water_accent_light">#E8F4FD</color>
+
+    <!-- 텍스트 색상 -->
+    <color name="text_primary">#1B1B1F</color>
     <color name="text_secondary">#6C757D</color>
+
+    <!-- 구분선 색상 -->
+    <color name="divider_light">#E0E0E0</color>
 
     <!-- Material Design 3 에러 색상 -->
     <color name="md_theme_light_error">#DC3545</color>

@@ -188,6 +188,21 @@
     - `ripple_effect.xml`: 터치 효과 (물결 효과)
     - `radio_selector.xml`: 라디오 버튼 선택자
   - 없는 drawable을 참조하면 빌드 에러가 발생하므로 반드시 사전 생성 필요
+- **Color 리소스 규칙**:
+  - **필수**: XML 레이아웃에서 참조하는 모든 색상은 **반드시 colors.xml에 정의되어야 함**
+  - 레이아웃 작성 시 색상이 없으면 즉시 `core:ui/src/main/res/values/colors.xml`에 추가
+  - 하드코딩된 색상 값(예: #FFFFFF) 사용 금지, 반드시 color 리소스로 관리
+  - **주요 공통 색상**:
+    - `water_blue` (#4A90E2): 메인 블루 색상
+    - `water_blue_variant` (#2196F3): 블루 변형 색상
+    - `water_light_blue` (#E3F2FD): 라이트 블루
+    - `glass_surface` (#E6FFFFFF): 글래스모피즘 표면 (90% 불투명도)
+    - `text_primary` (#1B1B1F): 주요 텍스트 색상
+    - `text_secondary` (#6C757D): 보조 텍스트 색상
+    - `divider_light` (#E0E0E0): 구분선 색상
+    - `white` (#FFFFFFFF): 흰색
+  - 그라데이션 색상: `gradient_start`, `gradient_middle`, `gradient_end`
+  - 없는 색상을 참조하면 빌드 에러가 발생하므로 반드시 사전 정의 필요
 
 ### 다국어 번역 규칙
 
