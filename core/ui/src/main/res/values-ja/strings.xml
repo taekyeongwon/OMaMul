@@ -45,7 +45,10 @@
     <string name="cup_alias">カップ名</string>
     <string name="cup_alias_hint">カップの名前を設定してください。</string>
     <string name="cup_amount">カップ容量</string>
+    <string name="cup_unit">単位</string>
     <string name="cup_image">カップ画像</string>
+    <string name="unit_cup">カップ</string>
+    <string name="unit_fl_oz">fl oz</string>
     <string name="add">追加</string>
     <string name="modify">修正</string>
     <string name="empty_day_list">水分摂取記録がありません。</string>

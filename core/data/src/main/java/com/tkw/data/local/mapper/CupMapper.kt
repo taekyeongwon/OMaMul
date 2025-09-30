@@ -4,6 +4,7 @@ import com.tkw.database.model.CupEntity
 import com.tkw.database.model.CupListEntity
 import com.tkw.domain.model.Cup
 import com.tkw.domain.model.CupList
+import com.tkw.domain.model.UnitType
 
 object CupMapper {
     fun cupToEntity(cup: Cup): CupEntity {
@@ -11,14 +12,16 @@ object CupMapper {
             this.cupId = cup.cupId
             this.cupName = cup.cupName
             this.cupAmount = cup.cupAmount
+            this.cupUnit = cup.cupUnit.name
         }
     }
 
     fun cupToModel(entity: CupEntity): Cup {
         return Cup(
-            entity.cupId,
-            entity.cupName,
-            entity.cupAmount
+            cupId = entity.cupId,
+            cupName = entity.cupName,
+            cupAmount = entity.cupAmount,
+            cupUnit = UnitType.fromString(entity.cupUnit)
         )
     }
 

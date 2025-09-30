@@ -45,7 +45,10 @@
     <string name="cup_alias">Cup name</string>
     <string name="cup_alias_hint">Please set the cup name.</string>
     <string name="cup_amount">Cup capacity</string>
+    <string name="cup_unit">Unit</string>
     <string name="cup_image">Cup image</string>
+    <string name="unit_cup">cup</string>
+    <string name="unit_fl_oz">fl oz</string>
     <string name="add">Add</string>
     <string name="modify">Modify</string>
     <string name="empty_day_list">No water intake records.</string>

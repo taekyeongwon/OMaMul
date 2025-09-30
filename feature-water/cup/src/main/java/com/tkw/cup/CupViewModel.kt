@@ -41,6 +41,7 @@ class CupViewModel
     //cup create fragment에서 관찰할 변수
     val cupNameLiveData = MutableLiveData(params.cupName)
     val cupAmountLiveData = MutableLiveData(params.cupAmount)
+    val cupUnitLiveData = MutableLiveData(params.cupUnit)
     val buttonName = MutableLiveData<String>()
 
     private val _nextEvent = SingleLiveEvent<Unit>()
@@ -69,7 +70,8 @@ class CupViewModel
         launch {
             val cupName = cupNameLiveData.value!!
             val cupAmount = cupAmountLiveData.value!!
-            cupRepository.insertCup(cupName, cupAmount)
+            val cupUnit = cupUnitLiveData.value!!
+            cupRepository.insertCup(cupName, cupAmount, cupUnit)
             _nextEvent.call()
         }
     }
@@ -82,7 +84,8 @@ class CupViewModel
         launch {
             val cupName = cupNameLiveData.value!!
             val cupAmount = cupAmountLiveData.value!!
-            cupRepository.updateCup(params.cupId, cupName, cupAmount)
+            val cupUnit = cupUnitLiveData.value!!
+            cupRepository.updateCup(params.cupId, cupName, cupAmount, cupUnit)
             _nextEvent.call()
         }
     }

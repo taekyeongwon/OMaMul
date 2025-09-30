@@ -45,7 +45,10 @@
     <string name="cup_alias">杯子名称</string>
     <string name="cup_alias_hint">请设置杯子名称。</string>
     <string name="cup_amount">杯子容量</string>
+    <string name="cup_unit">单位</string>
     <string name="cup_image">杯子图片</string>
+    <string name="unit_cup">杯</string>
+    <string name="unit_fl_oz">fl oz</string>
     <string name="add">添加</string>
     <string name="modify">修改</string>
     <string name="empty_day_list">没有饮水记录。</string>

@@ -45,7 +45,10 @@
     <string name="cup_alias">컵 이름</string>
     <string name="cup_alias_hint">컵 이름을 설정해주세요.</string>
     <string name="cup_amount">컵 용량</string>
+    <string name="cup_unit">단위</string>
     <string name="cup_image">컵 이미지</string>
+    <string name="unit_cup">컵</string>
+    <string name="unit_fl_oz">fl oz</string>
     <string name="add">추가하기</string>
     <string name="modify">수정하기</string>
     <string name="empty_day_list">물 섭취 기록이 없습니다.</string>

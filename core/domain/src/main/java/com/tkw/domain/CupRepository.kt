@@ -2,6 +2,7 @@ package com.tkw.domain
 
 import com.tkw.domain.model.Cup
 import com.tkw.domain.model.CupList
+import com.tkw.domain.model.UnitType
 import kotlinx.coroutines.flow.Flow
 
 interface CupRepository {
@@ -11,9 +12,9 @@ interface CupRepository {
 
     suspend fun createList()
 
-    suspend fun insertCup(cupName: String, cupAmount: Int)
+    suspend fun insertCup(cupName: String, cupAmount: Int, cupUnit: UnitType = UnitType.ML)
 
-    suspend fun updateCup(cupId: String, cupName: String, cupAmount: Int)
+    suspend fun updateCup(cupId: String, cupName: String, cupAmount: Int, cupUnit: UnitType = UnitType.ML)
 
     suspend fun updateAll(list: List<Cup>)
 

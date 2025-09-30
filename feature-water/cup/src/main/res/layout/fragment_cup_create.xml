@@ -148,6 +148,96 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- 단위 선택 카드 -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_cup_unit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="@color/glass_surface"
+                app:layout_constraintTop_toBottomOf="@id/card_cup_amount">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/glass_card_background"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_settings"
+                            android:layout_marginEnd="8dp"
+                            app:tint="@color/water_blue"/>
+
+                        <TextView
+                            android:id="@+id/tv_cup_unit_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cup_unit"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/water_blue"/>
+                    </LinearLayout>
+
+                    <RadioGroup
+                        android:id="@+id/rg_unit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/rb_ml"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/unit_ml_no_bracket"
+                            android:textSize="16sp"
+                            android:checked="true"
+                            android:buttonTint="@color/water_blue"/>
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/rb_liter"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/unit_l_no_bracket"
+                            android:textSize="16sp"
+                            android:buttonTint="@color/water_blue"/>
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/rb_cup"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/unit_cup"
+                            android:textSize="16sp"
+                            android:buttonTint="@color/water_blue"/>
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/rb_fl_oz"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/unit_fl_oz"
+                            android:textSize="16sp"
+                            android:buttonTint="@color/water_blue"/>
+                    </RadioGroup>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
 
             <!-- 하단 버튼 -->
             <com.google.android.material.button.MaterialButton
@@ -160,7 +250,7 @@
                 android:textSize="16sp"
                 app:icon="@drawable/ic_check"
                 app:iconGravity="textStart"
-                app:layout_constraintTop_toBottomOf="@id/card_cup_amount"/>
+                app:layout_constraintTop_toBottomOf="@id/card_cup_unit"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

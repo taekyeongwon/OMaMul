@@ -7,6 +7,7 @@ import com.tkw.domain.CupRepository
 import com.tkw.domain.PrefDataRepository
 import com.tkw.domain.model.Cup
 import com.tkw.domain.model.CupList
+import com.tkw.domain.model.UnitType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -39,19 +40,21 @@ class CupRepositoryImpl @Inject constructor(
 
     override suspend fun createList() = cupDao.createList()
 
-    override suspend fun insertCup(cupName: String, cupAmount: Int) {
+    override suspend fun insertCup(cupName: String, cupAmount: Int, cupUnit: UnitType) {
         val cup = CupEntity().apply {
             this.cupName = cupName
             this.cupAmount = cupAmount
+            this.cupUnit = cupUnit.name
         }
         cupDao.insertCup(cup)
     }
 
-    override suspend fun updateCup(cupId: String, cupName: String, cupAmount: Int) {
+    override suspend fun updateCup(cupId: String, cupName: String, cupAmount: Int, cupUnit: UnitType) {
         val target = CupEntity().apply {
             this.cupId = cupId
             this.cupName = cupName
             this.cupAmount = cupAmount
+            this.cupUnit = cupUnit.name
         }
         cupDao.updateCup(target)
     }

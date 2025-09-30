@@ -12,6 +12,7 @@ import androidx.navigation.fragment.navArgs
 import com.tkw.common.autoCleared
 import com.tkw.cup.databinding.FragmentCupCreateBinding
 import com.tkw.domain.model.Cup
+import com.tkw.domain.model.UnitType
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.withCreationCallback
 
@@ -77,5 +78,28 @@ class CupCreateFragment: Fragment() {
             if(isCreate) viewModel.insertCup()
             else viewModel.updateCup()
         }
+
+        // 단위 선택 리스너
+        dataBinding.rgUnit.setOnCheckedChangeListener { _, checkedId ->
+            val selectedUnit = when (checkedId) {
+                R.id.rb_ml -> UnitType.ML
+                R.id.rb_liter -> UnitType.L
+                R.id.rb_cup -> UnitType.CUP
+                R.id.rb_fl_oz -> UnitType.FL_OZ
+                else -> UnitType.ML
+            }
+            viewModel.cupUnitLiveData.value = selectedUnit
+        }
+
+        // 초기 선택 상태 설정
+        val currentUnit = viewModel.cupUnitLiveData.value ?: UnitType.ML
+        dataBinding.rgUnit.check(
+            when (currentUnit) {
+                UnitType.ML -> R.id.rb_ml
+                UnitType.L -> R.id.rb_liter
+                UnitType.CUP -> R.id.rb_cup
+                UnitType.FL_OZ -> R.id.rb_fl_oz
+            }
+        )
     }
 }
