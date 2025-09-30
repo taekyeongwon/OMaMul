@@ -163,7 +163,15 @@
 - **언어**: 모든 코드 주석, 문서, 의사소통은 한국어로 작성
 - **답변**: 답변은 간결하게 최대 3-5문장으로 답변
 - **ViewModel 인터페이스 보존**: 각 모듈별로 사용하고 있던 ViewModel의 모든 필드와 메서드는 반드시 동일하게 사용해야 함. 프레젠테이션 레이어 변경 시에도 기존 ViewModel의 public 인터페이스는 변경 금지
-- **다국어 지원 규칙**: UI에 표시되는 모든 문구는 반드시 string 리소스로 관리해야 함
+- **다국어 지원 규칙**:
+  - **필수**: UI에 표시되는 모든 문구는 반드시 string 리소스로 관리해야 함
+  - **레이아웃 작성 시**: `@string/xxx` 참조를 추가할 때는 반드시 해당 string이 존재하는지 확인
+  - **string 리소스 추가 프로세스**:
+    1. 레이아웃에 `android:text="@string/새로운_문구"` 작성
+    2. 즉시 `core:ui/src/main/res/values/strings.xml` 확인
+    3. 없으면 **반드시 5개 언어 모두에 추가** (values, values-ko-rKR, values-en-rUS, values-ja, values-zh-rCN)
+    4. 추가 후 다음 작업 진행
+  - **검증**: 레이아웃 작성 완료 후 누락된 string이 없는지 반드시 확인
 - **그림자 효과 규칙**:
   - **필수**: `elevation` 또는 `translationZ`를 사용하여 그림자 효과를 적용할 때는 해당 뷰의 **상위 레이아웃에 반드시 `android:clipToPadding="false"` 속성을 설정**해야 함
   - 그림자가 패딩 영역을 넘어서 자연스럽게 표시되도록 보장

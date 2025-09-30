@@ -141,6 +141,12 @@
     <string name="water_goal_far">目標まで%dml残っています！頑張って！ 🎯</string>
     <string name="water_goal_ratio">/ %dml (%d%%)</string>
 
+    <!-- Dialog 文句 -->
+    <string name="water_amount">水分摂取量</string>
+    <string name="time_select">時間選択</string>
+    <string name="alarm_period_time">アラーム周期時間</string>
+    <string name="alarm_day_select">曜日選択</string>
+
     <!-- 컵 관련 추가 문구들 -->
     <string name="cup_list_subtitle">カップを管理して水分摂取量を追跡しよう</string>
     <string name="empty_cup_description">まだカップが登録されていません。\n新しいカップを追加してみてください！</string>

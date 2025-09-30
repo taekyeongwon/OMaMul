@@ -141,6 +141,12 @@
     <string name="water_goal_far">%dml left to goal!\nKeep going! 🎯</string>
     <string name="water_goal_ratio">/ %dml (%d%%)</string>
 
+    <!-- Dialog 문구 -->
+    <string name="water_amount">Water Amount</string>
+    <string name="time_select">Select Time</string>
+    <string name="alarm_period_time">Alarm Period Time</string>
+    <string name="alarm_day_select">Select Days</string>
+
     <!-- 컵 관련 추가 문구들 -->
     <string name="cup_list_subtitle">Manage your cups and track water intake</string>
     <string name="empty_cup_description">No cups registered yet.\nAdd a new cup to get started!</string>
