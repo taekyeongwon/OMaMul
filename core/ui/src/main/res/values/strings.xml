@@ -145,4 +145,8 @@
     <string name="cup_selected_badge">선택됨</string>
     <string name="current_selected_cup">현재 선택된 컵</string>
     <string name="cup_manage_description">컵을 추가하고 순서를 변경하세요</string>
+
+    <!-- 알람 관련 추가 문구들 -->
+    <string name="alarm_water_time">물 마실 시간입니다!</string>
+    <string name="alarm_swipe_to_dismiss">드래그하여 종료</string>
 </resources>

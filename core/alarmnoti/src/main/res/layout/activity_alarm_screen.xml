@@ -1,6 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_water_background"
+    android:clipToPadding="false">
+
+    <!-- 중앙 물방울 애니메이션 영역 -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_animation"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="48dp"
+        app:cardCornerRadius="32dp"
+        app:cardElevation="8dp"
+        app:strokeWidth="0dp"
+        app:cardBackgroundColor="@color/glass_surface"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tv_dismiss_instruction"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintHeight_percent="0.45">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="24dp">
+
+            <!-- 알람 아이콘 -->
+            <ImageView
+                android:id="@+id/iv_alarm_icon"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_water_drop"
+                android:tint="@color/md_theme_light_primary"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/tv_alarm_title"/>
+
+            <!-- 알람 제목 -->
+            <TextView
+                android:id="@+id/tv_alarm_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/alarm_water_time"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/md_theme_light_primary"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/iv_alarm_icon"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/tv_alarm_time"/>
+
+            <!-- 현재 시간 -->
+            <TextView
+                android:id="@+id/tv_alarm_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12:00"
+                android:textSize="18sp"
+                android:textColor="@color/md_theme_light_onSurface"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_alarm_title"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- 드래그 안내 텍스트 -->
+    <TextView
+        android:id="@+id/tv_dismiss_instruction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/alarm_swipe_to_dismiss"
+        android:textSize="16sp"
+        android:textColor="@color/md_theme_light_primary"
+        android:textStyle="bold"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toBottomOf="@id/card_animation"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/dismiss_button_area"/>
+
+    <!-- 드래그 디스미스 버튼 영역 -->
+    <FrameLayout
+        android:id="@+id/dismiss_button_area"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:clipToPadding="false"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="48dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_dismiss_instruction"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <!-- 드래그 트랙 배경 -->
+        <View
+            android:id="@+id/drag_track"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="48dp"
+            android:background="@drawable/alarm_dismiss_track_background"/>
+
+        <!-- 드래그 가능한 X 버튼 -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/btn_dismiss"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center_vertical|start"
+            android:layout_marginStart="48dp"
+            app:cardCornerRadius="40dp"
+            app:cardElevation="8dp"
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@color/md_theme_light_primary">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_close"
+                android:tint="@android:color/white"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

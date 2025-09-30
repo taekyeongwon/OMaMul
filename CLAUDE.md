@@ -286,24 +286,26 @@ buildTypes {
 
 #### 모듈별 작업 우선순위
 
-**1. feature-water:home** (최우선) - 메인 화면 개선
+**✅ 1. feature-water:home** - 메인 화면 개선 (완료)
 - FAB 버튼 가시성 향상
 - 롱클릭 되돌리기 버튼 아이콘을 목적에 맞게 수정
 - 중앙 애니메이션 영역 외곽선을 컵 모양으로 변경하여 담겨있는 느낌 제공
 - 애니메이션 영역 하단 텍스트가 두줄이 되어도 애니메이션 영역이 줄어들지 않도록 두줄 기준으로 높이 고정
 - 다국어 텍스트가 두줄을 넘어가지 않도록 관리
 
-**1.5. WaterActivity** - 메인 액티비티 UI 재디자인
+**✅ 1.5. WaterActivity** - 메인 액티비티 UI 재디자인 (완료)
 - Bottom Navigation 영역을 앱 컨셉에 맞게 재디자인
 - ActionBar 영역 재디자인
 - 우측 상단 더보기 버튼 제거
 - 홈 모듈의 목표 영역 클릭 시 더보기 버튼에서 호출하던 팝업 연결
 - 홈 모듈의 다음 알람 영역 클릭 시 더보기 버튼에서 호출하던 화면 이동 연결
 
-**2. core:ui** - 공통 UI 컴포넌트, 다른 모듈에서 재사용
-**3. feature-water:cup** - 컵 관리 화면
-**4. feature-water:record** - 로그 및 차트 화면
-**5. feature-water:alarm** - 알람 설정 화면
+**✅ 2. core:ui** - 공통 UI 컴포넌트, 다른 모듈에서 재사용 (완료)
+**✅ 3. feature-water:cup** - 컵 관리 화면 (완료)
+**✅ 4. feature-water:record** - 로그 및 차트 화면 (완료)
+**🔄 5. feature-water:alarm** - 알람 설정 화면 (진행 중)
+- 알람 설정 화면 물 앱 컨셉 적용
+- AlarmActivity 기상 알람 스타일 UI (드래그 투 디스미스)
 **6. feature-water:setting** - 물 관련 설정
 **7. feature-common:init** - 온보딩 화면
 **8. feature-common:setting** - 앱 설정

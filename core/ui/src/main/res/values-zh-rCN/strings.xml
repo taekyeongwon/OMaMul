@@ -145,4 +145,8 @@
     <string name="cup_selected_badge">已选择</string>
     <string name="current_selected_cup">当前选择的杯子</string>
     <string name="cup_manage_description">添加杯子并更改顺序</string>
+
+    <!-- 알람 관련 추가 문구들 -->
+    <string name="alarm_water_time">该喝水了！</string>
+    <string name="alarm_swipe_to_dismiss">滑动关闭</string>
 </resources>
