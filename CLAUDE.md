@@ -323,7 +323,16 @@ buildTypes {
 
 **진행률: 7/8 완료**
 
-**7. feature-common:init** - 온보딩 화면
+**✅ 7. feature-common:init** - 온보딩 화면 (완료)
+- fragment_init_language.xml 언어 선택 화면 물 앱 컨셉 적용
+- fragment_init_time.xml 시간 설정 화면 물 앱 컨셉 적용
+- fragment_init_intake.xml 섭취량 설정 화면 물 앱 컨셉 적용
+- Progress Indicator 개선 (40dp 원형, active/inactive 상태, elevation)
+- MaterialCardView 및 글래스모피즘 효과 적용
+- 그라데이션 배경 및 MaterialButton 적용
+
+**진행률: 8/8 완료 (feature-common:setting 제외)**
+
 **8. feature-common:setting** - 앱 설정
 
 #### 각 모듈별 작업 프로세스
