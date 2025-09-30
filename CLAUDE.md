@@ -176,6 +176,18 @@
   - 물 앱 컨셉에 맞는 아이콘 디자인 (물방울, 블루 계열 색상 활용)
   - Material Icons Extended 우선 사용, 없으면 커스텀 Vector Drawable 생성
   - **예시**: 삭제 버튼에는 휴지통 아이콘, 추가 버튼에는 플러스 아이콘 사용
+- **Drawable 리소스 규칙**:
+  - **필수**: XML 레이아웃에서 참조하는 모든 drawable은 **반드시 존재해야 함**
+  - 레이아웃 작성 시 drawable이 없으면 즉시 생성
+  - 공통 drawable은 `core:ui` 모듈에 생성
+  - 모듈별 drawable은 해당 모듈의 `res/drawable` 폴더에 생성
+  - **주요 공통 drawable**:
+    - `gradient_background.xml`: 그라데이션 배경
+    - `step_indicator_active.xml`: 활성 단계 표시 (40dp 원형, water_blue)
+    - `step_indicator_inactive.xml`: 비활성 단계 표시 (40dp 원형, 회색)
+    - `ripple_effect.xml`: 터치 효과 (물결 효과)
+    - `radio_selector.xml`: 라디오 버튼 선택자
+  - 없는 drawable을 참조하면 빌드 에러가 발생하므로 반드시 사전 생성 필요
 
 ### 다국어 번역 규칙
 
