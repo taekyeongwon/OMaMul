@@ -1,49 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/glass_card_background">
 
-    <com.tkw.ui.custom.TextSwitchView
-        android:id="@+id/sv_phone_setting"
+    <!-- 벨소리 설정 카드 -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:text="@string/alarm_sound_device"
-        app:textSize="16sp"
-        app:layout_constraintTop_toTopOf="parent"/>
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#1A4A90E2"
-        android:layout_marginVertical="12dp"
-        app:layout_constraintTop_toBottomOf="@id/sv_phone_setting"/>
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:strokeWidth="0dp"
+        app:cardBackgroundColor="@color/glass_surface">
 
-    <com.tkw.ui.custom.TextSwitchView
-        android:id="@+id/sv_vibe"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:text="@string/alarm_sound_vibe"
-        app:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/divider"
-        app:layout_constraintRight_toRightOf="parent"/>
-    <com.tkw.ui.custom.TextSwitchView
-        android:id="@+id/sv_ringtone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:text="@string/alarm_sound_ringtone"
-        app:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/sv_vibe"
-        app:layout_constraintRight_toRightOf="parent"/>
-    <com.tkw.ui.custom.TextSwitchView
-        android:id="@+id/sv_noti"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:text="@string/alarm_sound_noti"
-        app:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/sv_ringtone"
-        app:layout_constraintRight_toRightOf="parent"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- 기기 설정 따르기 -->
+            <com.tkw.ui.custom.TextSwitchView
+                android:id="@+id/sv_phone_setting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:text="@string/alarm_sound_device"
+                app:textSize="16sp"/>
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_light"
+                android:layout_marginVertical="16dp"/>
+
+            <!-- 진동 -->
+            <com.tkw.ui.custom.TextSwitchView
+                android:id="@+id/sv_vibe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:text="@string/alarm_sound_vibe"
+                app:textSize="16sp"/>
+
+            <!-- 벨소리 -->
+            <com.tkw.ui.custom.TextSwitchView
+                android:id="@+id/sv_ringtone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:text="@string/alarm_sound_ringtone"
+                app:textSize="16sp"/>
+
+            <!-- 무음 알림 -->
+            <com.tkw.ui.custom.TextSwitchView
+                android:id="@+id/sv_noti"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:text="@string/alarm_sound_noti"
+                app:textSize="16sp"/>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>
