@@ -304,9 +304,15 @@ buildTypes {
 **✅ 3. feature-water:cup** - 컵 관리 화면 (완료)
 **✅ 4. feature-water:record** - 로그 및 차트 화면 (완료)
 **✅ 5. feature-water:alarm** - 알람 설정 화면 (완료)
-- 알람 설정 화면 물 앱 컨셉 적용
-- AlarmActivity 기상 알람 스타일 UI (드래그 투 디스미스)
+- 알람 설정 화면 물 앱 컨셉 적용 (MaterialCardView, 글래스모피즘)
+- 알람 모드 관련 화면 디자인 개선 (fragment_alarm_mode.xml, fragment_alarm_mode_period.xml, fragment_alarm_mode_custom.xml)
+- AlarmActivity 기상 알람 스타일 UI (드래그 투 디스미스, 70% 임계값)
+- item_alarm.xml, item_alarm_edit.xml MaterialCardView 적용
+- core:alarmnoti에 core:ui 의존성 추가
 - 다국어 지원 (한국어, 영어, 일본어, 중국어)
+
+**진행률: 6/8 완료**
+
 **6. feature-water:setting** - 물 관련 설정
 **7. feature-common:init** - 온보딩 화면
 **8. feature-common:setting** - 앱 설정
