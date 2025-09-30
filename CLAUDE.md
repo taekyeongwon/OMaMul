@@ -303,9 +303,10 @@ buildTypes {
 **✅ 2. core:ui** - 공통 UI 컴포넌트, 다른 모듈에서 재사용 (완료)
 **✅ 3. feature-water:cup** - 컵 관리 화면 (완료)
 **✅ 4. feature-water:record** - 로그 및 차트 화면 (완료)
-**🔄 5. feature-water:alarm** - 알람 설정 화면 (진행 중)
+**✅ 5. feature-water:alarm** - 알람 설정 화면 (완료)
 - 알람 설정 화면 물 앱 컨셉 적용
 - AlarmActivity 기상 알람 스타일 UI (드래그 투 디스미스)
+- 다국어 지원 (한국어, 영어, 일본어, 중국어)
 **6. feature-water:setting** - 물 관련 설정
 **7. feature-common:init** - 온보딩 화면
 **8. feature-common:setting** - 앱 설정
