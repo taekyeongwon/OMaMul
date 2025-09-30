@@ -9,46 +9,57 @@
             type="com.tkw.domain.model.Alarm" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/rounded_rect"
-        android:padding="16dp">
+        android:layout_marginVertical="4dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:strokeWidth="0dp"
+        app:cardBackgroundColor="@color/glass_surface">
 
-        <CheckBox
-            android:id="@+id/cb_delete"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:background="@drawable/circle_check_selector"
-            android:button="@null"
-            android:checked="@{alarm.checked}"
-            android:layout_marginLeft="8dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
-        <TextView
-            android:id="@+id/tv_time"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textSize="23sp"
-            android:textColor="@color/black"
-            android:text="@{alarm.alarmTime}"
-            android:layout_marginLeft="8dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/cb_delete"
-            app:layout_constraintRight_toLeftOf="@id/ib_drag"
-            tools:text="오전 11:00"/>
-        <ImageButton
-            android:id="@+id/ib_drag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/menu"
-            android:background="@android:color/transparent"
-            android:padding="16dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <CheckBox
+                android:id="@+id/cb_delete"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:background="@drawable/circle_check_selector"
+                android:button="@null"
+                android:checked="@{alarm.checked}"
+                android:layout_marginLeft="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="23sp"
+                android:textStyle="bold"
+                android:textColor="@color/md_theme_light_primary"
+                android:text="@{alarm.alarmTime}"
+                android:layout_marginLeft="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/cb_delete"
+                app:layout_constraintRight_toLeftOf="@id/ib_drag"
+                tools:text="오전 11:00"/>
+            <ImageButton
+                android:id="@+id/ib_drag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/menu"
+                android:background="@android:color/transparent"
+                android:padding="16dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 </layout>
