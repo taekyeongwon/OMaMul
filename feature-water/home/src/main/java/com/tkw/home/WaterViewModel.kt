@@ -41,6 +41,13 @@ class WaterViewModel
     private val savedStateHandle: SavedStateHandle
 ): BaseViewModel() {
 
+    // 설정 정보 (단위 변환용)
+    val settingsFlow = settingRepository.getSetting().stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        com.tkw.domain.model.Settings()
+    )
+
     //최초 진입 여부
     private val initFlag = prefDataRepository.fetchInitialFlag()
     suspend fun getInitFlag(): Boolean = initFlag.first()

@@ -139,7 +139,7 @@
     <string name="water_goal_close">目標まで%dml残っています！もうすぐです！ 🔥</string>
     <string name="water_goal_near">目標まで%dml残っています！もう少し！ 💪</string>
     <string name="water_goal_far">目標まで%dml残っています！頑張って！ 🎯</string>
-    <string name="water_goal_ratio">/ %dml (%d%%)</string>
+    <string name="water_goal_ratio">/ %s (%d%%)</string>
 
     <!-- Dialog 文句 -->
     <string name="water_amount">水分摂取量</string>

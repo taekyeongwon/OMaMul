@@ -156,7 +156,8 @@ class WaterFragment: Fragment() {
             viewModel.amountSaveEvent.collect {
                 // 목표량 변경 시 UI 즉시 업데이트
                 val intakeGoal = viewModel.getIntakeAmount()
-                dataBinding.tvTargetAmount.text = "${intakeGoal}${getString(com.tkw.ui.R.string.unit_ml_no_bracket)}"
+                val settings = viewModel.settingsFlow.value
+                dataBinding.tvTargetAmount.text = settings.formatAmount(intakeGoal)
 
                 // 현재 물 섭취량으로 다시 계산하여 애니메이션과 표시 정보 업데이트
                 dayOfWater?.let { currentData ->
@@ -173,10 +174,12 @@ class WaterFragment: Fragment() {
             }
         }
 
-        // 목표량 초기 표시
+        // 설정 변경 감지 (단위 변경 시 목표량 표시 업데이트)
         lifecycleScope.launch {
-            val intakeGoal = viewModel.getIntakeAmount()
-            dataBinding.tvTargetAmount.text = "${intakeGoal}${getString(com.tkw.ui.R.string.unit_ml_no_bracket)}"
+            viewModel.settingsFlow.collect { settings ->
+                val intakeGoal = viewModel.getIntakeAmount()
+                dataBinding.tvTargetAmount.text = settings.formatAmount(intakeGoal)
+            }
         }
 
         // 다음 알람 시간 표시
@@ -196,14 +199,18 @@ class WaterFragment: Fragment() {
     }
 
     private fun updateWaterDisplay(currentIntake: Int, intakeGoal: Int) {
+        val settings = viewModel.settingsFlow.value
+
         // 목표 대비 비율 계산
         val percentage = if (intakeGoal > 0) {
             ((currentIntake.toFloat() / intakeGoal.toFloat()) * 100).toInt()
         } else 0
 
-        dataBinding.tvGoalRatio.text = getString(com.tkw.ui.R.string.water_goal_ratio, intakeGoal, percentage)
+        // 현재 단위로 변환하여 표시
+        val formattedGoal = settings.formatAmount(intakeGoal)
+        dataBinding.tvGoalRatio.text = getString(com.tkw.ui.R.string.water_goal_ratio, formattedGoal, percentage)
 
-        // 격려 메시지 업데이트
+        // 격려 메시지 업데이트 (ml 기준으로 유지)
         val remainingAmount = maxOf(0, intakeGoal - currentIntake)
         dataBinding.tvEncouragement.text = when {
             remainingAmount == 0 -> getString(com.tkw.ui.R.string.water_goal_achieved)

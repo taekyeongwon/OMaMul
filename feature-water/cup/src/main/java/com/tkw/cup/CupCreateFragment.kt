@@ -13,8 +13,19 @@ import com.tkw.common.autoCleared
 import com.tkw.cup.databinding.FragmentCupCreateBinding
 import com.tkw.domain.model.Cup
 import com.tkw.domain.model.UnitType
+import com.tkw.ui.custom.WaterAmountPicker
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.withCreationCallback
+
+// UnitType 변환 확장 함수
+private fun UnitType.toPickerUnitType(): WaterAmountPicker.UnitType {
+    return when (this) {
+        UnitType.ML -> WaterAmountPicker.UnitType.ML
+        UnitType.L -> WaterAmountPicker.UnitType.L
+        UnitType.CUP -> WaterAmountPicker.UnitType.CUP
+        UnitType.FL_OZ -> WaterAmountPicker.UnitType.FL_OZ
+    }
+}
 
 @AndroidEntryPoint
 class CupCreateFragment: Fragment() {
@@ -75,6 +86,11 @@ class CupCreateFragment: Fragment() {
     private fun initListener() {
         dataBinding.btnNext.setOnClickListener {
             val isCreate = viewModel.createMode.value ?: false
+            val currentUnit = viewModel.cupUnitLiveData.value ?: UnitType.ML
+            // ml 기준으로 변환하여 저장
+            val mlAmount = dataBinding.npAmount.getCurrentValueInMl(currentUnit.toPickerUnitType())
+            viewModel.cupAmountLiveData.value = mlAmount
+
             if(isCreate) viewModel.insertCup()
             else viewModel.updateCup()
         }
@@ -88,6 +104,10 @@ class CupCreateFragment: Fragment() {
                 R.id.rb_fl_oz -> UnitType.FL_OZ
                 else -> UnitType.ML
             }
+
+            // 현재 ml 값을 가져와서 새 단위로 변환하여 표시
+            val currentMlValue = viewModel.cupAmountLiveData.value ?: 200
+            dataBinding.npAmount.updateUnit(selectedUnit.toPickerUnitType(), currentMlValue)
             viewModel.cupUnitLiveData.value = selectedUnit
         }
 
@@ -101,5 +121,9 @@ class CupCreateFragment: Fragment() {
                 UnitType.FL_OZ -> R.id.rb_fl_oz
             }
         )
+
+        // 초기 NumberPicker 설정
+        val initialMlValue = viewModel.cupAmountLiveData.value ?: 200
+        dataBinding.npAmount.updateUnit(currentUnit.toPickerUnitType(), initialMlValue)
     }
 }

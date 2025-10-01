@@ -42,21 +42,22 @@ class SettingViewModel
         DayOfWaterList(list)
     }
 
-    val totalIntake = getAllDay.flatMapLatest {
-        flow {
-            emit("${it.getTotalIntake()}ml")
-        }
-    }.asLiveData()
-
-    val totalAchieve = getAllDay.flatMapLatest {
-        flow {
-            emit("${it.getTotalAchieve(settings.first().intake)}")
-        }
-    }.asLiveData()
-
     private val settings = settingRepository.getSetting()
+
+    val totalIntake = getAllDay.flatMapLatest { dayList ->
+        settings.mapLatest { setting ->
+            setting.formatAmount(dayList.getTotalIntake())
+        }
+    }.asLiveData()
+
+    val totalAchieve = getAllDay.flatMapLatest { dayList ->
+        settings.mapLatest { setting ->
+            "${dayList.getTotalAchieve(setting.intake)}"
+        }
+    }.asLiveData()
+
     val goalOfIntake = settings.mapLatest {
-        "${it.intake}ml"
+        it.formatAmount(it.intake)
     }.asLiveData()
 
     val currentLangFlow = prefDataRepository.fetchLanguage()
@@ -76,7 +77,8 @@ class SettingViewModel
     val unit = settings.mapLatest {
         when(it.unit) {
             0 -> "ml, L"
-            1 -> "fl.oz"
+            1 -> "fl oz"
+            2 -> "컵"
             else -> "ml, L"
         }
     }.asLiveData()

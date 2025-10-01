@@ -139,7 +139,7 @@
     <string name="water_goal_close">Only %dml left to goal!\nAlmost there! 🔥</string>
     <string name="water_goal_near">Only %dml left to goal!\nJust a little more! 💪</string>
     <string name="water_goal_far">%dml left to goal!\nKeep going! 🎯</string>
-    <string name="water_goal_ratio">/ %dml (%d%%)</string>
+    <string name="water_goal_ratio">/ %s (%d%%)</string>
 
     <!-- Dialog 문구 -->
     <string name="water_amount">Water Amount</string>

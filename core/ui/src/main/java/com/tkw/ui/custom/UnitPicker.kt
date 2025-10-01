@@ -13,10 +13,10 @@ class UnitPicker
 
     init {
         minValue = 0
-        maxValue = 1
+        maxValue = 2
         wrapSelectorWheel = false
         descendantFocusability = FOCUS_BLOCK_DESCENDANTS
-        displayedValues = arrayOf("ml, L", "fl oz")
+        displayedValues = arrayOf("ml, L", "fl oz", "컵")
     }
 
     fun getCurrentValue(): String {
