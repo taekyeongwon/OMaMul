@@ -94,13 +94,15 @@ class WaterFragment: Fragment() {
 
     private fun initCurrentCup() {
         // 현재 선택된 컵 정보를 표시하는 초기화 함수
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             // 현재 선택된 컵이 없으면 첫 번째 컵을 기본으로 설정
             viewModel.initCurrentCupIfNeeded()
 
             // 현재 선택된 컵 flow 관찰
-            viewModel.currentSelectedCupFlow.collect { selectedCup ->
-                currentCup = selectedCup
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.currentSelectedCupFlow.collect { selectedCup ->
+                    currentCup = selectedCup
+                }
             }
         }
     }
@@ -126,73 +128,81 @@ class WaterFragment: Fragment() {
         //홈 화면은 오늘 날짜의 데이터만 보여주도록 여기서 세팅
         viewModel.setToday()
 
-        lifecycleScope.launch {
-            viewModel.amountLiveData.collect {
-                val intakeGoal = viewModel.getIntakeAmount()
-                val currentIntake = it.getTotalIntakeByDate()
-                val prevWater = dayOfWater
-                val currentAmount = minOf(currentIntake / intakeGoal.toFloat(), 1.0f)
-                val dy = lottieHeight * (1 - currentAmount)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.amountLiveData.collect {
+                    val intakeGoal = viewModel.getIntakeAmount()
+                    val currentIntake = it.getTotalIntakeByDate()
+                    val prevWater = dayOfWater
+                    val currentAmount = minOf(currentIntake / intakeGoal.toFloat(), 1.0f)
+                    val dy = lottieHeight * (1 - currentAmount)
 
-                // Lottie 애니메이션 업데이트
-                if(prevWater != null) {
-                    val prevAmount = minOf(prevWater.getTotalIntakeByDate() / intakeGoal.toFloat(), 1.0f)
-                    val prevDy = lottieHeight * (1 - prevAmount)
-                    startWaterAnimation(prevDy, dy)
-                } else {
-                    startWaterAnimation(lottieHeight, dy)
+                    // Lottie 애니메이션 업데이트
+                    if(prevWater != null) {
+                        val prevAmount = minOf(prevWater.getTotalIntakeByDate() / intakeGoal.toFloat(), 1.0f)
+                        val prevDy = lottieHeight * (1 - prevAmount)
+                        startWaterAnimation(prevDy, dy)
+                    } else {
+                        startWaterAnimation(lottieHeight, dy)
+                    }
+
+                    // UI 데이터 업데이트
+                    updateWaterDisplay(currentIntake, intakeGoal)
+
+                    dayOfWater = it
+                    countObject = it.dayOfList
                 }
-
-                // UI 데이터 업데이트
-                updateWaterDisplay(currentIntake, intakeGoal)
-
-                dayOfWater = it
-                countObject = it.dayOfList
             }
         }
 
         // 목표량 실시간 반영을 위한 설정 변경 감지
-        lifecycleScope.launch {
-            viewModel.amountSaveEvent.collect {
-                // 목표량 변경 시 UI 즉시 업데이트
-                val intakeGoal = viewModel.getIntakeAmount()
-                val settings = viewModel.settingsFlow.value
-                dataBinding.tvTargetAmount.text = settings.formatAmount(intakeGoal)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.amountSaveEvent.collect {
+                    // 목표량 변경 시 UI 즉시 업데이트
+                    val intakeGoal = viewModel.getIntakeAmount()
+                    val settings = viewModel.settingsFlow.value
+                    dataBinding.tvTargetAmount.text = settings.formatAmount(intakeGoal)
 
-                // 현재 물 섭취량으로 다시 계산하여 애니메이션과 표시 정보 업데이트
-                dayOfWater?.let { currentData ->
-                    val currentIntake = currentData.getTotalIntakeByDate()
-                    val currentAmount = minOf(currentIntake / intakeGoal.toFloat(), 1.0f)
-                    val dy = lottieHeight * (1 - currentAmount)
+                    // 현재 물 섭취량으로 다시 계산하여 애니메이션과 표시 정보 업데이트
+                    dayOfWater?.let { currentData ->
+                        val currentIntake = currentData.getTotalIntakeByDate()
+                        val currentAmount = minOf(currentIntake / intakeGoal.toFloat(), 1.0f)
+                        val dy = lottieHeight * (1 - currentAmount)
 
-                    // 애니메이션 즉시 업데이트
-                    startWaterAnimation(dataBinding.lotti.translationY, dy)
+                        // 애니메이션 즉시 업데이트
+                        startWaterAnimation(dataBinding.lotti.translationY, dy)
 
-                    // 표시 정보 업데이트
-                    updateWaterDisplay(currentIntake, intakeGoal)
+                        // 표시 정보 업데이트
+                        updateWaterDisplay(currentIntake, intakeGoal)
+                    }
                 }
             }
         }
 
         // 설정 변경 감지 (단위 변경 시 목표량 표시 업데이트)
-        lifecycleScope.launch {
-            viewModel.settingsFlow.collect { settings ->
-                val intakeGoal = viewModel.getIntakeAmount()
-                dataBinding.tvTargetAmount.text = settings.formatAmount(intakeGoal)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.settingsFlow.collect { settings ->
+                    val intakeGoal = viewModel.getIntakeAmount()
+                    dataBinding.tvTargetAmount.text = settings.formatAmount(intakeGoal)
+                }
             }
         }
 
         // 다음 알람 시간 표시
-        lifecycleScope.launch {
-            viewModel.nextAlarmTimeFlow.collect { remainMillis ->
-                if (remainMillis > 0) {
-                    // 다음 알람까지 남은 시간을 HH:mm 형식으로 표시
-                    val nextAlarmTime = System.currentTimeMillis() + remainMillis
-                    val formatter = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
-                    dataBinding.tvNextAlarm.text = formatter.format(java.util.Date(nextAlarmTime))
-                } else {
-                    // 알람이 없거나 꺼진 상태
-                    dataBinding.tvNextAlarm.text = getString(com.tkw.ui.R.string.water_alarm_off)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.nextAlarmTimeFlow.collect { remainMillis ->
+                    if (remainMillis > 0) {
+                        // 다음 알람까지 남은 시간을 HH:mm 형식으로 표시
+                        val nextAlarmTime = System.currentTimeMillis() + remainMillis
+                        val formatter = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
+                        dataBinding.tvNextAlarm.text = formatter.format(java.util.Date(nextAlarmTime))
+                    } else {
+                        // 알람이 없거나 꺼진 상태
+                        dataBinding.tvNextAlarm.text = getString(com.tkw.ui.R.string.water_alarm_off)
+                    }
                 }
             }
         }
