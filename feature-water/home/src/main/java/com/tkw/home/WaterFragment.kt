@@ -69,6 +69,14 @@ class WaterFragment: Fragment() {
         initListener()
     }
 
+    override fun onResume() {
+        super.onResume()
+        // 화면 복귀 시 FAB 메뉴가 열려있으면 강제로 닫기
+        if (isFabMenuOpen) {
+            closeFabMenuImmediately()
+        }
+    }
+
 
     private fun initBinding() {
         dataBinding.run {
@@ -387,6 +395,24 @@ class WaterFragment: Fragment() {
                     scaleY = 1f
                 }
             }
+        }
+    }
+
+    private fun closeFabMenuImmediately() {
+        // 애니메이션 없이 즉시 FAB 메뉴 닫기 (화면 복귀 시 사용)
+        isFabMenuOpen = false
+
+        dataBinding.fabOverlay.apply {
+            alpha = 0f
+            visibility = View.GONE
+        }
+
+        dataBinding.fabMenuContainer.apply {
+            visibility = View.GONE
+            translationY = 0f
+            alpha = 1f
+            scaleX = 1f
+            scaleY = 1f
         }
     }
 }
