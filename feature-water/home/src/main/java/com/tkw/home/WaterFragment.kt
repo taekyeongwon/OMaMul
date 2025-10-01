@@ -216,6 +216,20 @@ class WaterFragment: Fragment() {
             ((currentIntake.toFloat() / intakeGoal.toFloat()) * 100).toInt()
         } else 0
 
+        // 현재 섭취량 단위 변환하여 표시
+        val convertedIntake = settings.convertAmount(currentIntake)
+        val intakeUnitString = settings.getUnitString(currentIntake)
+
+        // 소수점 처리 (정수면 정수로, 소수점 있으면 소수점 표시)
+        val formattedIntake = if (convertedIntake % 1.0 == 0.0) {
+            convertedIntake.toInt().toString()
+        } else {
+            String.format("%.1f", convertedIntake)
+        }
+
+        dataBinding.tvCurrentIntake.text = formattedIntake
+        dataBinding.tvCurrentIntakeUnit.text = intakeUnitString
+
         // 현재 단위로 변환하여 표시
         val formattedGoal = settings.formatAmount(intakeGoal)
         dataBinding.tvGoalRatio.text = getString(com.tkw.ui.R.string.water_goal_ratio, formattedGoal, percentage)

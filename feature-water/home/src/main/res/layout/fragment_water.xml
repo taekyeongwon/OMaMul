@@ -200,20 +200,20 @@
                                 android:id="@+id/tv_current_intake"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@{Integer.toString(viewModel.amountLiveData.totalIntakeByDate)}"
                                 android:textSize="42sp"
                                 android:textColor="@color/md_theme_light_primary"
                                 android:textAppearance="?attr/textAppearanceDisplayLarge"
                                 tools:text="1250" />
 
                             <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/tv_current_intake_unit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/unit_ml_no_bracket"
                                 android:textSize="16sp"
                                 android:textColor="@color/md_theme_light_onSurfaceVariant"
                                 android:layout_marginStart="4dp"
-                                android:textAppearance="?attr/textAppearanceTitleSmall" />
+                                android:textAppearance="?attr/textAppearanceTitleSmall"
+                                tools:text="ml" />
 
                         </LinearLayout>
 

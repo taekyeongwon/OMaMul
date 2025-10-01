@@ -128,7 +128,7 @@
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/water_blue_variant"
-                        app:unit="@{cup.cupAmount}"
+                        app:cupInfo="@{cup}"
                         tools:text="400ml"/>
                 </LinearLayout>
             </LinearLayout>
