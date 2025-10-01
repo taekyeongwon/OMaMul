@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 interface CupDao: RealmDao {
     fun getCup(id: String): CupEntity?
 
+    fun getCupList(): CupListEntity?
+
     fun getCupListFlow(): Flow<ResultsChange<CupListEntity>>
 
     suspend fun createList()

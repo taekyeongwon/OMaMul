@@ -21,6 +21,10 @@ class CupDaoImpl @Inject constructor(): CupDao {
         return this.findFirst(CupListEntity::class)?.cupList?.find { it.cupId == id }
     }
 
+    override fun getCupList(): CupListEntity? {
+        return this.findByOne(CupListEntity::class, "cupId == $0", CupEntity.DEFAULT_CUP_LIST_ID)
+    }
+
     override fun getCupListFlow(): Flow<ResultsChange<CupListEntity>> {
         return this.stream(this.find(CupListEntity::class, "cupId == $0", CupEntity.DEFAULT_CUP_LIST_ID))
     }
@@ -31,7 +35,18 @@ class CupDaoImpl @Inject constructor(): CupDao {
 
     override suspend fun insertCup(obj: CupEntity) {
         this.write {
-            getCupList()?.cupList?.add(obj)
+            // 트랜잭션 내부에서 람다 호출
+            val cupList = this@write.getCupList()
+            if (cupList != null) {
+                // EmbeddedRealmObject는 트랜잭션 내에서 새로 생성해야 함
+                val newCup = CupEntity().apply {
+                    cupId = obj.cupId
+                    cupName = obj.cupName
+                    cupAmount = obj.cupAmount
+                    cupUnit = obj.cupUnit
+                }
+                cupList.cupList.add(newCup)
+            }
         }
     }
 
@@ -41,21 +56,42 @@ class CupDaoImpl @Inject constructor(): CupDao {
             findLatest(origin!!)?.apply {
                 cupName = target.cupName
                 cupAmount = target.cupAmount
+                cupUnit = target.cupUnit
             }
         }
     }
 
     override suspend fun updateAll(list: List<CupEntity>) {
         this.write {
-            getCupList()?.cupList?.clear()
-            getCupList()?.cupList?.addAll(list)
+            // 트랜잭션 내부에서 람다 호출
+            val cupList = this@write.getCupList()
+            if (cupList != null) {
+                cupList.cupList.clear()
+                list.forEach { cup ->
+                    // EmbeddedRealmObject는 트랜잭션 내에서 새로 생성해야 함
+                    val newCup = CupEntity().apply {
+                        cupId = cup.cupId
+                        cupName = cup.cupName
+                        cupAmount = cup.cupAmount
+                        cupUnit = cup.cupUnit
+                    }
+                    cupList.cupList.add(newCup)
+                }
+            }
         }
     }
 
     override suspend fun deleteCup(cupId: String) {
         this.write {
-            val cup = getCup(cupId)
-            getCupList()?.cupList?.remove(cup)
+            // 트랜잭션 내부에서 람다 호출
+            val cupList = this@write.getCupList()
+            if (cupList != null) {
+                // 트랜잭션 내에서 직접 검색하여 삭제
+                val cupToRemove = cupList.cupList.find { it.cupId == cupId }
+                if (cupToRemove != null) {
+                    cupList.cupList.remove(cupToRemove)
+                }
+            }
         }
     }
 }

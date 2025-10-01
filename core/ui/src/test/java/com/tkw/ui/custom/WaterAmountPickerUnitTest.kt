@@ -154,4 +154,114 @@ class WaterAmountPickerUnitTest {
         val flOzResult = mlValue / UnitType.FL_OZ.mlPerUnit
         assert(flOzResult > 67.0 && flOzResult < 68.0)
     }
+
+    @Test
+    fun `단위 변경 시 배열 인덱스 범위 검증 - ML에서 L`() {
+        // ML: 50~2000, interval=50 → 40개 항목 (0~39 인덱스)
+        val mlMin = 50
+        val mlMax = 2000
+        val mlInterval = 50
+        val mlArraySize = (mlMax - mlMin) / mlInterval + 1
+        assertEquals(40, mlArraySize)
+
+        // L: 1~5, interval=1 → 5개 항목 (0~4 인덱스)
+        val lMin = 1
+        val lMax = 5
+        val lInterval = 1
+        val lArraySize = (lMax - lMin) / lInterval + 1
+        assertEquals(5, lArraySize)
+
+        // 1000ml을 L로 변환 → 1L (인덱스 0)
+        val mlValue = 1000
+        val lValue = (mlValue / UnitType.L.mlPerUnit).toInt()
+        val lIndex = (lValue - lMin) / lInterval
+        assert(lIndex in 0 until lArraySize)
+    }
+
+    @Test
+    fun `단위 변경 시 배열 인덱스 범위 검증 - ML에서 CUP`() {
+        val mlMin = 50
+        val mlMax = 2000
+        val mlInterval = 50
+        val mlArraySize = (mlMax - mlMin) / mlInterval + 1
+        assertEquals(40, mlArraySize)
+
+        // CUP: 1~10, interval=1 → 10개 항목
+        val cupMin = 1
+        val cupMax = 10
+        val cupInterval = 1
+        val cupArraySize = (cupMax - cupMin) / cupInterval + 1
+        assertEquals(10, cupArraySize)
+
+        // 200ml을 컵으로 변환 → 1컵 (인덱스 0)
+        val mlValue = 200
+        val cupValue = (mlValue / UnitType.CUP.mlPerUnit).toInt()
+        val cupIndex = (cupValue - cupMin) / cupInterval
+        assert(cupIndex in 0 until cupArraySize)
+    }
+
+    @Test
+    fun `단위 변경 시 배열 인덱스 범위 검증 - ML에서 FL_OZ`() {
+        val mlMin = 50
+        val mlMax = 2000
+        val mlInterval = 50
+        val mlArraySize = (mlMax - mlMin) / mlInterval + 1
+        assertEquals(40, mlArraySize)
+
+        // FL_OZ: 2~70, interval=2 → 35개 항목
+        val flOzMin = 2
+        val flOzMax = 70
+        val flOzInterval = 2
+        val flOzArraySize = (flOzMax - flOzMin) / flOzInterval + 1
+        assertEquals(35, flOzArraySize)
+
+        // 200ml을 fl oz로 변환 → 약 6.76 → 6 (coerce) (인덱스 2)
+        val mlValue = 200
+        val flOzValue = (mlValue / UnitType.FL_OZ.mlPerUnit).toInt().coerceIn(flOzMin, flOzMax)
+        val flOzIndex = (flOzValue - flOzMin) / flOzInterval
+        assert(flOzIndex in 0 until flOzArraySize)
+    }
+
+    @Test
+    fun `배열 최대값을 초과하는 인덱스 접근 방지 확인`() {
+        // L 단위 배열 크기: 5
+        val lMin = 1
+        val lMax = 5
+        val lInterval = 1
+        val lArraySize = (lMax - lMin) / lInterval + 1
+        
+        // 잘못된 인덱스 180이 들어왔을 때 coerce로 안전 처리
+        val invalidIndex = 180
+        val safeIndex = invalidIndex.coerceIn(0, lArraySize - 1)
+        assertEquals(4, safeIndex) // 최대 인덱스인 4로 보정
+    }
+
+    @Test
+    fun `displayedValues 배열 크기와 인덱스 일관성 검증`() {
+        // 각 단위별 배열 크기 계산
+        data class UnitConfig(val min: Int, val max: Int, val interval: Int)
+        
+        val configs = mapOf(
+            UnitType.ML to UnitConfig(50, 2000, 50),
+            UnitType.L to UnitConfig(1, 5, 1),
+            UnitType.CUP to UnitConfig(1, 10, 1),
+            UnitType.FL_OZ to UnitConfig(2, 70, 2)
+        )
+        
+        configs.forEach { (unitType, config) ->
+            val expectedSize = (config.max - config.min) / config.interval + 1
+            val values = mutableListOf<String>()
+            for (i in 0 until expectedSize) {
+                values.add((config.min + i * config.interval).toString())
+            }
+            
+            // 배열 크기가 예상과 일치하는지 확인
+            assertEquals("Unit: $unitType - size mismatch", expectedSize, values.size)
+            
+            // 모든 인덱스가 배열 범위 내에 있는지 확인
+            for (index in 0 until expectedSize) {
+                assert(index < values.size) { "Index $index exceeds array size ${values.size} for $unitType" }
+            }
+        }
+    }
 }

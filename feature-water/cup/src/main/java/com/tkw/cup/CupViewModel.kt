@@ -93,7 +93,7 @@ class CupViewModel
     fun deleteCup(cupId: String) {
         launch {
             cupRepository.deleteCup(cupId)
-            _nextEvent.call()
+            // nextEvent 제거 - Fragment에서 직접 처리
         }
     }
 

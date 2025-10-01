@@ -50,7 +50,7 @@ class CupRepositoryImpl @Inject constructor(
 
         // 첫 번째 컵 추가 시 자동으로 선택
         val cupList = cupDao.getCupList()
-        if (cupList.cupList.size == 1) {
+        if (cupList?.cupList?.size == 1) {
             setCurrentSelectedCupId(cup.cupId)
         }
     }

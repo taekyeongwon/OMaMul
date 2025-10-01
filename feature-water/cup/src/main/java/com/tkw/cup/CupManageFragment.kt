@@ -63,8 +63,10 @@ class CupManageFragment: Fragment() {
                 cup.copy(isChecked = true)
             } else cup
         }
-        cupListAdapter.submitList(updatedList)
-        viewModel.setModifyMode(true)
+        cupListAdapter.submitList(updatedList) {
+            // submitList 완료 후 수정 모드로 전환
+            viewModel.setModifyMode(true)
+        }
     }
 
     private val dragListener = object : OnItemDrag<Cup> {
@@ -216,11 +218,18 @@ class CupManageFragment: Fragment() {
 
 
         dataBinding.btnDelete.setOnClickListener {
-            cupListAdapter.currentList
-                .filter { it.isChecked }
-                .forEach {
-                    viewModel.deleteCup(it.cupId)
-                }
+            // 체크된 컵들을 모두 수집
+            val checkedCups = cupListAdapter.currentList.filter { it.isChecked }
+            
+            // 모든 컵 삭제 처리
+            checkedCups.forEach { cup ->
+                viewModel.deleteCup(cup.cupId)
+            }
+            
+            // 모든 삭제 완료 후 수정 모드 해제
+            if (checkedCups.isNotEmpty()) {
+                viewModel.setModifyMode(false)
+            }
         }
     }
 

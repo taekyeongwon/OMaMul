@@ -68,20 +68,28 @@ class WaterAmountPicker
         super.setValue(newValue)
     }
 
-    //인덱스 값이 아닌 displayedValue 값 리턴
     fun getCurrentValue(): Int {
-        val value = displayedValues[super.getValue()].toInt()
+        val currentIndex = super.getValue()
+        // 배열 범위 안전 체크
+        if (displayedValues == null || currentIndex < 0 || currentIndex >= displayedValues.size) {
+            return currentMlValue.coerceIn(minValue, maxValue)
+        }
+        val value = displayedValues[currentIndex].toInt()
         currentMlValue = value
         return value
     }
 
-    /**
-     * 단위 변경 시 호출
-     * ml 기준 값을 유지한 채로 단위만 변경하여 표시
-     */
     fun updateUnit(unitType: UnitType, currentValue: Int) {
         // 현재 ml 값 저장
-        currentMlValue = if (currentValue > 0) currentValue else this.getCurrentValue()
+        currentMlValue = if (currentValue > 0) currentValue else {
+            // 안전하게 현재 값 가져오기
+            val currentIndex = super.getValue()
+            if (displayedValues != null && currentIndex >= 0 && currentIndex < displayedValues.size) {
+                displayedValues[currentIndex].toInt()
+            } else {
+                200 // 기본값
+            }
+        }
 
         // 단위에 따라 min/max/interval 변경
         when (unitType) {
@@ -107,11 +115,22 @@ class WaterAmountPicker
             }
         }
 
-        // NumberPicker 재초기화
+        // NumberPicker 재초기화 (순서 중요!)
         val values = getIntervalDisplayedValues(interval)
-        displayedValues = values.toTypedArray()
+        
+        // 1. 먼저 현재 value를 0으로 리셋
+        super.setValue(0)
+        
+        // 2. displayedValues를 null로 초기화
+        displayedValues = null
+        
+        // 3. min/max 범위 설정
         setMinValue(0)
         setMaxValue(values.size - 1)
+        
+        // 4. 새로운 displayedValues 설정
+        displayedValues = values.toTypedArray()
+        
         wrapSelectorWheel = false
 
         // 현재 ml 값을 새 단위로 변환하여 설정
@@ -122,16 +141,27 @@ class WaterAmountPicker
             UnitType.FL_OZ -> (currentMlValue / 29.5735).toInt().coerceIn(minValue, maxValue)
         }
 
-        // 변환된 값을 표시
-        val index = (convertedValue - minValue) / interval
-        super.setValue(index.coerceIn(0, values.size - 1))
+        // 변환된 값을 표시 (안전한 인덱스 계산)
+        val index = ((convertedValue - minValue) / interval).coerceIn(0, values.size - 1)
+        super.setValue(index)
+        
+        // 현재 ml 값 업데이트
+        currentMlValue = when (unitType) {
+            UnitType.ML -> convertedValue
+            UnitType.L -> convertedValue * 1000
+            UnitType.CUP -> convertedValue * 200
+            UnitType.FL_OZ -> (convertedValue * 29.5735).toInt()
+        }
     }
 
-    /**
-     * 현재 표시된 값을 ml로 변환하여 반환
-     */
     fun getCurrentValueInMl(unitType: UnitType): Int {
-        val currentDisplayValue = getCurrentValue()
+        val currentIndex = super.getValue()
+        // 배열 범위 안전 체크
+        if (displayedValues == null || currentIndex < 0 || currentIndex >= displayedValues.size) {
+            return currentMlValue
+        }
+        
+        val currentDisplayValue = displayedValues[currentIndex].toInt()
         return when (unitType) {
             UnitType.ML -> currentDisplayValue
             UnitType.L -> currentDisplayValue * 1000

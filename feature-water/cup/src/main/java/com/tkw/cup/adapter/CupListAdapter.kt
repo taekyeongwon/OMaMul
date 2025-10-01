@@ -26,22 +26,22 @@ class CupListAdapter(
     private var draggable: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when(C.CupListViewType.values()[viewType]) {
-            C.CupListViewType.NORMAL -> {
-                val binding = ItemCupListBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
-                CupListViewHolder(binding, editListener, longClickListener, cupSelectListener)
-            }
-            C.CupListViewType.DRAG -> {
+        return when(viewType) {
+            C.CupListViewType.DRAG.viewType -> {
                 val binding = ItemCupListEditBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
                 )
                 CupEditViewHolder(binding, deleteCheckListener, dragListener)
+            }
+            else -> {
+                val binding = ItemCupListBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                CupListViewHolder(binding, editListener, longClickListener, cupSelectListener)
             }
         }
     }
@@ -100,12 +100,20 @@ class CupListAdapter(
 
         init {
             with(binding) {
-                ibEdit.setOnClickListener { editListener(adapterPosition) }
+                ibEdit.setOnClickListener {
+                    val position = adapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        editListener(position)
+                    }
+                }
                 root.setOnClickListener {
                     currentCup?.let { cupSelectListener(it) }
                 }
                 root.setOnLongClickListener {
-                    longClickListener(adapterPosition)
+                    val position = adapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        longClickListener(position)
+                    }
                     return@setOnLongClickListener true
                 }
             }
@@ -136,21 +144,24 @@ class CupListAdapter(
                     true
                 }
                 root.setOnClickListener {
-                    if (adapterPosition != RecyclerView.NO_POSITION) {
+                    val position = adapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
                         cbDelete.isChecked = !cbDelete.isChecked
                     }
                 }
                 // 체크박스 영역 클릭도 처리
                 layoutCheckbox.setOnClickListener {
-                    if (adapterPosition != RecyclerView.NO_POSITION) {
+                    val position = adapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
                         cbDelete.isChecked = !cbDelete.isChecked
                     }
                 }
 
                 // 체크박스 상태 변경 리스너 (플래그로 무한 루프 방지)
                 cbDelete.setOnCheckedChangeListener { _, isChecked ->
-                    if (adapterPosition != RecyclerView.NO_POSITION && !isUpdatingProgrammatically) {
-                        deleteCheckListener(adapterPosition, isChecked)
+                    val position = adapterPosition
+                    if (position != RecyclerView.NO_POSITION && !isUpdatingProgrammatically) {
+                        deleteCheckListener(position, isChecked)
                     }
                 }
             }
