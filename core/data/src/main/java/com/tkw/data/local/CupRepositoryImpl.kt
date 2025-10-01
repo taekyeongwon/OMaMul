@@ -47,6 +47,12 @@ class CupRepositoryImpl @Inject constructor(
             this.cupUnit = cupUnit.name
         }
         cupDao.insertCup(cup)
+
+        // 첫 번째 컵 추가 시 자동으로 선택
+        val cupList = cupDao.getCupList()
+        if (cupList.cupList.size == 1) {
+            setCurrentSelectedCupId(cup.cupId)
+        }
     }
 
     override suspend fun updateCup(cupId: String, cupName: String, cupAmount: Int, cupUnit: UnitType) {

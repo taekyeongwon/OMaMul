@@ -37,6 +37,7 @@ class WaterViewModel
     private val cupRepository: CupRepository,
     private val settingRepository: SettingRepository,
     private val prefDataRepository: PrefDataRepository,
+    private val alarmRepository: com.tkw.domain.AlarmRepository,
     private val savedStateHandle: SavedStateHandle
 ): BaseViewModel() {
 
@@ -143,4 +144,12 @@ class WaterViewModel
             }
         }
     }
+
+    // 다음 알람까지 남은 시간 (밀리초)
+    val nextAlarmTimeFlow: StateFlow<Long> =
+        alarmRepository.getRemainAlarmTime().stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            -1L
+        )
 }

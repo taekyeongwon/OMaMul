@@ -180,8 +180,19 @@ class WaterFragment: Fragment() {
         }
 
         // 다음 알람 시간 표시
-        // TODO: 알람 기능 연동 시 실제 다음 알람 시간으로 업데이트
-        dataBinding.tvNextAlarm.text = getString(com.tkw.ui.R.string.water_alarm_off)
+        lifecycleScope.launch {
+            viewModel.nextAlarmTimeFlow.collect { remainMillis ->
+                if (remainMillis > 0) {
+                    // 다음 알람까지 남은 시간을 HH:mm 형식으로 표시
+                    val nextAlarmTime = System.currentTimeMillis() + remainMillis
+                    val formatter = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
+                    dataBinding.tvNextAlarm.text = formatter.format(java.util.Date(nextAlarmTime))
+                } else {
+                    // 알람이 없거나 꺼진 상태
+                    dataBinding.tvNextAlarm.text = getString(com.tkw.ui.R.string.water_alarm_off)
+                }
+            }
+        }
     }
 
     private fun updateWaterDisplay(currentIntake: Int, intakeGoal: Int) {
