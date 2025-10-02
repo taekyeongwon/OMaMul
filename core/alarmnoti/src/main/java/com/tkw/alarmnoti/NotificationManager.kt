@@ -27,7 +27,7 @@ object NotificationManager {
     private const val DEFAULT_CH = "DEFAULT_CH"
     private const val NOTIFICATION_GROUP_NAME = "GROUP_NAME"
     private lateinit var homeIntent: PendingIntent
-    const val TIMEOUT: Long = 1000 * 5
+    const val TIMEOUT: Long = 1000 * 30 // 30초 후 자동 종료
 
     fun createNotificationChannel(context: Context) {
         val importance = NotificationManager.IMPORTANCE_HIGH

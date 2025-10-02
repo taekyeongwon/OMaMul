@@ -22,7 +22,7 @@ class AlarmActivity: AppCompatActivity() {
     private var dragTrack: View? = null
     private var initialX = 0f
     private var initialTouchX = 0f
-    private val dismissThreshold = 0.7f // 70% 드래그 시 종료
+    private val dismissThreshold = 0.9f // 90% 이상 드래그 후 놓으면 종료
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,15 +51,26 @@ class AlarmActivity: AppCompatActivity() {
                     val maxDragDistance = dragTrack?.width?.toFloat()?.minus(view.width) ?: 0f
                     val newX = (initialX + deltaX).coerceIn(initialX, initialX + maxDragDistance)
                     view.x = newX
+                    true
+                }
+                MotionEvent.ACTION_UP -> {
+                    val deltaX = event.rawX - initialTouchX
+                    val maxDragDistance = dragTrack?.width?.toFloat()?.minus(view.width) ?: 0f
 
-                    // 임계값 도달 시 종료
+                    // 우측 끝까지 드래그 후 놓으면 종료
                     if (deltaX >= maxDragDistance * dismissThreshold) {
                         finish()
+                    } else {
+                        // 임계값 미만이면 원위치로 되돌림
+                        view.animate()
+                            .x(initialX)
+                            .setDuration(200)
+                            .start()
                     }
                     true
                 }
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    // 버튼을 원위치로 되돌림
+                MotionEvent.ACTION_CANCEL -> {
+                    // 취소 시 원위치로 되돌림
                     view.animate()
                         .x(initialX)
                         .setDuration(200)
