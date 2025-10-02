@@ -53,7 +53,7 @@ class WaterViewModel
 
     //현재 날짜로 조회한 DayOfWater, 마지막 데이터 제거하기 위해 관찰
     @OptIn(ExperimentalCoroutinesApi::class)
-    val amountLiveData: StateFlow<DayOfWater> = dateStringFlow.flatMapLatest { date ->
+    val amountFlow: StateFlow<DayOfWater> = dateStringFlow.flatMapLatest { date ->
         waterRepository.getAmountByFlow(date)
     }.stateIn(
         viewModelScope,
@@ -63,7 +63,7 @@ class WaterViewModel
 
     //메인화면에 표시할 컵 리스트
     @OptIn(ExperimentalCoroutinesApi::class)
-    val cupListLiveData: StateFlow<List<Cup>> =
+    val cupListFlow: StateFlow<List<Cup>> =
         cupRepository.getCupList().mapLatest {
             it.cupList
         }.stateIn(
@@ -140,7 +140,7 @@ class WaterViewModel
     fun initCurrentCupIfNeeded() {
         launch {
             val currentSelected = currentSelectedCupIdFlow.first()
-            val cupList = cupListLiveData.first()
+            val cupList = cupListFlow.first()
 
             if (currentSelected == null && cupList.isNotEmpty()) {
                 setCurrentSelectedCup(cupList.first().cupId)

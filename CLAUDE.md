@@ -366,9 +366,12 @@ buildTypes {
 - MaterialCardView 및 글래스모피즘 효과 적용
 - 그라데이션 배경 및 MaterialButton 적용
 
-**진행률: 8/8 완료 (feature-common:setting 제외)**
+**진행률: 7/7 완료 (Phase 1 완료, feature-common:setting 보류)**
 
-**8. feature-common:setting** - 앱 설정
+**⏸️ 8. feature-common:setting** - 앱 설정 (보류)
+- 추후 작업 지시 전까지 보류
+
+**Phase 1 완료! 다음은 Phase 2: LiveData → StateFlow 마이그레이션 진행**
 
 #### 각 모듈별 작업 프로세스
 ```bash

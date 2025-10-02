@@ -130,7 +130,7 @@ class WaterFragment: Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.amountLiveData.collect {
+                viewModel.amountFlow.collect {
                     val intakeGoal = viewModel.getIntakeAmount()
                     val currentIntake = it.getTotalIntakeByDate()
                     val prevWater = dayOfWater
