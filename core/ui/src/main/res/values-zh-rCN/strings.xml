@@ -158,4 +158,11 @@
     <!-- 알람 관련 추가 문구들 -->
     <string name="alarm_water_time">该喝水了！</string>
     <string name="alarm_swipe_to_dismiss">滑动关闭</string>
+
+    <!-- 백업 에러 메시지 -->
+    <string name="backup_error_quota_exceeded">Google Drive 存储空间不足。\n请清理空间后重试。</string>
+    <string name="backup_error_auth">身份验证失败。\n请重新登录。</string>
+    <string name="backup_error_network">网络错误。\n请检查网络连接后重试。</string>
+    <string name="backup_error_permission">权限被拒绝。\n请检查 Google Drive 访问权限。</string>
+    <string name="backup_error_unknown">发生未知错误。\n请稍后重试。</string>
 </resources>

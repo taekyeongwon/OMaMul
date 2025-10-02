@@ -95,6 +95,15 @@ class WaterSettingFragment : Fragment()
                         anim.end()
                     }
                 }
+                BackupForeground.ACTION_SERVICE_ERROR -> {
+                    val anim = animator
+                    if(anim != null && anim.isRunning) {
+                        anim.end()
+                    }
+                    val errorType = intent.getStringExtra(BackupForeground.EXTRA_ERROR_TYPE)
+                    val errorMessage = intent.getStringExtra(BackupForeground.EXTRA_ERROR_MESSAGE)
+                    showErrorDialog(errorType, errorMessage)
+                }
             }
         }
     }
@@ -128,6 +137,7 @@ class WaterSettingFragment : Fragment()
         val intentFilter = IntentFilter()
         intentFilter.addAction(BackupForeground.ACTION_SERVICE_START)
         intentFilter.addAction(BackupForeground.ACTION_SERVICE_STOP)
+        intentFilter.addAction(BackupForeground.ACTION_SERVICE_ERROR)
         LocalBroadcastManager.getInstance(requireContext())
             .registerReceiver(broadcastReceiver, intentFilter)
     }
@@ -307,5 +317,28 @@ class WaterSettingFragment : Fragment()
 
     private fun syncRotateStop(animator: ObjectAnimator) {
         animator.cancel()
+    }
+
+    private fun showErrorDialog(errorType: String?, errorMessage: String?) {
+        val dialog = CustomDialog()
+        dialog.show(childFragmentManager, dialog.tag)
+        lifecycleScope.launch {
+            dialog.withStarted {
+                val message = when (errorType) {
+                    "quota_exceeded" -> getString(com.tkw.ui.R.string.backup_error_quota_exceeded)
+                    "auth_error" -> getString(com.tkw.ui.R.string.backup_error_auth)
+                    "network_error" -> getString(com.tkw.ui.R.string.backup_error_network)
+                    "permission_denied" -> getString(com.tkw.ui.R.string.backup_error_permission)
+                    else -> getString(com.tkw.ui.R.string.backup_error_unknown)
+                }
+                dialog.setTextView(message)
+                dialog.setButtonListener(
+                    confirmButtonTitle = getString(com.tkw.ui.R.string.ok),
+                    confirmAction = {
+                        dialog.dismiss()
+                    }
+                )
+            }
+        }
     }
 }

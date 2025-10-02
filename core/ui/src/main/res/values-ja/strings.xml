@@ -158,4 +158,11 @@
     <!-- 알람 관련 추가 문구들 -->
     <string name="alarm_water_time">水を飲む時間です！</string>
     <string name="alarm_swipe_to_dismiss">スワイプして閉じる</string>
+
+    <!-- 백업 에러 메시지 -->
+    <string name="backup_error_quota_exceeded">Google Driveの容量が不足しています。\n容量を確保してから再試行してください。</string>
+    <string name="backup_error_auth">認証に失敗しました。\n再度ログインしてください。</string>
+    <string name="backup_error_network">ネットワークエラーが発生しました。\nインターネット接続を確認して再試行してください。</string>
+    <string name="backup_error_permission">権限が拒否されました。\nGoogle Driveのアクセス権限を確認してください。</string>
+    <string name="backup_error_unknown">不明なエラーが発生しました。\nしばらくしてから再試行してください。</string>
 </resources>

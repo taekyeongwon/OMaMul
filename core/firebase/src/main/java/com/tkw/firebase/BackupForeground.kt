@@ -65,8 +65,34 @@ class BackupForeground: Service() {
         CoroutineScope(Dispatchers.IO).launch {
             runCatching {
                 googleDrive.upload(accessToken, destRealmFile, destRealmFile.name)
-            }.onFailure {
-                it.printStackTrace()
+            }.onFailure { error ->
+                error.printStackTrace()
+                val errorIntent = Intent(ACTION_SERVICE_ERROR).apply {
+                    when (error) {
+                        is BackupError.QuotaExceeded -> {
+                            putExtra(EXTRA_ERROR_TYPE, "quota_exceeded")
+                            putExtra(EXTRA_ERROR_MESSAGE, error.message)
+                        }
+                        is BackupError.AuthenticationError -> {
+                            putExtra(EXTRA_ERROR_TYPE, "auth_error")
+                            putExtra(EXTRA_ERROR_MESSAGE, error.message)
+                        }
+                        is BackupError.NetworkError -> {
+                            putExtra(EXTRA_ERROR_TYPE, "network_error")
+                            putExtra(EXTRA_ERROR_MESSAGE, error.message)
+                        }
+                        is BackupError.PermissionDenied -> {
+                            putExtra(EXTRA_ERROR_TYPE, "permission_denied")
+                            putExtra(EXTRA_ERROR_MESSAGE, error.message)
+                        }
+                        else -> {
+                            putExtra(EXTRA_ERROR_TYPE, "unknown_error")
+                            putExtra(EXTRA_ERROR_MESSAGE, error.message ?: "Unknown error occurred")
+                        }
+                    }
+                }
+                LocalBroadcastManager.getInstance(applicationContext)
+                    .sendBroadcast(errorIntent)
             }.onSuccess {
                 prefDataRepository.saveLastSync(System.currentTimeMillis())
             }.also {
@@ -85,8 +111,34 @@ class BackupForeground: Service() {
         CoroutineScope(Dispatchers.IO).launch {
             runCatching {
                 backUpRealm(accessToken, sourceRealmFile, destRealmFile)
-            }.onFailure {
-                it.printStackTrace()
+            }.onFailure { error ->
+                error.printStackTrace()
+                val errorIntent = Intent(ACTION_SERVICE_ERROR).apply {
+                    when (error) {
+                        is BackupError.QuotaExceeded -> {
+                            putExtra(EXTRA_ERROR_TYPE, "quota_exceeded")
+                            putExtra(EXTRA_ERROR_MESSAGE, error.message)
+                        }
+                        is BackupError.AuthenticationError -> {
+                            putExtra(EXTRA_ERROR_TYPE, "auth_error")
+                            putExtra(EXTRA_ERROR_MESSAGE, error.message)
+                        }
+                        is BackupError.NetworkError -> {
+                            putExtra(EXTRA_ERROR_TYPE, "network_error")
+                            putExtra(EXTRA_ERROR_MESSAGE, error.message)
+                        }
+                        is BackupError.PermissionDenied -> {
+                            putExtra(EXTRA_ERROR_TYPE, "permission_denied")
+                            putExtra(EXTRA_ERROR_MESSAGE, error.message)
+                        }
+                        else -> {
+                            putExtra(EXTRA_ERROR_TYPE, "unknown_error")
+                            putExtra(EXTRA_ERROR_MESSAGE, error.message ?: "Unknown error occurred")
+                        }
+                    }
+                }
+                LocalBroadcastManager.getInstance(applicationContext)
+                    .sendBroadcast(errorIntent)
             }.onSuccess {
                 prefDataRepository.saveLastSync(System.currentTimeMillis())
             }.also {
@@ -120,6 +172,9 @@ class BackupForeground: Service() {
         const val EXTRA_ACCESS_TOKEN = "accessToken"
         const val ACTION_SERVICE_START = "action_service_start"
         const val ACTION_SERVICE_STOP = "action_service_stop"
+        const val ACTION_SERVICE_ERROR = "action_service_error"
+        const val EXTRA_ERROR_TYPE = "error_type"
+        const val EXTRA_ERROR_MESSAGE = "error_message"
         const val BACKUP_FILE_NAME = "default.realm"
         const val DOWNLOAD_FILE_NAME = "tmp.realm"
     }

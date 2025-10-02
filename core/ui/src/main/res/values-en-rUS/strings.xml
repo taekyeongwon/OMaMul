@@ -158,4 +158,11 @@
     <!-- 알람 관련 추가 문구들 -->
     <string name="alarm_water_time">Time to drink water!</string>
     <string name="alarm_swipe_to_dismiss">Swipe to dismiss</string>
+
+    <!-- 백업 에러 메시지 -->
+    <string name="backup_error_quota_exceeded">Google Drive storage is full.\nPlease free up space and try again.</string>
+    <string name="backup_error_auth">Authentication failed.\nPlease sign in again.</string>
+    <string name="backup_error_network">Network error occurred.\nPlease check your internet connection and try again.</string>
+    <string name="backup_error_permission">Permission denied.\nPlease check Google Drive access permissions.</string>
+    <string name="backup_error_unknown">An unknown error occurred.\nPlease try again later.</string>
 </resources>

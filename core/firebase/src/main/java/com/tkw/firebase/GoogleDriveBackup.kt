@@ -59,9 +59,11 @@ class GoogleDriveBackup @Inject constructor(
             println("File ID: " + createdFile.id)
             createdFile.id
         } catch (e: GoogleJsonResponseException) {
-            // TODO(developer) - handle error appropriately
             System.err.println("Unable to create file: " + e.details)
-            throw e
+            throw handleGoogleDriveException(e)
+        } catch (e: Exception) {
+            System.err.println("Unexpected error during upload: ${e.message}")
+            throw BackupError.UnknownError(e.message ?: "Unexpected error during upload")
         }
     }
 
@@ -79,7 +81,10 @@ class GoogleDriveBackup @Inject constructor(
             outputStream.writeTo(FileOutputStream(destFile))
         } catch (e: GoogleJsonResponseException) {
             System.err.println("Unable to download file: " + e.details)
-            throw e
+            throw handleGoogleDriveException(e)
+        } catch (e: Exception) {
+            System.err.println("Unexpected error during download: ${e.message}")
+            throw BackupError.UnknownError(e.message ?: "Unexpected error during download")
         } finally {
             outputStream.close()
         }
@@ -110,7 +115,10 @@ class GoogleDriveBackup @Inject constructor(
             files
         } catch (e: GoogleJsonResponseException) {
             System.err.println("Unable to list files: " + e.details)
-            throw e
+            throw handleGoogleDriveException(e)
+        } catch (e: Exception) {
+            System.err.println("Unexpected error during list: ${e.message}")
+            throw BackupError.UnknownError(e.message ?: "Unexpected error during list")
         }
     }
 
@@ -146,4 +154,33 @@ class GoogleDriveBackup @Inject constructor(
                 resultListener(Result.failure(it))
             }
     }
+
+    private fun handleGoogleDriveException(e: GoogleJsonResponseException): BackupError {
+        return when (e.statusCode) {
+            403 -> {
+                if (e.details?.message?.contains("quota", ignoreCase = true) == true ||
+                    e.details?.message?.contains("storage", ignoreCase = true) == true) {
+                    BackupError.QuotaExceeded(e.details.message ?: "Storage quota exceeded")
+                } else {
+                    BackupError.PermissionDenied(e.details?.message ?: "Permission denied")
+                }
+            }
+            404 -> BackupError.FileNotFound(e.details?.message ?: "File not found")
+            429 -> BackupError.RateLimitError(e.details?.message ?: "Too many requests")
+            in 500..599 -> BackupError.ServerError(e.details?.message ?: "Server error")
+            401 -> BackupError.AuthenticationError(e.details?.message ?: "Authentication failed")
+            else -> BackupError.UnknownError(e.details?.message ?: "Unknown error: ${e.statusCode}")
+        }
+    }
+}
+
+sealed class BackupError(message: String) : Exception(message) {
+    data class QuotaExceeded(val details: String) : BackupError("Google Drive quota exceeded: $details")
+    data class AuthenticationError(val details: String) : BackupError("Authentication failed: $details")
+    data class NetworkError(val details: String) : BackupError("Network error: $details")
+    data class RateLimitError(val details: String) : BackupError("Rate limit exceeded: $details")
+    data class FileNotFound(val details: String) : BackupError("File not found: $details")
+    data class PermissionDenied(val details: String) : BackupError("Permission denied: $details")
+    data class ServerError(val details: String) : BackupError("Server error: $details")
+    data class UnknownError(val details: String) : BackupError("Unknown error: $details")
 }
