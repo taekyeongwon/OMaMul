@@ -16,7 +16,9 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.withStarted
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
@@ -145,12 +147,16 @@ class WaterSettingFragment : Fragment()
     }
 
     private fun initObserver() {
-        viewModel.lastSync.observe(viewLifecycleOwner) {
-            if(it == -1L) {
-                dataBinding.settingInfo.tvLastSync.text = getString(com.tkw.ui.R.string.setting_last_sync_empty)
-            } else {
-                dataBinding.settingInfo.tvLastSync.text = DateTimeUtils.DateTime.getFormat(
-                    DateTimeUtils.DateTime.getLocalDateTime(it))
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.lastSyncFlow.collect {
+                    if(it == -1L || it == 0L) {
+                        dataBinding.settingInfo.tvLastSync.text = getString(com.tkw.ui.R.string.setting_last_sync_empty)
+                    } else {
+                        dataBinding.settingInfo.tvLastSync.text = DateTimeUtils.DateTime.getFormat(
+                            DateTimeUtils.DateTime.getLocalDateTime(it))
+                    }
+                }
             }
         }
     }
@@ -164,7 +170,7 @@ class WaterSettingFragment : Fragment()
         }
         dataBinding.settingInfo.ivSync.setOnClickListener {
 //            cloudStorageUpload()
-            viewModel.lastSync.value?.let {
+            viewModel.lastSyncFlow.value.let {
                 if(it == -1L) {
                     googleDriveStartSync()
                 } else {

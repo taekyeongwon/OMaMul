@@ -18,6 +18,7 @@ import androidx.fragment.app.commit
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.tkw.alarm.databinding.FragmentAlarmModeBinding
 import com.tkw.alarm.dialog.AlarmModeBottomDialog
 import com.tkw.alarm.dialog.ExactAlarmDialog
@@ -165,25 +166,29 @@ class AlarmModeFragment: Fragment() {
     }
 
     private fun initObserver() {
-        viewModel.alarmMode.observe(viewLifecycleOwner) {
-            //현재 뷰모델 setting에서 가져온 모드로 replace
-            it?.let {
-                setAlarmModeText(it)
-                currentMode = it
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.alarmModeFlow.collect {
+                    //현재 뷰모델 setting에서 가져온 모드로 replace
+                    it?.let {
+                        setAlarmModeText(it)
+                        currentMode = it
 
-                when(it) {
-                    AlarmMode.PERIOD -> {
-                        replaceFragment(fragmentList[0])
-                    }
-                    AlarmMode.CUSTOM -> {
-                        replaceFragment(fragmentList[1])
+                        when(it) {
+                            AlarmMode.PERIOD -> {
+                                replaceFragment(fragmentList[0])
+                            }
+                            AlarmMode.CUSTOM -> {
+                                replaceFragment(fragmentList[1])
+                            }
+                        }
                     }
                 }
             }
         }
 
         lifecycleScope.launch(Dispatchers.Default) {
-            viewModel.timeTickerLiveData.flatMapLatest {
+            viewModel.timeTickerFlow.flatMapLatest {
                 setTimeContent(it)
             }.collect {
                 viewModel.setRemainTimeContent(it)

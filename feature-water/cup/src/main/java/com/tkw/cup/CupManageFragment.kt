@@ -8,11 +8,14 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.tkw.common.autoCleared
+import kotlinx.coroutines.launch
 import com.tkw.cup.adapter.CupListAdapter
 import com.tkw.cup.databinding.FragmentCupManageBinding
 import com.tkw.domain.model.Cup
@@ -91,7 +94,7 @@ class CupManageFragment: Fragment() {
 
     private val callback = object: OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if(viewModel.modifyMode.value == true) {
+            if(viewModel.modifyModeFlow.value == true) {
                 clearChecked()
                 viewModel.setModifyMode(false)
             } else {
@@ -141,7 +144,7 @@ class CupManageFragment: Fragment() {
                 // 현재 선택된 컵으로 설정
                 viewModel.setCurrentSelectedCup(cup.cupId)
             },
-            currentSelectedCupId = viewModel.currentSelectedCupIdLiveData.value
+            currentSelectedCupId = viewModel.currentSelectedCupIdFlow.value
         )
         cupListAdapter.registerAdapterDataObserver(positionObserver)
 
@@ -157,25 +160,37 @@ class CupManageFragment: Fragment() {
     }
 
     private fun initObserver() {
-        viewModel.cupListLiveData.observe(viewLifecycleOwner) {
-            val list = draggedList.ifEmpty { it }
-            cupListAdapter.submitList(list.map { it.copy() }) {
-                draggedList.clear()
-                dataChanged()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.cupListFlow.collect {
+                        val list = draggedList.ifEmpty { it }
+                        cupListAdapter.submitList(list.map { it.copy() }) {
+                            draggedList.clear()
+                            dataChanged()
+                        }
+                    }
+                }
+
+                // 현재 선택된 컵 ID 변경 시 어댑터 업데이트
+                launch {
+                    viewModel.currentSelectedCupIdFlow.collect { selectedCupId ->
+                        cupListAdapter.updateSelectedCupId(selectedCupId)
+                    }
+                }
+
+                launch {
+                    viewModel.modifyModeFlow.collect {
+                        modeChanged(it)
+                    }
+                }
+
+                launch {
+                    viewModel.nextEvent.collect {
+                        viewModel.setModifyMode(false)
+                    }
+                }
             }
-        }
-
-        // 현재 선택된 컵 ID 변경 시 어댑터 업데이트
-        viewModel.currentSelectedCupIdLiveData.observe(viewLifecycleOwner) { selectedCupId ->
-            cupListAdapter.updateSelectedCupId(selectedCupId)
-        }
-
-        viewModel.modifyMode.observe(viewLifecycleOwner) {
-            modeChanged(it)
-        }
-
-        viewModel.nextEvent.observe(viewLifecycleOwner) {
-            viewModel.setModifyMode(false)
         }
     }
 

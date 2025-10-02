@@ -7,9 +7,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.tkw.common.autoCleared
+import kotlinx.coroutines.launch
 import com.tkw.cup.databinding.FragmentCupCreateBinding
 import com.tkw.domain.model.Cup
 import com.tkw.domain.model.UnitType
@@ -64,32 +68,42 @@ class CupCreateFragment: Fragment() {
     }
 
     private fun initObserver() {
-        viewModel.createMode.observe(viewLifecycleOwner) {
-            viewModel.buttonName.value =
-                if(it) getString(com.tkw.ui.R.string.add)
-                else getString(com.tkw.ui.R.string.modify)
-        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.createModeFlow.collect {
+                        viewModel.buttonNameFlow.value =
+                            if(it) getString(com.tkw.ui.R.string.add)
+                            else getString(com.tkw.ui.R.string.modify)
+                    }
+                }
 
-        viewModel.nextEvent.observe(viewLifecycleOwner) {
-            findNavController().navigateUp()
-        }
+                launch {
+                    viewModel.nextEvent.collect {
+                        findNavController().navigateUp()
+                    }
+                }
 
-        viewModel.toastEvent.observe(viewLifecycleOwner) {
-            Toast.makeText(
-                requireContext(),
-                it.getMessage(requireContext()),
-                Toast.LENGTH_SHORT
-            ).show()
+                launch {
+                    viewModel.toastEvent.collect {
+                        Toast.makeText(
+                            requireContext(),
+                            it.getMessage(requireContext()),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
         }
     }
 
     private fun initListener() {
         dataBinding.btnNext.setOnClickListener {
-            val isCreate = viewModel.createMode.value ?: false
-            val currentUnit = viewModel.cupUnitLiveData.value ?: UnitType.ML
+            val isCreate = viewModel.createModeFlow.value
+            val currentUnit = viewModel.cupUnitFlow.value
             // ml 기준으로 변환하여 저장 (기존 방식 유지)
             val mlAmount = dataBinding.npAmount.getCurrentValueInMl(currentUnit.toPickerUnitType())
-            viewModel.cupAmountLiveData.value = mlAmount
+            viewModel.cupAmountFlow.value = mlAmount
 
             if(isCreate) viewModel.insertCup()
             else viewModel.updateCup()
@@ -106,15 +120,15 @@ class CupCreateFragment: Fragment() {
             }
 
             // 현재 선택된 값의 ml 환산값을 구해서 새 단위로 변환하여 표시
-            val currentUnit = viewModel.cupUnitLiveData.value ?: UnitType.ML
+            val currentUnit = viewModel.cupUnitFlow.value
             val currentMlValue = dataBinding.npAmount.getCurrentValueInMl(currentUnit.toPickerUnitType())
 
             dataBinding.npAmount.updateUnit(selectedUnit.toPickerUnitType(), currentMlValue)
-            viewModel.cupUnitLiveData.value = selectedUnit
+            viewModel.cupUnitFlow.value = selectedUnit
         }
 
         // 초기 선택 상태 설정
-        val currentUnit = viewModel.cupUnitLiveData.value ?: UnitType.ML
+        val currentUnit = viewModel.cupUnitFlow.value
         dataBinding.rgUnit.check(
             when (currentUnit) {
                 UnitType.ML -> R.id.rb_ml
@@ -125,7 +139,7 @@ class CupCreateFragment: Fragment() {
         )
 
         // 초기 NumberPicker 설정 (저장된 값은 항상 ml 기준)
-        val initialMlValue = viewModel.cupAmountLiveData.value ?: 200
+        val initialMlValue = viewModel.cupAmountFlow.value
         dataBinding.npAmount.updateUnit(currentUnit.toPickerUnitType(), initialMlValue)
     }
 }

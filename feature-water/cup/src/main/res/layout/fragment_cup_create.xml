@@ -75,7 +75,7 @@
                             android:layout_height="wrap_content"
                             android:inputType="text"
                             android:textSize="16sp"
-                            android:text="@={viewModel.cupNameLiveData}"
+                            android:text="@={viewModel.cupNameFlow}"
                             android:hint="@string/cup_alias_hint"
                             android:maxLines="1"/>
                     </com.google.android.material.textfield.TextInputLayout>
@@ -245,7 +245,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="16dp"
-                android:text="@{viewModel.buttonName}"
+                android:text="@{viewModel.buttonNameFlow}"
                 android:textSize="16sp"
                 app:icon="@drawable/ic_check"
                 app:iconGravity="textStart"

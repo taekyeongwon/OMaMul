@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.tkw.alarm.databinding.FragmentWaterAlarmBinding
 import com.tkw.alarm.dialog.AlarmRingtoneDialog
@@ -158,12 +159,16 @@ class WaterAlarmFragment: Fragment() {
     }
 
     private fun initObserver() {
-        viewModel.alarmSettings.observe(viewLifecycleOwner) {
-            //가져온 데이터로 화면 구성
-            it?.let {
-                setRingtoneTitle(it.ringToneMode.getCurrentMode())
-                setAlarmModeTitle(it.alarmMode)
-                setEtcSetting(it.etcSetting)
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.alarmSettingsStateFlow.collect {
+                    //가져온 데이터로 화면 구성
+                    it?.let {
+                        setRingtoneTitle(it.ringToneMode.getCurrentMode())
+                        setAlarmModeTitle(it.alarmMode)
+                        setEtcSetting(it.etcSetting)
+                    }
+                }
             }
         }
     }

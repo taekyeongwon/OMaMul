@@ -5,6 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
 import com.tkw.alarm.R
 import com.tkw.alarm.WaterAlarmViewModel
 import com.tkw.alarm.databinding.DialogRingtoneBinding
@@ -35,15 +39,19 @@ class AlarmRingtoneDialog: CustomBottomDialog<DialogRingtoneBinding>() {
     }
 
     private fun initObserver() {
-        viewModel.alarmRingTone.observe(viewLifecycleOwner) {
-            when(it.getCurrentMode()) {
-                RingTone.BELL -> setRingtoneChecked(it.isBell)
-                RingTone.VIBE -> setVibeChecked(it.isVibe)
-                RingTone.ALL -> setAllChecked()
-                RingTone.IGNORE -> setIgnore()
-                RingTone.DEVICE -> setDeviceChecked(it.isDevice)
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.alarmRingToneFlow.collect {
+                    when(it.getCurrentMode()) {
+                        RingTone.BELL -> setRingtoneChecked(it.isBell)
+                        RingTone.VIBE -> setVibeChecked(it.isVibe)
+                        RingTone.ALL -> setAllChecked()
+                        RingTone.IGNORE -> setIgnore()
+                        RingTone.DEVICE -> setDeviceChecked(it.isDevice)
+                    }
+                    setNotiChecked(it.isSilence)
+                }
             }
-            setNotiChecked(it.isSilence)
         }
     }
 

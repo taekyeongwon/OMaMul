@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -142,16 +144,24 @@ class AlarmModeCustomFragment: Fragment() {
     }
 
     private fun initObserver() {
-        viewModel.customAlarmList.observe(viewLifecycleOwner) {
-            val list = draggedList.ifEmpty { it.alarmList }
-            alarmListAdapter.submitList(list.map { it.copy() }) {
-                draggedList.clear()
-                dataChanged()
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.customAlarmListFlow.collect {
+                    val list = draggedList.ifEmpty { it.alarmList }
+                    alarmListAdapter.submitList(list.map { it.copy() }) {
+                        draggedList.clear()
+                        dataChanged()
+                    }
+                }
             }
         }
 
-        viewModel.nextEvent.observe(viewLifecycleOwner) {
-            modeChanged(false)
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.nextEvent.collect {
+                    modeChanged(false)
+                }
+            }
         }
     }
 

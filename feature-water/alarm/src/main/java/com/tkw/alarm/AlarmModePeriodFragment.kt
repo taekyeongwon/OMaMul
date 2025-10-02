@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.tkw.alarm.databinding.FragmentAlarmModePeriodBinding
 import com.tkw.alarm.dialog.AlarmPeriodDialog
 import com.tkw.alarm.dialog.AlarmTimeBottomDialog
@@ -55,41 +57,50 @@ class AlarmModePeriodFragment : Fragment() {
     }
 
     private fun initObserver() {
-        viewModel.periodModeSettingsLiveData.observe(viewLifecycleOwner) {
-
-            //해당 값으로 화면 구성
-            it?.let { period ->
-                periodMode = period
-                viewModel.setTmpPeriodMode(period)
-                dataBinding.alarmWeek.setChecked(period.selectedDate)
-                dataBinding.tvIntervalSet.text = DateTimeUtils.Time.getFormat(
-                    period.interval.toLong(),
-                    requireContext().getString(com.tkw.ui.R.string.hour),
-                    requireContext().getString(com.tkw.ui.R.string.minute)
-                )
-                dataBinding.tvAlarmTime.text = period.run {
-                    getTimeRange(
-                        DateTimeUtils.Time.getFormat(startTime),
-                        DateTimeUtils.Time.getFormat(endTime)
-                    )
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.periodModeSettingsFlow.collect {
+                    //해당 값으로 화면 구성
+                    it?.let { period ->
+                        periodMode = period
+                        viewModel.setTmpPeriodMode(period)
+                        dataBinding.alarmWeek.setChecked(period.selectedDate)
+                        dataBinding.tvIntervalSet.text = DateTimeUtils.Time.getFormat(
+                            period.interval.toLong(),
+                            requireContext().getString(com.tkw.ui.R.string.hour),
+                            requireContext().getString(com.tkw.ui.R.string.minute)
+                        )
+                        dataBinding.tvAlarmTime.text = period.run {
+                            getTimeRange(
+                                DateTimeUtils.Time.getFormat(startTime),
+                                DateTimeUtils.Time.getFormat(endTime)
+                            )
+                        }
+                        dataBinding.ivEdit.visibility = View.VISIBLE
+                    }
                 }
-                dataBinding.ivEdit.visibility = View.VISIBLE
             }
         }
 
-        viewModel.tmpPeriodMode.observe(viewLifecycleOwner) {
-            if(it != periodMode) {
-                dataBinding.btnSave.visibility = View.VISIBLE
-            } else {
-                dataBinding.btnSave.visibility = View.GONE
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.tmpPeriodModeFlow.collect {
+                    if(it != periodMode) {
+                        dataBinding.btnSave.visibility = View.VISIBLE
+                    } else {
+                        dataBinding.btnSave.visibility = View.GONE
+                    }
+                }
             }
         }
     }
 
     private fun initListener() {
         dataBinding.alarmWeek.setCheckListListener {
-            viewModel.tmpPeriodMode.value?.let { setting ->
-                viewModel.setTmpPeriodMode(setting.copy(selectedDate = it))
+            lifecycleScope.launch {
+                viewModel.tmpPeriodModeFlow.value?.let { setting ->
+                    viewModel.setTmpPeriodMode(setting.copy(selectedDate = it))
+                }
             }
         }
         dataBinding.clPeriod.setOnClickListener {
@@ -105,15 +116,17 @@ class AlarmModePeriodFragment : Fragment() {
                     requireContext().getString(com.tkw.ui.R.string.hour),
                     requireContext().getString(com.tkw.ui.R.string.minute)
                 ).toSecondOfDay()
-                viewModel.tmpPeriodMode.value?.let { setting ->
-                    viewModel.setTmpPeriodMode(setting.copy(interval = interval))
+                lifecycleScope.launch {
+                    viewModel.tmpPeriodModeFlow.value?.let { setting ->
+                        viewModel.setTmpPeriodMode(setting.copy(interval = interval))
+                    }
                 }
             }
             dialog.show(childFragmentManager, dialog.tag)
         }
         dataBinding.btnSave.setOnClickListener {
-            viewModel.tmpPeriodMode.value?.let {
-                lifecycleScope.launch {
+            lifecycleScope.launch {
+                viewModel.tmpPeriodModeFlow.value?.let {
                     updateModeSetting(it)
                     setAlarm(it)
                 }
@@ -135,24 +148,28 @@ class AlarmModePeriodFragment : Fragment() {
     }
 
     private fun showTimeDialog() {
-        viewModel.tmpPeriodMode.value?.let {
-            val dialog = AlarmTimeBottomDialog(
-                selectedStart = DateTimeUtils.Time.getLocalTime(it.startTime),
-                selectedEnd = DateTimeUtils.Time.getLocalTime(it.endTime),
-                resultListener = { wake, sleep ->
-                    viewModel.tmpPeriodMode.value?.let { setting ->
-                        val newSetting = setting.copy(startTime = wake.toEpochMilli(), endTime = sleep.toEpochMilli())
-                        viewModel.setTmpPeriodMode(newSetting)
-                        dataBinding.tvAlarmTime.text = newSetting.run {
-                            getTimeRange(
-                                DateTimeUtils.Time.getFormat(startTime),
-                                DateTimeUtils.Time.getFormat(endTime)
-                            )
+        lifecycleScope.launch {
+            viewModel.tmpPeriodModeFlow.value?.let {
+                val dialog = AlarmTimeBottomDialog(
+                    selectedStart = DateTimeUtils.Time.getLocalTime(it.startTime),
+                    selectedEnd = DateTimeUtils.Time.getLocalTime(it.endTime),
+                    resultListener = { wake, sleep ->
+                        lifecycleScope.launch {
+                            viewModel.tmpPeriodModeFlow.value?.let { setting ->
+                                val newSetting = setting.copy(startTime = wake.toEpochMilli(), endTime = sleep.toEpochMilli())
+                                viewModel.setTmpPeriodMode(newSetting)
+                                dataBinding.tvAlarmTime.text = newSetting.run {
+                                    getTimeRange(
+                                        DateTimeUtils.Time.getFormat(startTime),
+                                        DateTimeUtils.Time.getFormat(endTime)
+                                    )
+                                }
+                            }
                         }
                     }
-                }
-            )
-            dialog.show(childFragmentManager, dialog.tag)
+                )
+                dialog.show(childFragmentManager, dialog.tag)
+            }
         }
     }
 }
