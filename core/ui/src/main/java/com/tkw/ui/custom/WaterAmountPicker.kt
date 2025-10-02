@@ -136,21 +136,26 @@ class WaterAmountPicker
         // 현재 ml 값을 새 단위로 변환하여 설정
         val convertedValue = when (unitType) {
             UnitType.ML -> currentMlValue
-            UnitType.L -> (currentMlValue / 1000.0).toInt().coerceIn(minValue, maxValue)
-            UnitType.CUP -> (currentMlValue / 200.0).toInt().coerceIn(minValue, maxValue)
-            UnitType.FL_OZ -> (currentMlValue / 29.5735).toInt().coerceIn(minValue, maxValue)
+            UnitType.L -> kotlin.math.round(currentMlValue / 1000.0).toInt().coerceIn(minValue, maxValue)
+            UnitType.CUP -> kotlin.math.round(currentMlValue / 200.0).toInt().coerceIn(minValue, maxValue)
+            UnitType.FL_OZ -> kotlin.math.round(currentMlValue / 29.5735).toInt().coerceIn(minValue, maxValue)
         }
 
+        // interval에 맞춰 반올림 (가장 가까운 interval 배수로)
+        val adjustedValue = ((convertedValue - minValue).toDouble() / interval).let { ratio ->
+            minValue + (kotlin.math.round(ratio) * interval).toInt()
+        }.coerceIn(minValue, maxValue)
+
         // 변환된 값을 표시 (안전한 인덱스 계산)
-        val index = ((convertedValue - minValue) / interval).coerceIn(0, values.size - 1)
+        val index = ((adjustedValue - minValue) / interval).coerceIn(0, values.size - 1)
         super.setValue(index)
-        
-        // 현재 ml 값 업데이트
+
+        // 현재 ml 값 업데이트 (adjustedValue 기준으로)
         currentMlValue = when (unitType) {
-            UnitType.ML -> convertedValue
-            UnitType.L -> convertedValue * 1000
-            UnitType.CUP -> convertedValue * 200
-            UnitType.FL_OZ -> (convertedValue * 29.5735).toInt()
+            UnitType.ML -> adjustedValue
+            UnitType.L -> adjustedValue * 1000
+            UnitType.CUP -> adjustedValue * 200
+            UnitType.FL_OZ -> (adjustedValue * 29.5735).toInt()
         }
     }
 

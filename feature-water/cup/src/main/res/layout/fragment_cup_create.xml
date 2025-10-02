@@ -137,7 +137,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="180dp"
                             android:selectionDividerHeight="0dp"
-                            value="@={viewModel.cupAmountLiveData}"
                             app:minValue="100"
                             app:maxValue="5000"
                             app:interval="5"
