@@ -1,12 +1,9 @@
 package com.tkw.cup
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.tkw.base.AppError
 import com.tkw.base.BaseViewModel
 import com.tkw.base.launch
-import com.tkw.common.SingleLiveEvent
 import com.tkw.domain.CupRepository
 import com.tkw.domain.model.Cup
 import dagger.assisted.Assisted
@@ -14,7 +11,15 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel(assistedFactory = CupViewModel.AssistFactory::class)
 class CupViewModel
@@ -29,64 +34,72 @@ class CupViewModel
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val cupListLiveData: LiveData<List<Cup>> =
+    val cupListFlow: StateFlow<List<Cup>> =
         cupRepository.getCupList().mapLatest {
             it.cupList  //Flow<CupListEntity> -> Flow<List<Cup>>으로 최신값 매핑
-        }.asLiveData()
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            listOf()
+        )
 
     // 현재 선택된 컵 ID 정보
-    val currentSelectedCupIdLiveData: LiveData<String?> =
-        cupRepository.getCurrentSelectedCupId().asLiveData()
+    val currentSelectedCupIdFlow: StateFlow<String?> =
+        cupRepository.getCurrentSelectedCupId().stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            null
+        )
 
     //cup create fragment에서 관찰할 변수
-    val cupNameLiveData = MutableLiveData(params.cupName)
-    val cupAmountLiveData = MutableLiveData(params.cupAmount)
-    val cupUnitLiveData = MutableLiveData(params.cupUnit)
-    val buttonName = MutableLiveData<String>()
+    val cupNameFlow = MutableStateFlow(params.cupName)
+    val cupAmountFlow = MutableStateFlow(params.cupAmount)
+    val cupUnitFlow = MutableStateFlow(params.cupUnit)
+    val buttonNameFlow = MutableStateFlow("")
 
-    private val _nextEvent = SingleLiveEvent<Unit>()
-    val nextEvent: LiveData<Unit> = _nextEvent
+    private val _nextEvent = MutableSharedFlow<Unit>(replay = 0, extraBufferCapacity = 1)
+    val nextEvent: SharedFlow<Unit> = _nextEvent.asSharedFlow()
 
-    private val _createMode = MutableLiveData(true)
-    val createMode: LiveData<Boolean> = _createMode
+    private val _createModeFlow = MutableStateFlow(true)
+    val createModeFlow: StateFlow<Boolean> = _createModeFlow.asStateFlow()
     //end
 
-    private val _toastEvent = SingleLiveEvent<AppError>()
-    val toastEvent: LiveData<AppError> = _toastEvent
+    private val _toastEvent = MutableSharedFlow<AppError>(replay = 0, extraBufferCapacity = 1)
+    val toastEvent: SharedFlow<AppError> = _toastEvent.asSharedFlow()
 
-    private val _modifyMode = MutableLiveData(false)
-    val modifyMode: LiveData<Boolean> = _modifyMode
+    private val _modifyModeFlow = MutableStateFlow(false)
+    val modifyModeFlow: StateFlow<Boolean> = _modifyModeFlow.asStateFlow()
 
     init {
         //createMode true면 추가 모드, 그 외 수정 모드
-        _createMode.value = params.createMode
+        _createModeFlow.value = params.createMode
     }
 
     fun insertCup() {
         if(!validateCheck()) {
-            _toastEvent.value = AppError(100)
+            _toastEvent.tryEmit(AppError(100))
             return
         }
         launch {
-            val cupName = cupNameLiveData.value!!
-            val cupAmount = cupAmountLiveData.value!!
-            val cupUnit = cupUnitLiveData.value!!
+            val cupName = cupNameFlow.value
+            val cupAmount = cupAmountFlow.value
+            val cupUnit = cupUnitFlow.value
             cupRepository.insertCup(cupName, cupAmount, cupUnit)
-            _nextEvent.call()
+            _nextEvent.tryEmit(Unit)
         }
     }
 
     fun updateCup() {
         if(!validateCheck()) {
-            _toastEvent.value = AppError(100)
+            _toastEvent.tryEmit(AppError(100))
             return
         }
         launch {
-            val cupName = cupNameLiveData.value!!
-            val cupAmount = cupAmountLiveData.value!!
-            val cupUnit = cupUnitLiveData.value!!
+            val cupName = cupNameFlow.value
+            val cupAmount = cupAmountFlow.value
+            val cupUnit = cupUnitFlow.value
             cupRepository.updateCup(params.cupId, cupName, cupAmount, cupUnit)
-            _nextEvent.call()
+            _nextEvent.tryEmit(Unit)
         }
     }
 
@@ -97,7 +110,7 @@ class CupViewModel
         }
     }
 
-    private fun validateCheck(): Boolean = cupNameLiveData.value!!.isNotBlank()
+    private fun validateCheck(): Boolean = cupNameFlow.value.isNotBlank()
 
     fun updateAll(list: List<Cup>) {
         launch {
@@ -106,7 +119,7 @@ class CupViewModel
     }
 
     fun setModifyMode(flag: Boolean) {
-        _modifyMode.value = flag
+        _modifyModeFlow.value = flag
     }
 
     // 현재 선택된 컵 설정

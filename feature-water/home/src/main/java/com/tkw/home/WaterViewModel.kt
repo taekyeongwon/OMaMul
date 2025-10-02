@@ -1,13 +1,9 @@
 package com.tkw.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.tkw.base.BaseViewModel
 import com.tkw.base.launch
-import com.tkw.common.SingleLiveEvent
 import com.tkw.common.util.DateTimeUtils
 import com.tkw.domain.CupRepository
 import com.tkw.domain.PrefDataRepository
@@ -100,7 +96,7 @@ class WaterViewModel
         )
 
     //컵 관리 화면 이동 후 돌아왔을 때 위치 저장용
-    val cupPagerScrollPosition = MutableLiveData(0)
+    val cupPagerScrollPosition = MutableStateFlow(0)
 
     //섭취량 변경 완료 여부
     private val _amountSaveEvent = MutableSharedFlow<Unit>(replay = 0, extraBufferCapacity = 1)

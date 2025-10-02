@@ -1,11 +1,9 @@
 package com.tkw.setting
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.tkw.base.BaseViewModel
 import com.tkw.base.launch
-import com.tkw.common.SingleLiveEvent
 import com.tkw.common.util.DateTimeUtils
 import com.tkw.domain.AlarmRepository
 import com.tkw.domain.PrefDataRepository
@@ -17,10 +15,16 @@ import com.tkw.domain.model.RingTone
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
 import java.time.format.TextStyle
 import java.util.Locale
 import javax.inject.Inject
@@ -35,8 +39,8 @@ class SettingViewModel
     private val prefDataRepository: PrefDataRepository
 ): BaseViewModel() {
 
-    private val _nextEvent = SingleLiveEvent<Unit>()
-    val nextEvent: LiveData<Unit> = _nextEvent
+    private val _nextEvent = MutableSharedFlow<Unit>(replay = 0, extraBufferCapacity = 1)
+    val nextEvent: SharedFlow<Unit> = _nextEvent.asSharedFlow()
 
     private val getAllDay = waterRepository.getAllDay().mapLatest { list ->
         DayOfWaterList(list)
@@ -44,24 +48,36 @@ class SettingViewModel
 
     private val settings = settingRepository.getSetting()
 
-    val totalIntake = getAllDay.flatMapLatest { dayList ->
+    val totalIntakeFlow: StateFlow<String> = getAllDay.flatMapLatest { dayList ->
         settings.mapLatest { setting ->
             setting.formatAmount(dayList.getTotalIntake())
         }
-    }.asLiveData()
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        ""
+    )
 
-    val totalAchieve = getAllDay.flatMapLatest { dayList ->
+    val totalAchieveFlow: StateFlow<String> = getAllDay.flatMapLatest { dayList ->
         settings.mapLatest { setting ->
             "${dayList.getTotalAchieve(setting.intake)}"
         }
-    }.asLiveData()
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        ""
+    )
 
-    val goalOfIntake = settings.mapLatest {
+    val goalOfIntakeFlow: StateFlow<String> = settings.mapLatest {
         it.formatAmount(it.intake)
-    }.asLiveData()
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        ""
+    )
 
     val currentLangFlow = prefDataRepository.fetchLanguage()
-    val currentLang = currentLangFlow.mapLatest {
+    val currentLangResFlow: StateFlow<Int> = currentLangFlow.mapLatest {
         when(it) {
             Locale.KOREAN.language -> com.tkw.ui.R.string.lang_ko
             Locale.ENGLISH.language -> com.tkw.ui.R.string.lang_en
@@ -69,26 +85,38 @@ class SettingViewModel
             Locale.CHINESE.language -> com.tkw.ui.R.string.lang_cn
             else -> com.tkw.ui.R.string.lang_ko
         }
-    }.asLiveData()
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        com.tkw.ui.R.string.lang_ko
+    )
 
     val unitFlow = settings.mapLatest {
         it.unit
     }
-    val unit = settings.mapLatest {
+    val unitTextFlow: StateFlow<String> = settings.mapLatest {
         when(it.unit) {
             0 -> "ml, L"
             1 -> "fl oz"
             2 -> "컵"
             else -> "ml, L"
         }
-    }.asLiveData()
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        "ml, L"
+    )
 
-    val lastSync = prefDataRepository.fetchLastSync().asLiveData()
+    val lastSyncFlow: StateFlow<Long> = prefDataRepository.fetchLastSync().stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        0L
+    )
 
     private val alarmSetting = alarmRepository.getAlarmSetting()
     private val alarmModeSetting = alarmRepository.getAlarmModeSetting()
 
-    val alarmMode = alarmSetting.flatMapLatest {
+    val alarmModeFlow: StateFlow<Int> = alarmSetting.flatMapLatest {
         flow {
             val mode = it.alarmMode
             when(mode) {
@@ -96,9 +124,13 @@ class SettingViewModel
                 AlarmMode.CUSTOM -> emit(com.tkw.ui.R.string.alarm_mode_custom)
             }
         }
-    }.asLiveData()
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        com.tkw.ui.R.string.alarm_mode_period
+    )
 
-    val alarmRingtone = alarmSetting.flatMapLatest {
+    val alarmRingtoneFlow: StateFlow<Int> = alarmSetting.flatMapLatest {
         flow {
             val ringtone = it.ringToneMode.getCurrentMode()
             val soundTitle = when(ringtone) {
@@ -110,9 +142,13 @@ class SettingViewModel
             }
             emit(soundTitle)
         }
-    }.asLiveData()
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        com.tkw.ui.R.string.alarm_sound_device
+    )
 
-    val alarmSchedule = alarmModeSetting.flatMapLatest {
+    val alarmScheduleFlow: StateFlow<String> = alarmModeSetting.flatMapLatest {
         flow {
             if(it.selectedDate.isEmpty()) {
                 emit("-")
@@ -124,9 +160,13 @@ class SettingViewModel
                 )
             }
         }
-    }.asLiveData()
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        "-"
+    )
 
-    val alarmTime = alarmModeSetting.flatMapLatest {
+    val alarmTimeFlow: StateFlow<String> = alarmModeSetting.flatMapLatest {
         flow {
             emit(it.run {
                 getTimeRange(
@@ -134,19 +174,23 @@ class SettingViewModel
                     DateTimeUtils.Time.getFormat(endTime))
             })
         }
-    }.asLiveData()
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        "-"
+    )
 
     fun saveUnit(unit: Int) {
         launch {
             settingRepository.saveUnit(unit)
-            _nextEvent.call()
+            _nextEvent.tryEmit(Unit)
         }
     }
 
     fun saveLanguage(lang: String) {
         launch {
             prefDataRepository.saveLanguage(lang)
-            _nextEvent.call()
+            _nextEvent.tryEmit(Unit)
         }
     }
 }
