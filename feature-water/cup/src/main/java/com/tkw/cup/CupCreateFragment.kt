@@ -87,7 +87,7 @@ class CupCreateFragment: Fragment() {
         dataBinding.btnNext.setOnClickListener {
             val isCreate = viewModel.createMode.value ?: false
             val currentUnit = viewModel.cupUnitLiveData.value ?: UnitType.ML
-            // ml 기준으로 변환하여 저장
+            // ml 기준으로 변환하여 저장 (기존 방식 유지)
             val mlAmount = dataBinding.npAmount.getCurrentValueInMl(currentUnit.toPickerUnitType())
             viewModel.cupAmountLiveData.value = mlAmount
 
@@ -105,8 +105,10 @@ class CupCreateFragment: Fragment() {
                 else -> UnitType.ML
             }
 
-            // 현재 ml 값을 가져와서 새 단위로 변환하여 표시
-            val currentMlValue = viewModel.cupAmountLiveData.value ?: 200
+            // 현재 선택된 값의 ml 환산값을 구해서 새 단위로 변환하여 표시
+            val currentUnit = viewModel.cupUnitLiveData.value ?: UnitType.ML
+            val currentMlValue = dataBinding.npAmount.getCurrentValueInMl(currentUnit.toPickerUnitType())
+
             dataBinding.npAmount.updateUnit(selectedUnit.toPickerUnitType(), currentMlValue)
             viewModel.cupUnitLiveData.value = selectedUnit
         }
@@ -122,7 +124,7 @@ class CupCreateFragment: Fragment() {
             }
         )
 
-        // 초기 NumberPicker 설정
+        // 초기 NumberPicker 설정 (저장된 값은 항상 ml 기준)
         val initialMlValue = viewModel.cupAmountLiveData.value ?: 200
         dataBinding.npAmount.updateUnit(currentUnit.toPickerUnitType(), initialMlValue)
     }

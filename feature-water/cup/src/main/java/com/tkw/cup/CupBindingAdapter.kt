@@ -36,12 +36,23 @@ object CupBindingAdapter {
 
     /**
      * 컵의 용량을 컵 생성/수정 시 선택한 단위로 표시
+     * cupAmount는 ml 기준으로 저장되므로, cupUnit으로 변환하여 표시
      */
     @JvmStatic
     @BindingAdapter("cupInfo")
     fun setCupInfo(view: TextView, cup: Cup?) {
         cup?.let {
-            view.text = "${it.cupAmount}${it.cupUnit.displayName}"
+            // ml 값을 선택한 단위로 변환
+            val convertedValue = it.cupUnit.fromMl(it.cupAmount)
+
+            // 소수점 처리 (정수면 정수로, 소수점 있으면 소수점 표시)
+            val formattedValue = if (convertedValue % 1.0 == 0.0) {
+                convertedValue.toInt().toString()
+            } else {
+                String.format("%.1f", convertedValue)
+            }
+
+            view.text = "$formattedValue${it.cupUnit.displayName}"
         }
     }
 
