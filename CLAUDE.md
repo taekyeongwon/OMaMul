@@ -4,6 +4,46 @@
 
 **중요한 규칙: 모든 답변과 의사소통은 한국어로 작성해야 합니다.**
 
+---
+
+## 📊 전체 프로젝트 진행 상황 요약
+
+### 현재 단계: Phase 2 완료 ✅
+
+**Phase 1: XML + Fragment 디자인 변경 (물 앱 컨셉 적용)** ✅ 완료
+- ✅ 1. feature-water:home - 메인 화면 개선
+- ✅ 1.5. WaterActivity - 메인 액티비티 UI 재디자인
+- ✅ 2. core:ui - 공통 UI 컴포넌트
+- ✅ 3. feature-water:cup - 컵 관리 화면
+- ✅ 4. feature-water:record - 로그 및 차트 화면
+- ✅ 5. feature-water:alarm - 알람 설정 화면
+- ✅ 6. feature-water:setting - 물 관련 설정
+- ✅ 7. feature-common:init - 온보딩 화면
+- ⏸️ 8. feature-common:setting - 앱 설정 (보류)
+
+**진행률: 7/7 완료 (feature-common:setting 제외)**
+
+**Phase 2: LiveData → StateFlow 마이그레이션** ✅ 완료
+- ✅ ViewModel 클래스별 LiveData → StateFlow 변환 완료
+- ✅ Fragment에서 observe → collect 방식으로 변경 완료
+- ✅ 변수명 리팩토링 (livedata → flow) 완료
+- ✅ feature-water 모듈 전체 마이그레이션 완료
+- ✅ feature-common 모듈 전체 마이그레이션 완료
+
+**주요 완료 커밋:**
+- `6cffb96` Phase 2: LiveData → StateFlow 마이그레이션 완료
+- `3accf6b` Fragment observe → Flow collect 마이그레이션 완료
+- `8671f48` feature-water:setting LiveData → Flow 마이그레이션 완료
+- `1858a19` refactor: LiveData 변수명을 Flow 네이밍으로 변경
+
+**Phase 3: Compose UI 마이그레이션** (대기 중)
+- 🔜 Navigation 구조 변경
+- 🔜 Activity 구조 단순화
+- 🔜 모듈별 Composable 구현
+- 🔜 공통 Composable 구현
+
+---
+
 ## 빌드 명령어
 
 ### 개발 빌드
@@ -162,6 +202,7 @@
 - **Gradle 파일 수정 시**: 반드시 `./gradlew --refresh-dependencies` 명령어로 동기화 수행
 - **언어**: 모든 코드 주석, 문서, 의사소통은 한국어로 작성
 - **답변**: 답변은 간결하게 최대 3-5문장으로 답변
+- **작업 완료 후 문서 업데이트**: 모듈 또는 주요 작업이 완료되면 반드시 이 CLAUDE.md 파일의 진행 상황을 업데이트해야 함. 완료된 작업은 체크 표시(✅)로 표시하고, 진행률 카운터를 업데이트하며, 주요 변경사항을 기록
 - **ViewModel 인터페이스 보존**: 각 모듈별로 사용하고 있던 ViewModel의 모든 필드와 메서드는 반드시 동일하게 사용해야 함. 프레젠테이션 레이어 변경 시에도 기존 ViewModel의 public 인터페이스는 변경 금지
 - **다국어 지원 규칙**:
   - **필수**: UI에 표시되는 모든 문구는 반드시 string 리소스로 관리해야 함
@@ -382,7 +423,12 @@ buildTypes {
 # 3. 전체 빌드 테스트
 ./gradlew assembleDevDebug
 
-# 4. 깃 커밋 (작업 완료 후 반드시 수행)
+# 4. CLAUDE.md 진행 상황 업데이트 (작업 완료 후 반드시 수행)
+#    - 완료된 모듈 체크 표시(✅) 업데이트
+#    - 진행률 카운터 업데이트
+#    - 주요 변경사항 기록
+
+# 5. 깃 커밋 (진행 상황 업데이트 후 반드시 수행)
 git add .
 git commit -m "$(cat <<'EOF'
 feature-water:home 물 앱 컨셉 적용
@@ -400,12 +446,14 @@ EOF
 ```
 
 #### Git 커밋 가이드라인
-각 모듈 작업 완료 시 반드시 커밋을 수행하여 진행 상황을 추적하고 안정성을 확보합니다:
+각 모듈 작업 완료 시 반드시 다음 순서를 따릅니다:
 
-**커밋 타이밍:**
-- 각 모듈 작업 완료 후
-- 빌드 테스트 성공 확인 후
-- 다음 모듈 작업 시작 전
+**작업 순서:**
+1. 모듈 작업 완료
+2. 빌드 테스트 성공 확인
+3. **CLAUDE.md 진행 상황 업데이트** (✅ 표시, 진행률, 변경사항)
+4. **Git 커밋 수행**
+5. 다음 모듈 작업 시작
 
 **커밋 메시지 형식:**
 - 제목: 모듈명과 주요 작업 내용
