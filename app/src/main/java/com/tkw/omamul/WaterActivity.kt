@@ -198,8 +198,8 @@ class WaterActivity : AppCompatActivity() {
                 prevAmount = it.getTotalIntakeByDate()
             }
         }
-        alarmViewModel.isReachedGoal.observe(this) {
-            lifecycleScope.launch {
+        lifecycleScope.launch {
+            alarmViewModel.isReachedGoalFlow.collect {
                 val isNotificationEnabled = alarmViewModel.isNotificationAlarmEnabled().first()
                 alarmViewModel.delayAllAlarm(it, isNotificationEnabled)
             }

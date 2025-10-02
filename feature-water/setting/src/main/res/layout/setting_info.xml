@@ -85,7 +85,7 @@
             android:id="@+id/tv_total_intake"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@{String.valueOf(viewModel.totalIntake)}"
+            android:text="@{String.valueOf(viewModel.totalIntakeFlow)}"
             android:textColor="@color/md_theme_light_primary"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -117,7 +117,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@id/tv_total_achieve_title"
             app:layout_constraintBottom_toBottomOf="@id/tv_total_achieve_title"
-            app:prefix="@{viewModel.totalAchieve}"
+            app:prefix="@{viewModel.totalAchieveFlow}"
             app:textRes="@{@string/day}"
             tools:text="15일"/>
     </androidx.constraintlayout.widget.ConstraintLayout>

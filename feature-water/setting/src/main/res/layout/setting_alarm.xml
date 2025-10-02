@@ -68,7 +68,7 @@
                 android:textSize="14sp"
                 app:layout_constraintTop_toTopOf="@id/tv_alarm_mode_title"
                 app:layout_constraintRight_toRightOf="parent"
-                app:resId="@{viewModel.alarmMode}"
+                app:resId="@{viewModel.alarmModeFlow}"
                 tools:text="주기"/>
             <TextView
                 android:id="@+id/tv_alarm_schedule_title"
@@ -85,7 +85,7 @@
                 android:id="@+id/tv_alarm_schedule"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{viewModel.alarmSchedule}"
+                android:text="@{viewModel.alarmScheduleFlow}"
                 android:textColor="@color/md_theme_light_primary"
                 android:textStyle="bold"
                 android:textSize="14sp"
@@ -107,7 +107,7 @@
                 android:id="@+id/tv_alarm_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{viewModel.alarmTime}"
+                android:text="@{viewModel.alarmTimeFlow}"
                 android:textColor="@color/md_theme_light_primary"
                 android:textStyle="bold"
                 android:textSize="14sp"
@@ -134,7 +134,7 @@
                 android:textSize="14sp"
                 app:layout_constraintTop_toTopOf="@id/tv_alarm_sound_title"
                 app:layout_constraintRight_toRightOf="parent"
-                app:resId="@{viewModel.alarmRingtone}"
+                app:resId="@{viewModel.alarmRingtoneFlow}"
                 tools:text="벨소리"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
