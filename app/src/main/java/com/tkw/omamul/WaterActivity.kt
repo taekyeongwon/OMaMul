@@ -181,10 +181,11 @@ class WaterActivity : AppCompatActivity() {
 
     private fun initObserver() {
         lifecycleScope.launch {
-            waterViewModel.amountLiveData.collect {
+            waterViewModel.amountFlow.collect {
                 val prev = prevAmount
-                if(it.getTotalIntakeByDate() >= waterViewModel.getIntakeAmount()) {
-                    if(prev < waterViewModel.getIntakeAmount()) {
+                val intakeAmount = waterViewModel.getIntakeAmount()
+                if(it.getTotalIntakeByDate() >= intakeAmount) {
+                    if(prev < intakeAmount) {
                         Toast.makeText(
                             this@WaterActivity,
                             getString(com.tkw.ui.R.string.intake_complete),
