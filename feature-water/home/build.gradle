@@ -4,7 +4,8 @@ plugins {
     alias libs.plugins.jetbrains.kotlin.android
     alias libs.plugins.hilt
     alias libs.plugins.kotlin.compose
-    id 'kotlin-kapt'
+    alias libs.plugins.ksp
+    id 'kotlin-kapt' // DataBinding을 위해 필요
 }
 
 android {
@@ -88,7 +89,7 @@ dependencies {
     implementation libs.hilt
     implementation libs.androidx.hilt.navigation.compose
     // KAPT(Kotlin Annotation Processing Tools), 어노테이션 사용, annotationProcessor의 대체
-    kapt libs.hilt.compiler
+    ksp libs.hilt.compiler
 
     //lottie
     implementation libs.lottie
@@ -98,9 +99,5 @@ dependencies {
     implementation libs.bundles.compose
     debugImplementation libs.androidx.compose.ui.tooling
     debugImplementation libs.androidx.compose.ui.test.manifest
-}
-
-kapt {
-    correctErrorTypes true
 }
 

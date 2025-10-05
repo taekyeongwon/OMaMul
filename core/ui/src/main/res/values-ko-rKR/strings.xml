@@ -5,7 +5,11 @@
     <string name="complete">완료</string>
     <string name="init_intake_title">목표 물의 양을 설정해주세요.</string>
     <string name="init_intake_subtitle">매일 채울 물의 양을 설정합니다.</string>
-    <string name="intake_amount">일일 물 섭취량(ml)</string>
+    <string name="intake_amount">일일 물 섭취량</string>
+    <string name="intake_amount_ml">일일 물 섭취량 (ml)</string>
+    <string name="intake_amount_l">일일 물 섭취량 (L)</string>
+    <string name="intake_amount_cup">일일 물 섭취량 (컵)</string>
+    <string name="intake_amount_fl_oz">일일 물 섭취량 (fl oz)</string>
     <string name="init_language_title">앱 내 사용 언어를 설정해주세요.</string>
     <string name="lang_ko">한국어</string>
     <string name="lang_en">English</string>
@@ -136,9 +140,9 @@
     <string name="water_manage">관리</string>
     <string name="water_alarm_off">알람 꺼짐</string>
     <string name="water_goal_achieved">목표 달성! 잘 하셨어요! 🎉</string>
-    <string name="water_goal_close">목표까지 %dml 남았어요!\n거의 다 왔어요! 🔥</string>
-    <string name="water_goal_near">목표까지 %dml 남았어요!\n조금만 더! 💪</string>
-    <string name="water_goal_far">목표까지 %dml 남았어요!\n화이팅! 🎯</string>
+    <string name="water_goal_close">목표까지 %s 남았어요!\n거의 다 왔어요! 🔥</string>
+    <string name="water_goal_near">목표까지 %s 남았어요!\n조금만 더! 💪</string>
+    <string name="water_goal_far">목표까지 %s 남았어요!\n화이팅! 🎯</string>
     <string name="water_goal_ratio">/ %s (%d%%)</string>
 
     <!-- Dialog 문구 -->

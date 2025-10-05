@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias libs.plugins.hilt
-    id 'kotlin-kapt'
+    alias libs.plugins.ksp
 }
 
 android {
@@ -46,9 +46,5 @@ dependencies {
     //hilt
     implementation libs.hilt
     // KAPT(Kotlin Annotation Processing Tools), 어노테이션 사용, annotationProcessor의 대체
-    kapt libs.hilt.compiler
-}
-
-kapt {
-    correctErrorTypes true
+    ksp libs.hilt.compiler
 }

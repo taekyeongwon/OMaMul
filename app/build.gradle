@@ -39,12 +39,14 @@ android {
     productFlavors {
         prod {
             dimension "app-dev"
+            signingConfig signingConfigs.debug
         }
 
         dev {
             dimension "app-dev"
             applicationIdSuffix '.dev'
             versionNameSuffix "-dev"
+            signingConfig signingConfigs.debug
         }
     }
 
@@ -55,6 +57,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
 

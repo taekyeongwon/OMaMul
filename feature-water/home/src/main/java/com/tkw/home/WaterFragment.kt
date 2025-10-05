@@ -234,13 +234,14 @@ class WaterFragment: Fragment() {
         val formattedGoal = settings.formatAmount(intakeGoal)
         dataBinding.tvGoalRatio.text = getString(com.tkw.ui.R.string.water_goal_ratio, formattedGoal, percentage)
 
-        // 격려 메시지 업데이트 (ml 기준으로 유지)
+        // 격려 메시지 업데이트 (현재 단위로 표시)
         val remainingAmount = maxOf(0, intakeGoal - currentIntake)
+        val formattedRemaining = settings.formatAmount(remainingAmount)
         dataBinding.tvEncouragement.text = when {
             remainingAmount == 0 -> getString(com.tkw.ui.R.string.water_goal_achieved)
-            remainingAmount <= 250 -> getString(com.tkw.ui.R.string.water_goal_close, remainingAmount)
-            remainingAmount <= 500 -> getString(com.tkw.ui.R.string.water_goal_near, remainingAmount)
-            else -> getString(com.tkw.ui.R.string.water_goal_far, remainingAmount)
+            remainingAmount <= 250 -> getString(com.tkw.ui.R.string.water_goal_close, formattedRemaining)
+            remainingAmount <= 500 -> getString(com.tkw.ui.R.string.water_goal_near, formattedRemaining)
+            else -> getString(com.tkw.ui.R.string.water_goal_far, formattedRemaining)
         }
     }
 

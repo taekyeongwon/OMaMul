@@ -5,7 +5,11 @@
     <string name="complete">Complete</string>
     <string name="init_intake_title">Please set your daily water intake goal.</string>
     <string name="init_intake_subtitle">Set the amount of water to drink each day.</string>
-    <string name="intake_amount">Daily water intake (ml)</string>
+    <string name="intake_amount">Daily water intake</string>
+    <string name="intake_amount_ml">Daily water intake (ml)</string>
+    <string name="intake_amount_l">Daily water intake (L)</string>
+    <string name="intake_amount_cup">Daily water intake (cups)</string>
+    <string name="intake_amount_fl_oz">Daily water intake (fl oz)</string>
     <string name="init_language_title">Please set the app language.</string>
     <string name="lang_ko">한국어</string>
     <string name="lang_en">English</string>
@@ -136,9 +140,9 @@
     <string name="water_manage">Manage</string>
     <string name="water_alarm_off">Alarm Off</string>
     <string name="water_goal_achieved">Goal achieved! Well done! 🎉</string>
-    <string name="water_goal_close">Only %dml left to goal!\nAlmost there! 🔥</string>
-    <string name="water_goal_near">Only %dml left to goal!\nJust a little more! 💪</string>
-    <string name="water_goal_far">%dml left to goal!\nKeep going! 🎯</string>
+    <string name="water_goal_close">Only %s left to goal!\nAlmost there! 🔥</string>
+    <string name="water_goal_near">Only %s left to goal!\nJust a little more! 💪</string>
+    <string name="water_goal_far">%s left to goal!\nKeep going! 🎯</string>
     <string name="water_goal_ratio">/ %s (%d%%)</string>
 
     <!-- Dialog 문구 -->

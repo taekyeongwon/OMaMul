@@ -36,6 +36,18 @@
 - `8671f48` feature-water:setting LiveData → Flow 마이그레이션 완료
 - `1858a19` refactor: LiveData 변수명을 Flow 네이밍으로 변경
 
+**Phase 2.5: KAPT → KSP 마이그레이션** ✅ 완료
+- ✅ libs.versions.toml에 KSP 플러그인 추가 (v2.0.20-1.0.25)
+- ✅ 루트 build.gradle에 KSP 플러그인 선언
+- ✅ 14개 모듈 Hilt compiler kapt → ksp 변환
+- ✅ DataBinding 모듈에 kotlin-kapt 병행 사용 (9개 모듈)
+- ✅ 전체 빌드 테스트 성공
+
+**빌드 성능 개선 효과:**
+- Hilt annotation processing: KAPT → KSP (2-4배 빠름)
+- DataBinding: KAPT 유지 (KSP 미지원)
+- 증분 빌드 성능 향상
+
 **Phase 3: Compose UI 마이그레이션** (대기 중)
 - 🔜 Navigation 구조 변경
 - 🔜 Activity 구조 단순화

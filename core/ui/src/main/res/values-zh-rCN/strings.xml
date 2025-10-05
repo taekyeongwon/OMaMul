@@ -5,7 +5,11 @@
     <string name="complete">完成</string>
     <string name="init_intake_title">请设置每日饮水目标。</string>
     <string name="init_intake_subtitle">设置每天要喝的水量。</string>
-    <string name="intake_amount">每日饮水量（ml）</string>
+    <string name="intake_amount">每日饮水量</string>
+    <string name="intake_amount_ml">每日饮水量 (ml)</string>
+    <string name="intake_amount_l">每日饮水量 (L)</string>
+    <string name="intake_amount_cup">每日饮水量 (杯)</string>
+    <string name="intake_amount_fl_oz">每日饮水量 (fl oz)</string>
     <string name="init_language_title">请设置应用内语言。</string>
     <string name="lang_ko">한국어</string>
     <string name="lang_en">English</string>
@@ -136,10 +140,10 @@
     <string name="water_manage">管理</string>
     <string name="water_alarm_off">闹钟关闭</string>
     <string name="water_goal_achieved">目标达成！做得好！ 🎉</string>
-    <string name="water_goal_close">距离目标还有%dml！快达成了！ 🔥</string>
-    <string name="water_goal_near">距离目标还有%dml！再加油一点！ 💪</string>
-    <string name="water_goal_far">距离目标还有%dml！加油！ 🎯</string>
-    <string name="water_goal_ratio">/ %dml (%d%%)</string>
+    <string name="water_goal_close">距离目标还有%s！快达成了！ 🔥</string>
+    <string name="water_goal_near">距离目标还有%s！再加油一点！ 💪</string>
+    <string name="water_goal_far">距离目标还有%s！加油！ 🎯</string>
+    <string name="water_goal_ratio">/ %s (%d%%)</string>
 
     <!-- Dialog 文句 -->
     <string name="water_amount">水分摄入量</string>

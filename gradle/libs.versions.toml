@@ -34,6 +34,7 @@ realm-kotlin = "2.3.0"
 
 hilt = "2.51.1"
 hilt-navigation = "1.2.0"
+ksp = "2.0.20-1.0.25"
 
 datastore-preferences = "1.1.1"
 
@@ -127,6 +128,7 @@ navigation-safeargs = {id="androidx.navigation.safeargs.kotlin", version.ref="na
 realm-kotlin = {id="io.realm.kotlin", version.ref="realm-kotlin"}
 
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 

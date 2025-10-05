@@ -50,6 +50,15 @@ class WaterIntakeDialog : CustomDialog() {
             // 현재 설정된 섭취량(ml) 가져오기
             currentMlValue = viewModel.getIntakeAmount()
 
+            // 단위에 맞게 타이틀 업데이트
+            val titleResId = when (currentUnitType) {
+                UnitType.ML -> com.tkw.ui.R.string.intake_amount_ml
+                UnitType.L -> com.tkw.ui.R.string.intake_amount_l
+                UnitType.CUP -> com.tkw.ui.R.string.intake_amount_cup
+                UnitType.FL_OZ -> com.tkw.ui.R.string.intake_amount_fl_oz
+            }
+            dataBinding.tvIntakeTitle.setText(titleResId)
+
             // 단위에 맞게 NumberPicker 업데이트
             val pickerUnitType = when (currentUnitType) {
                 UnitType.ML -> WaterAmountPicker.UnitType.ML

@@ -5,7 +5,11 @@
     <string name="complete">完了</string>
     <string name="init_intake_title">目標水分摂取量を設定してください。</string>
     <string name="init_intake_subtitle">毎日飲む水の量を設定します。</string>
-    <string name="intake_amount">1日の水分摂取量（ml）</string>
+    <string name="intake_amount">1日の水分摂取量</string>
+    <string name="intake_amount_ml">1日の水分摂取量 (ml)</string>
+    <string name="intake_amount_l">1日の水分摂取量 (L)</string>
+    <string name="intake_amount_cup">1日の水分摂取量 (カップ)</string>
+    <string name="intake_amount_fl_oz">1日の水分摂取量 (fl oz)</string>
     <string name="init_language_title">アプリの使用言語を設定してください。</string>
     <string name="lang_ko">한국어</string>
     <string name="lang_en">English</string>
@@ -136,9 +140,9 @@
     <string name="water_manage">管理</string>
     <string name="water_alarm_off">アラームオフ</string>
     <string name="water_goal_achieved">目標達成！お疲れさまでした！ 🎉</string>
-    <string name="water_goal_close">目標まで%dml残っています！もうすぐです！ 🔥</string>
-    <string name="water_goal_near">目標まで%dml残っています！もう少し！ 💪</string>
-    <string name="water_goal_far">目標まで%dml残っています！頑張って！ 🎯</string>
+    <string name="water_goal_close">目標まで%s残っています！もうすぐです！ 🔥</string>
+    <string name="water_goal_near">目標まで%s残っています！もう少し！ 💪</string>
+    <string name="water_goal_far">目標まで%s残っています！頑張って！ 🎯</string>
     <string name="water_goal_ratio">/ %s (%d%%)</string>
 
     <!-- Dialog 文句 -->

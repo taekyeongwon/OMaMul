@@ -1,0 +1,100 @@
+{
+  "project_info": {
+    "project_number": "1001409795735",
+    "project_id": "omamul-3a3d2",
+    "storage_bucket": "omamul-3a3d2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1001409795735:android:39f19474051e616a9e7bd2",
+        "android_client_info": {
+          "package_name": "com.tkw.omamul"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1001409795735-lp1on4qbvo30jm5rrk8apr3hki4v9f0s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tkw.omamul",
+            "certificate_hash": "ddc0c8a4976df7d1b430a2bb020aeaa45ab3c1b7"
+          }
+        },
+        {
+          "client_id": "1001409795735-nh4hjbanj5oja687c5ot1ev3v8asq00f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tkw.omamul",
+            "certificate_hash": "c83e6377fbd4aa08e0f1048e6d9adba4ab1c0b8f"
+          }
+        },
+        {
+          "client_id": "1001409795735-s4ds0ef1t2u93fk0hu4fj8mv9egk32uf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRT66GLe29oq5bvYbcJ5fRicQFvLS-IIY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1001409795735-s4ds0ef1t2u93fk0hu4fj8mv9egk32uf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1001409795735:android:6ba9eb0183911bb09e7bd2",
+        "android_client_info": {
+          "package_name": "com.tkw.omamul.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1001409795735-82il5j7tai52v37b8ptltd9sp12c2oqe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tkw.omamul.dev",
+            "certificate_hash": "c83e6377fbd4aa08e0f1048e6d9adba4ab1c0b8f"
+          }
+        },
+        {
+          "client_id": "1001409795735-dicvhpsn7bo6ptrg73o367e00asns7g7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tkw.omamul.dev",
+            "certificate_hash": "ddc0c8a4976df7d1b430a2bb020aeaa45ab3c1b7"
+          }
+        },
+        {
+          "client_id": "1001409795735-s4ds0ef1t2u93fk0hu4fj8mv9egk32uf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRT66GLe29oq5bvYbcJ5fRicQFvLS-IIY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1001409795735-s4ds0ef1t2u93fk0hu4fj8mv9egk32uf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
