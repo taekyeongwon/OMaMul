@@ -19,6 +19,17 @@ android {
         consumerProguardFiles "consumer-rules.pro"
     }
 
+    flavorDimensions = ["app-dev"]
+    productFlavors {
+        prod {
+            dimension "app-dev"
+        }
+
+        dev {
+            dimension "app-dev"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true
