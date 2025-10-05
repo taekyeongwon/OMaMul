@@ -10,6 +10,7 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
 import androidx.credentials.exceptions.GetCredentialException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.firebase.auth.FirebaseAuth
@@ -38,15 +39,8 @@ class GoogleOAuth @Inject constructor(
     override fun signIn(result: (Boolean) -> Unit) {
         val credentialManager = CredentialManager.create(context)
 
-        //이전 ui로 구글 로그인 표시하는 경우
-//        val googleIdOption = GetSignInWithGoogleOption
-//            .Builder(context.getString(R.string.google_web_client_id))
-//            .build()
-
-        val googleIdOption = GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(true)
-            .setAutoSelectEnabled(true)
-//            .setServerClientId(context.getString(R.string.google_web_client_id))
+        val googleIdOption = GetSignInWithGoogleOption
+            .Builder(context.getString(R.string.google_web_client_id))
             .build()
 
         val request = GetCredentialRequest.Builder()
@@ -60,7 +54,9 @@ class GoogleOAuth @Inject constructor(
                 )
                 handleSignIn(response, result)
             } catch (e: GetCredentialException) {
+                Log.e("GoogleOAuth", "Google Sign-In failed", e)
                 e.printStackTrace()
+                result(false)
             }
         }
     }

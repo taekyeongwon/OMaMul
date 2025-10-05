@@ -25,6 +25,8 @@ render.experimental.xml
 # Keystore files
 *.jks
 *.keystore
+# Debug keystore는 팀 공유를 위해 커밋
+!keystore/debug.keystore
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json
