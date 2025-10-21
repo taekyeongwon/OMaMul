@@ -13,8 +13,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/gradient_water_background"
-        android:padding="20dp"
+        android:background="@color/minimalist_background"
+        android:padding="24dp"
         android:clipToPadding="false">
 
         <!-- 헤더 정보 카드 -->
@@ -22,12 +22,11 @@
             android:id="@+id/card_header_info"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="12dp"
-            app:cardBackgroundColor="@color/md_theme_light_surface"
-            android:translationZ="2dp"
-            app:strokeWidth="0dp"
-            style="@style/Widget.Material3.CardView.Elevated"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/minimalist_surface"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/minimalist_border"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -36,8 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="@drawable/glass_card_background"
-                android:padding="20dp"
+                android:padding="24dp"
                 android:gravity="center_vertical"
                 android:weightSum="2">
 
@@ -54,28 +52,29 @@
                     android:focusable="true">
 
                     <com.google.android.material.imageview.ShapeableImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:src="@drawable/ic_target"
-                        android:layout_marginBottom="8dp"
-                        app:tint="@color/md_theme_light_primary" />
+                        android:layout_marginBottom="12dp"
+                        app:tint="@color/minimalist_accent" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/water_target"
-                        android:textSize="12sp"
-                        android:textColor="@color/md_theme_light_onSurfaceVariant"
-                        android:layout_marginBottom="4dp"
-                        android:textAppearance="?attr/textAppearanceLabelSmall" />
+                        android:textSize="11sp"
+                        android:textColor="@color/minimalist_text_secondary"
+                        android:layout_marginBottom="6dp"
+                        android:letterSpacing="0.1"
+                        android:fontFamily="sans-serif-medium" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/tv_target_amount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:textColor="@color/md_theme_light_primary"
-                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textSize="20sp"
+                        android:textColor="@color/minimalist_text_primary"
+                        android:fontFamily="sans-serif-light"
                         tools:text="2000ml" />
 
                 </LinearLayout>
@@ -83,9 +82,9 @@
                 <!-- 구분선 -->
                 <View
                     android:layout_width="1dp"
-                    android:layout_height="60dp"
-                    android:background="@color/water_light_blue"
-                    android:layout_marginHorizontal="16dp" />
+                    android:layout_height="50dp"
+                    android:background="@color/minimalist_divider"
+                    android:layout_marginHorizontal="20dp" />
 
                 <!-- 다음 알람 정보 -->
                 <LinearLayout
@@ -100,28 +99,29 @@
                     android:focusable="true">
 
                     <com.google.android.material.imageview.ShapeableImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:src="@drawable/ic_alarm"
-                        android:layout_marginBottom="8dp"
-                        app:tint="@color/md_theme_light_primary" />
+                        android:layout_marginBottom="12dp"
+                        app:tint="@color/minimalist_accent" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/water_next_alarm"
-                        android:textSize="12sp"
-                        android:textColor="@color/md_theme_light_onSurfaceVariant"
-                        android:layout_marginBottom="4dp"
-                        android:textAppearance="?attr/textAppearanceLabelSmall" />
+                        android:textSize="11sp"
+                        android:textColor="@color/minimalist_text_secondary"
+                        android:layout_marginBottom="6dp"
+                        android:letterSpacing="0.1"
+                        android:fontFamily="sans-serif-medium" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/tv_next_alarm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:textColor="@color/md_theme_light_primary"
-                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textSize="20sp"
+                        android:textColor="@color/minimalist_text_primary"
+                        android:fontFamily="sans-serif-light"
                         tools:text="15:30" />
 
                 </LinearLayout>
@@ -135,14 +135,13 @@
             android:id="@+id/card_water_visualization"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="20dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="16dp"
-            app:cardBackgroundColor="@color/md_theme_light_surface"
-            android:translationZ="4dp"
-            app:strokeWidth="0dp"
-            style="@style/Widget.Material3.CardView.Elevated"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/minimalist_surface"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/minimalist_border"
             app:layout_constraintTop_toBottomOf="@id/card_header_info"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -151,27 +150,25 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/glass_card_background"
-                android:padding="20dp">
+                android:padding="32dp">
 
-                <!-- 메인 물 컨테이너 (두줄 텍스트 고려한 고정 높이) -->
+                <!-- 메인 물 컨테이너 -->
                 <FrameLayout
                     android:id="@+id/main_water_container"
                     android:layout_width="0dp"
-                    android:layout_height="280dp"
+                    android:layout_height="300dp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_margin="8dp"
-                    android:padding="12dp">
+                    android:layout_marginHorizontal="16dp">
 
-                    <!-- 물 웨이브 애니메이션 (구 형태) -->
+                    <!-- 물 웨이브 애니메이션 -->
                     <com.airbnb.lottie.LottieAnimationView
                         android:id="@+id/lotti"
-                        android:layout_width="240dp"
-                        android:layout_height="240dp"
+                        android:layout_width="220dp"
+                        android:layout_height="220dp"
                         android:layout_gravity="center"
-                        android:alpha="0.8"
+                        android:alpha="0.7"
                         app:lottie_autoPlay="true"
                         app:lottie_fileName="water_wave.json"
                         app:lottie_loop="true"
@@ -184,35 +181,33 @@
                         android:layout_gravity="center"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:background="@drawable/modern_info_background"
-                        android:padding="24dp"
-                        android:elevation="6dp">
+                        android:padding="20dp">
 
                         <!-- 현재 섭취량 -->
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:gravity="center_vertical"
+                            android:gravity="center_baseline"
                             android:layout_marginBottom="8dp">
 
                             <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/tv_current_intake"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="42sp"
-                                android:textColor="@color/md_theme_light_primary"
-                                android:textAppearance="?attr/textAppearanceDisplayLarge"
+                                android:textSize="56sp"
+                                android:textColor="@color/minimalist_text_primary"
+                                android:fontFamily="sans-serif-thin"
                                 tools:text="1250" />
 
                             <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/tv_current_intake_unit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="16sp"
-                                android:textColor="@color/md_theme_light_onSurfaceVariant"
+                                android:textSize="18sp"
+                                android:textColor="@color/minimalist_text_secondary"
                                 android:layout_marginStart="4dp"
-                                android:textAppearance="?attr/textAppearanceTitleSmall"
+                                android:fontFamily="sans-serif-light"
                                 tools:text="ml" />
 
                         </LinearLayout>
@@ -222,25 +217,26 @@
                             android:id="@+id/tv_goal_ratio"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
-                            android:textColor="@color/md_theme_light_onSurfaceVariant"
-                            android:textAppearance="?attr/textAppearanceBodyMedium"
+                            android:textSize="13sp"
+                            android:textColor="@color/minimalist_text_secondary"
+                            android:fontFamily="sans-serif"
+                            android:letterSpacing="0.05"
                             tools:text="/ 2000ml (62%)" />
 
                     </LinearLayout>
 
                 </FrameLayout>
 
-                <!-- 격려 메시지 (두줄 고정 영역) -->
+                <!-- 격려 메시지 -->
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tv_encouragement"
                     android:layout_width="0dp"
                     android:layout_height="60dp"
-                    android:textSize="15sp"
-                    android:textColor="@color/md_theme_light_onSurfaceVariant"
+                    android:textSize="14sp"
+                    android:textColor="@color/minimalist_text_secondary"
                     android:gravity="center"
-                    android:textAppearance="?attr/textAppearanceBodyMedium"
-                    android:layout_margin="8dp"
+                    android:fontFamily="sans-serif"
+                    android:lineSpacingExtra="4dp"
                     android:maxLines="2"
                     android:ellipsize="end"
                     app:layout_constraintTop_toBottomOf="@id/main_water_container"
@@ -253,7 +249,7 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- FAB 메뉴 오버레이 (배경 클릭 감지용) -->
+        <!-- FAB 메뉴 오버레이 -->
         <View
             android:id="@+id/fab_overlay"
             android:layout_width="0dp"
@@ -278,7 +274,6 @@
             android:layout_marginEnd="16dp"
             android:visibility="gone"
             android:alpha="0"
-            android:translationZ="20dp"
             app:layout_constraintBottom_toTopOf="@id/fab_current_cup"
             app:layout_constraintEnd_toEndOf="parent">
 
@@ -289,9 +284,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:src="@drawable/ic_settings"
-                app:backgroundTint="@color/md_theme_light_secondaryContainer"
-                app:tint="@color/md_theme_light_onSecondaryContainer"
-                app:elevation="0dp"
+                app:backgroundTint="@color/minimalist_surface"
+                app:tint="@color/minimalist_text_primary"
+                app:borderWidth="1dp"
+                app:elevation="2dp"
                 app:fabSize="mini" />
 
             <!-- 실행 취소 버튼 -->
@@ -300,10 +296,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_undo"
-                app:backgroundTint="@color/md_theme_light_tertiaryContainer"
-                app:tint="@color/md_theme_light_onTertiaryContainer"
-                app:elevation="8dp"
-                android:translationZ="4dp"
+                app:backgroundTint="@color/minimalist_surface"
+                app:tint="@color/minimalist_text_primary"
+                app:borderWidth="1dp"
+                app:elevation="2dp"
                 app:fabSize="mini" />
 
         </LinearLayout>
@@ -316,16 +312,13 @@
             android:layout_marginBottom="36dp"
             android:layout_marginEnd="16dp"
             android:src="@drawable/ic_cup"
-            app:backgroundTint="@color/md_theme_light_primary"
-            app:tint="@color/md_theme_light_onPrimary"
-            app:elevation="32dp"
-            android:translationZ="12dp"
+            app:backgroundTint="@color/minimalist_accent"
+            app:tint="@color/white"
+            app:elevation="4dp"
             app:fabSize="normal"
             android:hapticFeedbackEnabled="true"
-            app:maxImageSize="32dp"
+            app:maxImageSize="28dp"
             app:rippleColor="@color/water_light_blue"
-            android:stateListAnimator="@null"
-            style="@style/Widget.Material3.FloatingActionButton.Primary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

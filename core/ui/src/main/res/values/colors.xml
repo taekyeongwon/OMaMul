@@ -59,4 +59,13 @@
     <!-- Material Design 3 에러 색상 -->
     <color name="md_theme_light_error">#DC3545</color>
     <color name="md_theme_light_onError">#FFFFFF</color>
+
+    <!-- Minimalist 스타일 색상 -->
+    <color name="minimalist_background">#FAFAFA</color>
+    <color name="minimalist_surface">#FFFFFF</color>
+    <color name="minimalist_border">#E0E0E0</color>
+    <color name="minimalist_divider">#F5F5F5</color>
+    <color name="minimalist_text_primary">#1B1B1F</color>
+    <color name="minimalist_text_secondary">#9E9E9E</color>
+    <color name="minimalist_accent">#4A90E2</color>
 </resources>
