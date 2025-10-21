@@ -59,4 +59,11 @@
     <!-- Material Design 3 에러 색상 -->
     <color name="md_theme_light_error">#DC3545</color>
     <color name="md_theme_light_onError">#FFFFFF</color>
+
+    <!-- Material You (M3) 스타일 색상 -->
+    <color name="material_surface_container">#F3EDF7</color>
+    <color name="material_surface_container_high">#ECE6F0</color>
+    <color name="material_surface_container_highest">#E6E0E9</color>
+    <color name="material_outline">#79747E</color>
+    <color name="material_outline_variant">#CAC4D0</color>
 </resources>

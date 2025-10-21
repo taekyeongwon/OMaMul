@@ -17,7 +17,8 @@
       "mcp__serena__think_about_collected_information",
       "mcp__serena__think_about_whether_you_are_done",
       "mcp__serena__list_memories",
-      "Bash(chmod +x gradlew)"
+      "Bash(chmod +x gradlew)",
+      "Bash(git commit -m \"design: Material You 스타일 적용 (홈 화면)\n\n- Material Design 3 규격 준수\n- 넓은 라운드 코너 (28dp, 32dp)\n- 명확한 단계별 elevation (1dp, 3dp, 6dp)\n- FilledCard/ElevatedCard 스타일\n- Material3 Color System (Container 색상)\n- Material3 Type Scale 사용\n- MPAndroidChart 호환성 유지\")"
     ],
     "deny": [],
     "ask": []
