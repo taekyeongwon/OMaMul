@@ -18,7 +18,8 @@
       "mcp__serena__think_about_whether_you_are_done",
       "mcp__serena__list_memories",
       "Bash(chmod +x gradlew)",
-      "Bash(git commit -m \"design: Modern Glass 스타일 적용 (홈 화면)\n\n- 글래스모피즘 효과 강화\n- 높은 elevation (16dp, 20dp, 40dp)\n- 반투명 배경 (glass_strong, glass_overlay)\n- 블루 그림자 효과 (shadow_blue)\n- 깊이감 있는 레이어 (translationZ)\n- MPAndroidChart 호환성 유지\")"
+      "Bash(git commit -m \"design: Modern Glass 스타일 적용 (홈 화면)\n\n- 글래스모피즘 효과 강화\n- 높은 elevation (16dp, 20dp, 40dp)\n- 반투명 배경 (glass_strong, glass_overlay)\n- 블루 그림자 효과 (shadow_blue)\n- 깊이감 있는 레이어 (translationZ)\n- MPAndroidChart 호환성 유지\")",
+      "Bash(git checkout -b design/material-you)"
     ],
     "deny": [],
     "ask": []
