@@ -186,7 +186,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:gravity="center_baseline"
+                            android:gravity="center_vertical"
                             android:layout_marginBottom="12dp">
 
                             <com.google.android.material.textview.MaterialTextView
@@ -315,7 +315,7 @@
             app:backgroundTint="@color/md_theme_light_primary"
             app:tint="@color/md_theme_light_onPrimary"
             app:elevation="6dp"
-            app:fabSize="large"
+            app:fabSize="normal"
             android:hapticFeedbackEnabled="true"
             app:maxImageSize="40dp"
             app:rippleColor="@color/water_light_blue"
