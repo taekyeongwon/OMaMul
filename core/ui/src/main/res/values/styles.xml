@@ -37,4 +37,12 @@
         <item name="hintTextColor">@color/water_blue_variant</item>
     </style>
 
+    <!-- NumberPicker 스타일 -->
+    <style name="NumberPickerStyle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/figma_blue_primary</item>
+        <item name="android:textColorPrimary">@color/figma_blue_primary</item>
+        <item name="colorControlNormal">@color/figma_blue_primary</item>
+    </style>
+
 </resources>

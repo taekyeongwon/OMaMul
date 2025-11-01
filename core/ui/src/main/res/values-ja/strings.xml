@@ -20,6 +20,8 @@
     <string name="init_time_subtitle">設定した時間にアラームを受信します。</string>
     <string name="wakeup_time">起床時間</string>
     <string name="sleep_time">就寝時間</string>
+    <string name="init_time_picker_title">起床時間設定</string>
+    <string name="ampm">午前/午後</string>
     <string name="start">開始</string>
     <string name="end">終了</string>
     <string name="cancel">キャンセル</string>

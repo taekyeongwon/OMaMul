@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="62.5dp"
+    android:height="60dp"
+    android:viewportWidth="62.5"
+    android:viewportHeight="60">
+
+    <path
+        android:pathData="M31.25,0C31.25,0 10,25 10,40C10,51.87 19.38,60 31.25,60C43.12,60 52.5,51.87 52.5,40C52.5,25 31.25,0 31.25,0Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.9" />
+
+    <!-- 하이라이트 효과 -->
+    <path
+        android:pathData="M31.25,10C31.25,10 18,30 18,40C18,48 24,54 31.25,54C35,54 38,52 40,49"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.3"
+        android:fillColor="@android:color/transparent"
+        android:strokeLineCap="round" />
+</vector>

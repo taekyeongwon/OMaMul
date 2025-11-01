@@ -1,85 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:background="@drawable/glass_card_background">
+    android:layout_height="match_parent"
+    android:background="#80000000">
 
-    <!-- 시작/종료 선택 버튼 카드 -->
-    <com.google.android.material.card.MaterialCardView
+    <!-- Dialog Container (Bottom Sheet Style) -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
-        app:strokeWidth="0dp"
-        app:cardBackgroundColor="@color/glass_surface">
+        android:layout_height="340dp"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:background="@drawable/dialog_timepicker_background"
+        android:padding="24dp">
 
-        <RadioGroup
-            android:id="@+id/rg_selector"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:checkedButton="@id/rb_start"
-            android:gravity="center"
-            android:padding="16dp">
-
-            <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/rb_start"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:text="@string/start"
-                android:textSize="16sp"
-                android:textColor="@color/text_primary"
-                android:buttonTint="@color/water_blue"
-                android:layout_marginEnd="8dp"/>
-
-            <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/rb_end"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:text="@string/end"
-                android:textSize="16sp"
-                android:textColor="@color/text_primary"
-                android:buttonTint="@color/water_blue"
-                android:layout_marginStart="8dp"/>
-        </RadioGroup>
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- 시간 선택 카드 -->
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
-        app:strokeWidth="0dp"
-        app:cardBackgroundColor="@color/glass_surface">
-
+        <!-- Header Section (327x32dp, 24dp bottom margin) -->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_timepicker"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:layout_width="327dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp">
 
-            <TimePicker
-                android:id="@+id/tp_start"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:timePickerMode="spinner"
-                app:layout_constraintTop_toTopOf="parent"/>
+            <!-- Title -->
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:text="@string/init_time_picker_title"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#111827"
+                android:gravity="center_vertical"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"/>
 
-            <TimePicker
-                android:id="@+id/tp_end"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:timePickerMode="spinner"
-                android:visibility="gone"
-                app:layout_constraintTop_toTopOf="parent"/>
+            <!-- Close Button -->
+            <ImageButton
+                android:id="@+id/btn_close"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ico_close"
+                android:background="@drawable/ripple_circle"
+                android:scaleType="centerInside"
+                app:tint="#111827"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
 
-</LinearLayout>
+        <!-- TimePicker Section (327x156dp, 32dp bottom margin) -->
+        <LinearLayout
+            android:layout_width="327dp"
+            android:layout_height="156dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="32dp"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <!-- AM/PM Column (57.77dp width) -->
+            <LinearLayout
+                android:layout_width="58dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:text="@string/ampm"
+                    android:textSize="14sp"
+                    android:textColor="#4B5563"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"/>
+
+                <NumberPicker
+                    android:id="@+id/np_ampm"
+                    android:layout_width="58dp"
+                    android:layout_height="128dp"
+                    android:theme="@style/NumberPickerStyle"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="16dp"
+                android:layout_height="match_parent"/>
+
+            <!-- Hour Column (47.73dp width) -->
+            <LinearLayout
+                android:layout_width="48dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:text="@string/hour"
+                    android:textSize="14sp"
+                    android:textColor="#4B5563"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"/>
+
+                <NumberPicker
+                    android:id="@+id/np_hour"
+                    android:layout_width="48dp"
+                    android:layout_height="128dp"
+                    android:theme="@style/NumberPickerStyle"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="16dp"
+                android:layout_height="match_parent"/>
+
+            <!-- Minute Column (48.08dp width) -->
+            <LinearLayout
+                android:layout_width="48dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:text="@string/minute"
+                    android:textSize="14sp"
+                    android:textColor="#4B5563"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"/>
+
+                <NumberPicker
+                    android:id="@+id/np_minute"
+                    android:layout_width="48dp"
+                    android:layout_height="128dp"
+                    android:theme="@style/NumberPickerStyle"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Button Section (327x48dp) -->
+        <LinearLayout
+            android:layout_width="327dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <!-- Cancel Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_cancel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/cancel"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#374151"
+                android:backgroundTint="#F3F4F6"
+                app:cornerRadius="16dp"/>
+
+            <View
+                android:layout_width="12dp"
+                android:layout_height="match_parent"/>
+
+            <!-- Save Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/save"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/figma_blue_primary"
+                app:cornerRadius="16dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

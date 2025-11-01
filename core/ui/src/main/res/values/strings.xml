@@ -20,6 +20,8 @@
     <string name="init_time_subtitle">설정한 시간 대에 알람을 수신하게 됩니다.</string>
     <string name="wakeup_time">기상 시간</string>
     <string name="sleep_time">취침 시간</string>
+    <string name="init_time_picker_title">기상 시간 설정</string>
+    <string name="ampm">오전/오후</string>
     <string name="start">시작</string>
     <string name="end">종료</string>
     <string name="cancel">취소</string>

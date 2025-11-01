@@ -8,61 +8,32 @@
 
 ## 📊 전체 프로젝트 진행 상황 요약
 
-### 현재 단계: Phase 2 완료 ✅
+### 현재 단계: Phase 3 - Figma 디자인 적용 진행 중 🚀
 
-**Phase 1: XML + Fragment 디자인 변경 (물 앱 컨셉 적용)** ✅ 완료
-- ✅ 1. feature-water:home - 메인 화면 개선
-- ✅ 1.5. WaterActivity - 메인 액티비티 UI 재디자인
-- ✅ 2. core:ui - 공통 UI 컴포넌트
-- ✅ 3. feature-water:cup - 컵 관리 화면
-- ✅ 4. feature-water:record - 로그 및 차트 화면
-- ✅ 5. feature-water:alarm - 알람 설정 화면
-- ✅ 6. feature-water:setting - 물 관련 설정
-- ✅ 7. feature-common:init - 온보딩 화면
-- ⏸️ 8. feature-common:setting - 앱 설정 (보류)
+**Phase 3: Figma Readdy 디자인 기반 XML 레이아웃 재디자인** 🚧 진행 중
+- 🚧 feature-common:init - 온보딩 화면 Figma 디자인 적용 중
+  - ✅ fragment_init_language.xml (node-id=2-2)
+  - ⏳ fragment_init_time.xml
+  - ⏳ fragment_init_intake.xml
+  - ⏳ dialog 화면들
+- ⏳ feature-water 모듈 Figma 디자인 적용 대기
 
-**진행률: 7/7 완료 (feature-common:setting 제외)**
+**Figma 디자인 소스:**
+- 링크: https://www.figma.com/design/Dgp8drNVKW1c6qEqqXcAvy/Readdy--%EC%BB%A4%EB%AE%A4%EB%8B%88%ED%8B%B0-
+- File Key: `Dgp8drNVKW1c6qEqqXcAvy`
 
-**Phase 2: LiveData → StateFlow 마이그레이션** ✅ 완료
-- ✅ ViewModel 클래스별 LiveData → StateFlow 변환 완료
-- ✅ Fragment에서 observe → collect 방식으로 변경 완료
-- ✅ 변수명 리팩토링 (livedata → flow) 완료
-- ✅ feature-water 모듈 전체 마이그레이션 완료
-- ✅ feature-common 모듈 전체 마이그레이션 완료
+**작업 프로세스:**
+1. 사용자가 XML 파일과 Figma node-id 매핑 제공
+2. Figma 디자인 분석 및 XML 레이아웃 정확히 재작성
+3. 모듈 단위 빌드 테스트
+4. 모듈 작업 완료 후 동작 테스트 (사용자 수동)
+5. 정상 동작 확인 후 커밋
 
-**주요 완료 커밋:**
-- `6cffb96` Phase 2: LiveData → StateFlow 마이그레이션 완료
-- `3accf6b` Fragment observe → Flow collect 마이그레이션 완료
-- `8671f48` feature-water:setting LiveData → Flow 마이그레이션 완료
-- `1858a19` refactor: LiveData 변수명을 Flow 네이밍으로 변경
-
-**Phase 2.5: KAPT → KSP 마이그레이션** ✅ 완료
-- ✅ libs.versions.toml에 KSP 플러그인 추가 (v2.0.20-1.0.25)
-- ✅ 루트 build.gradle에 KSP 플러그인 선언
-- ✅ 14개 모듈 Hilt compiler kapt → ksp 변환
-- ✅ DataBinding 모듈에 kotlin-kapt 병행 사용 (9개 모듈)
-- ✅ 전체 빌드 테스트 성공
-
-**빌드 성능 개선 효과:**
-- Hilt annotation processing: KAPT → KSP (2-4배 빠름)
-- DataBinding: KAPT 유지 (KSP 미지원)
-- 증분 빌드 성능 향상
-
-**Phase 2.6: Skills 및 토큰 최적화** ✅ 완료
-- ✅ `.claude/skills/git-commit.md` 생성 (자동 커밋 워크플로우)
-- ✅ CLAUDE.md 커밋 가이드라인 간소화 (~500줄 → 간결한 안내)
-- ✅ Skills 기반 워크플로우 적용
-
-**토큰 최적화 효과:**
-- CLAUDE.md 크기: 약 70% 감소
-- 예상 토큰 절감: 77% (30,000 → 7,000 토큰/10회 대화)
-- 서브에이전트(Haiku) 활용 준비 완료
-
-**Phase 3: Compose UI 마이그레이션** (대기 중)
-- 🔜 Navigation 구조 변경
-- 🔜 Activity 구조 단순화
-- 🔜 모듈별 Composable 구현
-- 🔜 공통 Composable 구현
+**완료된 Phase:**
+- ✅ Phase 1: XML + Fragment 디자인 변경 (물 앱 컨셉 적용)
+- ✅ Phase 2: LiveData → StateFlow 마이그레이션
+- ✅ Phase 2.5: KAPT → KSP 마이그레이션
+- ✅ Phase 2.6: Skills 및 토큰 최적화
 
 ---
 
@@ -226,6 +197,29 @@
 - **답변**: 답변은 간결하게 최대 3-5문장으로 답변
 - **작업 완료 후**: 모듈 작업이 완료되고 빌드 테스트가 성공하면 `/git-commit` skill을 사용하여 자동 커밋
 - **ViewModel 인터페이스 보존**: 각 모듈별로 사용하고 있던 ViewModel의 모든 필드와 메서드는 반드시 동일하게 사용해야 함. 프레젠테이션 레이어 변경 시에도 기존 ViewModel의 public 인터페이스는 변경 금지
+- **Figma 디자인 정확도 규칙** (Phase 3 필수):
+  - **필수**: Figma 디자인을 XML 레이아웃으로 변환할 때 **100% 동일하게** 재현해야 함
+  - **분석 프로세스**:
+    1. `mcp__Framelink_Figma_MCP__get_figma_data` 도구로 Figma node 데이터 조회 (depth=6~8)
+    2. `globalVars.styles`에서 layout, fill, stroke, effect, textStyle 등 모든 스타일 정보 정확히 추출
+    3. 각 요소의 dimensions (width, height), padding, margin, spacing 정확히 계산
+    4. 색상 값 (#RRGGBB, rgba), 투명도, 그라데이션 정확히 변환
+    5. borderRadius, stroke, shadow 등 시각 효과 정확히 적용
+  - **검증 사항**:
+    - 인디케이터 개수 및 스타일 (활성/비활성 색상, 크기, 간격)
+    - 각 UI 요소의 크기 (width, height)
+    - 간격 (padding, margin, spacing between elements)
+    - 카드 구조 (개별 카드 vs 단일 카드 내 여러 항목)
+    - 버튼 위치 (좌측/우측/중앙)
+    - 텍스트 정렬 및 크기
+  - **재작성 원칙**:
+    - 기존 레이아웃을 수정하는 것이 아니라 Figma 디자인에 맞게 **완전히 새로 작성**
+    - Fragment 코드와의 연결을 위해 기존 ID는 유지 (예: `rg_language`, `rb_ko`, `btn_next`)
+    - 필요한 drawable, color 리소스는 즉시 생성
+  - **오류 방지**:
+    - Figma 디자인과 다른 부분이 발견되면 즉시 수정
+    - 사용자가 "디자인이 다르다"고 지적하면 Figma 데이터를 다시 분석하여 정확히 수정
+    - 추측하지 말고 Figma JSON 데이터를 정확히 읽어서 적용
 - **다국어 지원 규칙**:
   - **필수**: UI에 표시되는 모든 문구는 반드시 string 리소스로 관리해야 함
   - **레이아웃 작성 시**: `@string/xxx` 참조를 추가할 때는 반드시 해당 string이 존재하는지 확인

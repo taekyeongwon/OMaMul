@@ -56,6 +56,19 @@
     <!-- 구분선 색상 -->
     <color name="divider_light">#E0E0E0</color>
 
+    <!-- Figma Readdy 디자인 색상 -->
+    <color name="figma_blue_primary">#2563EB</color>
+    <color name="figma_blue_gradient_start">#60A5FA</color>
+    <color name="figma_blue_gradient_mid">#93C5FD</color>
+    <color name="figma_blue_gradient_end">#DBEBFE</color>
+    <color name="figma_glass_card">#33FFFFFF</color>
+    <color name="figma_glass_border">#4DFFFFFF</color>
+
+    <!-- 글래스모피즘 색상 (투명도별) -->
+    <color name="glass_surface_20">#33FFFFFF</color>
+    <color name="glass_border">#4DFFFFFF</color>
+    <color name="glass_white_inactive">#4DFFFFFF</color>
+
     <!-- Material Design 3 에러 색상 -->
     <color name="md_theme_light_error">#DC3545</color>
     <color name="md_theme_light_onError">#FFFFFF</color>

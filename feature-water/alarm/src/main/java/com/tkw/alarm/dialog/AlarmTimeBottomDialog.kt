@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioGroup.OnCheckedChangeListener
-import com.tkw.alarm.R
 import com.tkw.alarm.databinding.DialogTimepickerBinding
 import com.tkw.common.autoCleared
 import com.tkw.common.util.DateTimeUtils
@@ -13,28 +11,11 @@ import com.tkw.ui.dialog.CustomBottomDialog
 import java.time.LocalTime
 
 class AlarmTimeBottomDialog(
-    private val buttonFlag: Boolean = true,
-    private val selectedStart: LocalTime? = null,
-    private val selectedEnd: LocalTime? = null,
-    private val resultListener: (LocalTime, LocalTime) -> Unit
-    ) : CustomBottomDialog<DialogTimepickerBinding>() {
+    private val selectedTime: LocalTime? = null,
+    private val resultListener: (LocalTime) -> Unit
+) : CustomBottomDialog<DialogTimepickerBinding>() {
     override var childBinding by autoCleared<DialogTimepickerBinding>()
     override var buttonCount: Int = 2
-
-    private val onCheckedChangeListener =
-        OnCheckedChangeListener { _, checkedId ->
-            when(checkedId) {
-                R.id.rb_start -> {
-                    childBinding.tpStart.visibility = View.VISIBLE
-                    childBinding.tpEnd.visibility = View.GONE
-                }
-
-                R.id.rb_end -> {
-                    childBinding.tpStart.visibility = View.GONE
-                    childBinding.tpEnd.visibility = View.VISIBLE
-                }
-            }
-        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,28 +33,30 @@ class AlarmTimeBottomDialog(
     }
 
     private fun initView() {
-        val startHour = selectedStart?.hour ?: 1
-        val startMin = selectedStart?.minute ?: 0
-        val endHour = selectedEnd?.hour ?: 23
-        val endMin = selectedEnd?.minute ?: 0
-        initTimePicker(startHour, startMin, endHour, endMin)
+        val hour = selectedTime?.hour ?: 9
+        val minute = selectedTime?.minute ?: 0
 
-        childBinding.rgSelector.setOnCheckedChangeListener(onCheckedChangeListener)
-        setRadioChecked(buttonFlag)
-    }
-
-    private fun initTimePicker(startHour: Int, startMin: Int, endHour: Int, endMin: Int) {
         childBinding.apply {
-            tpStart.hour = startHour
-            tpStart.minute = startMin
-            tpEnd.hour = endHour
-            tpEnd.minute = endMin
-        }
-    }
+            // AM/PM 설정
+            val amPmArray = arrayOf("오전", "오후")
+            npAmpm.minValue = 0
+            npAmpm.maxValue = 1
+            npAmpm.displayedValues = amPmArray
+            npAmpm.value = if (hour < 12) 0 else 1
+            npAmpm.wrapSelectorWheel = false
 
-    private fun setRadioChecked(flag: Boolean) {
-        if(flag) childBinding.rgSelector.check(R.id.rb_start)
-        else childBinding.rgSelector.check(R.id.rb_end)
+            // 시간 설정 (1~12)
+            npHour.minValue = 1
+            npHour.maxValue = 12
+            npHour.value = if (hour == 0) 12 else if (hour > 12) hour - 12 else hour
+            npHour.wrapSelectorWheel = true
+
+            // 분 설정 (0~59)
+            npMinute.minValue = 0
+            npMinute.maxValue = 59
+            npMinute.value = minute
+            npMinute.wrapSelectorWheel = true
+        }
     }
 
     private fun initListener() {
@@ -89,17 +72,19 @@ class AlarmTimeBottomDialog(
     }
 
     private fun sendSelectTime() {
-        val startTime =
-            DateTimeUtils.Time.getLocalTime(
-                childBinding.tpStart.hour,
-                childBinding.tpStart.minute
-            )
-        val endTime =
-            DateTimeUtils.Time.getLocalTime(
-                childBinding.tpEnd.hour,
-                childBinding.tpEnd.minute
-            )
+        val amPm = childBinding.npAmpm.value // 0: AM, 1: PM
+        val hour12 = childBinding.npHour.value
+        val minute = childBinding.npMinute.value
 
-        resultListener(startTime, endTime)
+        // 12시간제를 24시간제로 변환
+        val hour24 = when {
+            amPm == 0 && hour12 == 12 -> 0 // 오전 12시 = 0시
+            amPm == 1 && hour12 == 12 -> 12 // 오후 12시 = 12시
+            amPm == 1 -> hour12 + 12 // 오후 1~11시
+            else -> hour12 // 오전 1~11시
+        }
+
+        val selectedTime = DateTimeUtils.Time.getLocalTime(hour24, minute)
+        resultListener(selectedTime)
     }
 }

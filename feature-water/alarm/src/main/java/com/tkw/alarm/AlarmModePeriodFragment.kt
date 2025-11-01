@@ -132,8 +132,10 @@ class AlarmModePeriodFragment : Fragment() {
                 }
             }
         }
+        // TODO: 기상시간과 취침시간을 각각 설정할 수 있는 UI 버튼이 필요합니다
+        // 임시로 기존 클릭 리스너를 기상시간 설정으로 변경
         dataBinding.clAlarmTimeEdit.setOnClickListener {
-            showTimeDialog()
+            showWakeTimeDialog()
         }
     }
 
@@ -147,16 +149,40 @@ class AlarmModePeriodFragment : Fragment() {
         viewModel.setPeriodAlarm(period)
     }
 
-    private fun showTimeDialog() {
+    private fun showWakeTimeDialog() {
         lifecycleScope.launch {
             viewModel.tmpPeriodModeFlow.value?.let {
                 val dialog = AlarmTimeBottomDialog(
-                    selectedStart = DateTimeUtils.Time.getLocalTime(it.startTime),
-                    selectedEnd = DateTimeUtils.Time.getLocalTime(it.endTime),
-                    resultListener = { wake, sleep ->
+                    selectedTime = DateTimeUtils.Time.getLocalTime(it.startTime),
+                    resultListener = { wakeTime ->
                         lifecycleScope.launch {
                             viewModel.tmpPeriodModeFlow.value?.let { setting ->
-                                val newSetting = setting.copy(startTime = wake.toEpochMilli(), endTime = sleep.toEpochMilli())
+                                val newSetting = setting.copy(startTime = wakeTime.toEpochMilli())
+                                viewModel.setTmpPeriodMode(newSetting)
+                                dataBinding.tvAlarmTime.text = newSetting.run {
+                                    getTimeRange(
+                                        DateTimeUtils.Time.getFormat(startTime),
+                                        DateTimeUtils.Time.getFormat(endTime)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                )
+                dialog.show(childFragmentManager, dialog.tag)
+            }
+        }
+    }
+
+    private fun showSleepTimeDialog() {
+        lifecycleScope.launch {
+            viewModel.tmpPeriodModeFlow.value?.let {
+                val dialog = AlarmTimeBottomDialog(
+                    selectedTime = DateTimeUtils.Time.getLocalTime(it.endTime),
+                    resultListener = { sleepTime ->
+                        lifecycleScope.launch {
+                            viewModel.tmpPeriodModeFlow.value?.let { setting ->
+                                val newSetting = setting.copy(endTime = sleepTime.toEpochMilli())
                                 viewModel.setTmpPeriodMode(newSetting)
                                 dataBinding.tvAlarmTime.text = newSetting.run {
                                     getTimeRange(

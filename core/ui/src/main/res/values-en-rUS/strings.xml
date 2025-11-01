@@ -20,6 +20,8 @@
     <string name="init_time_subtitle">You will receive notifications during the set times.</string>
     <string name="wakeup_time">Wake-up time</string>
     <string name="sleep_time">Sleep time</string>
+    <string name="init_time_picker_title">Set wake-up time</string>
+    <string name="ampm">AM/PM</string>
     <string name="start">Start</string>
     <string name="end">End</string>
     <string name="cancel">Cancel</string>

@@ -19,7 +19,6 @@ import kotlinx.coroutines.launch
 class InitTimeFragment: Fragment() {
     private var dataBinding by autoCleared<FragmentInitTimeBinding>()
     private val viewModel: InitViewModel by viewModels()
-    private lateinit var alarmTimeDialog: AlarmTimeBottomDialog
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,7 +38,6 @@ class InitTimeFragment: Fragment() {
 
     private fun initView() {
         setDefaultTime()
-        initTimePicker(true)
     }
 
     private fun setDefaultTime() {
@@ -55,35 +53,43 @@ class InitTimeFragment: Fragment() {
                         findNavController().navigate(R.id.initIntakeFragment)
                     }
                     is InitContract.SideEffect.InitTimePicker -> {
-                        initTimePicker(it.flag)
-                        showTimePicker()
+                        if (it.flag) {
+                            showWakeTimeDialog()
+                        } else {
+                            showSleepTimeDialog()
+                        }
                     }
                 }
             }
         }
-
     }
 
-    private fun initTimePicker(buttonFlag: Boolean) {
-        alarmTimeDialog = AlarmTimeBottomDialog(
-            buttonFlag,
-            DateTimeUtils.Time.getLocalTime(
-                dataBinding.tvWakeupTime.text.toString(),
-                DateTimeUtils.Time.TIME_PATTERN
-            ),
-            DateTimeUtils.Time.getLocalTime(
-                dataBinding.tvSleepTime.text.toString(),
-                DateTimeUtils.Time.TIME_PATTERN
-            ),
-            resultListener = { wake, sleep ->
-                dataBinding.tvWakeupTime.text = DateTimeUtils.Time.getFormat(wake.hour, wake.minute)
-                dataBinding.tvSleepTime.text = DateTimeUtils.Time.getFormat(sleep.hour, sleep.minute)
+    private fun showWakeTimeDialog() {
+        val currentTime = DateTimeUtils.Time.getLocalTime(
+            dataBinding.tvWakeupTime.text.toString(),
+            DateTimeUtils.Time.TIME_PATTERN
+        )
+        val dialog = AlarmTimeBottomDialog(
+            selectedTime = currentTime,
+            resultListener = { wakeTime ->
+                dataBinding.tvWakeupTime.text = DateTimeUtils.Time.getFormat(wakeTime.hour, wakeTime.minute)
             }
         )
+        dialog.show(childFragmentManager, dialog.tag)
     }
 
-    private fun showTimePicker() {
-        alarmTimeDialog.show(childFragmentManager, alarmTimeDialog.tag)
+    private fun showSleepTimeDialog() {
+        val currentTime = DateTimeUtils.Time.getLocalTime(
+            dataBinding.tvSleepTime.text.toString(),
+            DateTimeUtils.Time.TIME_PATTERN
+        )
+        val dialog = AlarmTimeBottomDialog(
+            selectedTime = currentTime,
+            resultListener = { sleepTime ->
+                dataBinding.tvSleepTime.text = DateTimeUtils.Time.getFormat(sleepTime.hour, sleepTime.minute)
+            }
+        )
+        dialog.show(childFragmentManager, dialog.tag)
     }
 
     private fun initListener() {

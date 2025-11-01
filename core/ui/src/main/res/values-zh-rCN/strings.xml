@@ -20,6 +20,8 @@
     <string name="init_time_subtitle">在设定的时间段内会收到提醒。</string>
     <string name="wakeup_time">起床时间</string>
     <string name="sleep_time">睡觉时间</string>
+    <string name="init_time_picker_title">设置起床时间</string>
+    <string name="ampm">上午/下午</string>
     <string name="start">开始</string>
     <string name="end">结束</string>
     <string name="cancel">取消</string>
